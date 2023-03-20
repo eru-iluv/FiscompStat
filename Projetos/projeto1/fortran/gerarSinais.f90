@@ -32,7 +32,7 @@ subroutine escreveSinal(labelSinal, N, dt, a1,  a2, w1, w2)
     real*8 :: calculaSinal
     integer :: i
     
-    open(1, file="dados/arquivo_"//labelsinal//".dat")
+    open(1, file="../dados/arquivo_"//labelsinal//".dat")
 
     do i = 1, N
         write(1, *) i*dt, calculaSinal(i*dt, a1, a2, w1, w2)

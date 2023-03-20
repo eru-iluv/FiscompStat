@@ -17,4 +17,7 @@ graph all:
 		make clean tex
 
 clean tex:
-		@rm *.log *.aux *.eps
+		@rm *.log
+		@rm *.aux
+		@rm *.eps
+		@rm *-eps-converted-to.pdf
