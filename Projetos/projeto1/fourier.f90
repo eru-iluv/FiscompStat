@@ -17,9 +17,10 @@ function Yk(k, y_t)
     complex*16 :: Yk, i = (0,1)
     real*8, parameter :: pi = 3.1415926537989
     integer :: j
+    Yk = (0,0)
     ! TODO: Realmente vou usar o tempo??
     somatoria : do  j = 1, 200
-        Yk = Yk + y_t(j)*e**(2.d0*pi*i*j*k/N)
+        Yk = Yk + y_t(j)*exp(2.d0*pi*i*j*k/N)
     end do somatoria
     
 end function Yk
