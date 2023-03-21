@@ -1,23 +1,20 @@
-
-# -*-Makefile-*-
-
-UTIL = utils/utils.c arvoreAVL/avl.c jogos/jogo.c
-MAIN = main.c
-BINARY = executavel
+MAIN = teste.f
+BINARY = teste.exe
+UTIL = teste.gp
+TEX_FILE = teste.tex
+PDF_FILE = teste.pdf
 
 all:
-		gcc -std=c99 -Wall -g $(UTIL) $(MAIN) -o $(BINARY)
+	gfortran $(MAIN) -o $(BINARY)
+run:
+	./$(BINARY)
 
-%.gp : %.tex
-	gnuplot $@
+plot:
 
-graph all:
-		gnuplot *.gp
-		pdflatex *.tex
-		make clean tex
+	gnuplot ./$(UTIL)
+	pdflatex ./$(TEX_FILE)
+	evince ./$(PDF_FILE) & 
+	@rm *-inc*eps* *.log *.tex *.aux
 
-clean tex:
-		@rm *.log
-		@rm *.aux
-		@rm *.eps
-		@rm *-eps-converted-to.pdf
+clean:
+	@rm *.exe *.dat
