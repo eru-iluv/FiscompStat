@@ -30,7 +30,7 @@ subroutine leTabela(label, t, y_t)
     real*8, dimension(200), intent(out) ::  t, y_t
     integer :: i
 
-    open(1, file="dados/arquivo_"//label//".dat")
+    open(1, file="../dados/arquivo_"//label//".dat")
     
     do i = 1, 200
         read(1,*) t(i), y_t(i)
