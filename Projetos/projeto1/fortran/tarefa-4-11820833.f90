@@ -1,63 +1,61 @@
 program gerarEspacoAmplitude
     implicit none
-    complex*16, dimension(200) :: Yk
-    real*8 :: dt
+    complex*16, dimension(100) :: Yk
     character :: label
+    integer :: N
     
     read(*,*) label
-    call leTabela(label, Yk, dt)
-    call escreveAmplitude(Yk, dt, label)
+    call leTabela(label, N, Yk)
+    call escreveAmplitude(Yk, N, label)
     
 end program gerarEspacoAmplitude
 
 
-function y_j(j, Yk)
-    integer, intent(in) :: j
-    complex*16, dimension(200), intent(in):: Yk 
-    integer :: N = 200
-    complex*16:: i = (0,1)
-    complex*16 :: y_j
-    real*8, parameter :: pi = 3.1415926537989
-    integer :: k
-    somatoria : do  k = 1, 200
-        y_j = y_j + Yk(j)*exp(-2.d0*pi*i*j*k/N)
-    end do somatoria
-    
-    y_j = y_j/200.d0
-
-end function y_j
-
-subroutine leTabela(label, Yk, dt)
+subroutine leTabela(label, N, Yk)
     character, intent(in) :: label
     real*8 ::  ignorada, Yk_real, Yk_imaginaria
-    complex*16, dimension(200), intent(out) :: Yk
-    real*8, intent(out) :: dt
+    complex*16, dimension(100), intent(out) :: Yk
+    integer, intent(out) :: N
     integer :: i
 
     open(1, file="../dados/saida-"//label//"-11820833.out")
     
-    do i = 1, 200
+    do 10 i = 1, 100
         read(1,*) ignorada, Yk_real, Yk_imaginaria
         Yk(i) = complex(Yk_real, Yk_imaginaria)
-        
-        if ( i==1 ) then
-            dt = ignorada
-        end if
-    end do
-
+ 10 end do
+        N = i
 end subroutine leTabela
 
-subroutine escreveAmplitude(Yk, dt, label)
-    complex*16, dimension(200), intent(in) :: Yk
-    real*8, intent(in) :: dt
+subroutine escreveAmplitude(Yk, N, label)
+    complex*16, dimension(100), intent(in) :: Yk
+    real*8:: dt = 0.04d0
     character :: label
     integer :: j
     complex*16 :: y_j, curr_y_j
     
     open(1, file="../dados/saida-"//label//"inversa-11820833.out")
-    do j = 0, 99
-        curr_y_j = y_j(k, Yk)
-        write(1,*) j*dt, real(currYk)
+    do j = 1, 2*(N + 1)
+        curr_y_j = y_j(j, N, Yk)
+        write(1,*) j*dt, real(curr_y_j)
     end do
+    close(1)
     
 end subroutine escreveAmplitude
+
+function y_j(j, N, Yk)
+    integer, intent(in) :: j
+    complex*16, dimension(100), intent(in):: Yk 
+    integer, intent(in) :: N
+    complex*16:: i = (0,1)
+    complex*16 :: y_j
+    real*8, parameter :: pi = 3.1415926537989
+    integer :: k
+
+    somatoria : do  k = 1, 100
+        y_j = y_j + Yk(k)*exp(-2.d0*pi*i*j*k/(2*(N+1)))
+    end do somatoria
+    
+    y_j = y_j/N
+
+end function y_j
