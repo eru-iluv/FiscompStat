@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-03-22 qua 21:00 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>[[https://edisciplinas.usp.br/pluginfile.php/7581904/mod_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf][ANÁLISE ESPECTRAL POR TRANSFORMADAS DE FOURIER]]</title>
+<meta name="author" content="Edgard Macena Cabral" />
+<meta name="description" content="A GNU Emacs notebook demonstration" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="../../notebook.css" />
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title"><a href="https://edisciplinas.usp.br/pluginfile.php/7581904/mod_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf">ANÁLISE ESPECTRAL POR TRANSFORMADAS DE FOURIER</a>
+<br />
+<span class="subtitle">Edgard Macena Cabral Nº 11820833 — Março 2023</span>
+</h1>
+<div class="abstract" id="org93c13be">
+<p>
+Nessa tarefa, buscamos analisar a Transformada Discreta de Fourier sem nenhuma aceleração. Criamos um programa que realiza a transformada e outro que realiza sua inversa.
+Observamos que, para alguns casos, essas operações são bem comportadas, e conseguimos recuperar o sinal sem dificuldades.
+Observamos também que, para outras sinais obtivemos um reflexo em torno da frequência de Nyquist, provando que a maior frequência que podemos obter com a transformada é \(\frac{1}{2\Delta t}\).
+Por fim, vimos a relação entre o número N de pontos e o tempo de 50 execuções do programa.
+</p>
+
+</div>
+<div id="outline-container-org6655302" class="outline-2">
+<h2 id="org6655302">Introdução</h2>
+<div class="outline-text-2" id="text-org6655302">
+<p>
+A transformada de Fourier é uma transformação que nos leva do espaço das amplitude de um sinal para um espaço de frequências. Para sinais contínuos, podemos escrever:
+</p>
+
+<div class="latex" id="orga5b7847">
+<p>
+\label{eq:Transformada contínua}
+</p>
+\begin{equation}
+Y(f) = \int^{\infty}_{-\infty}y(t)e^{2\pi f i t}
+\end{equation}
+
+</div>
+
+<p>
+Porém, na física experimental, da análise da luminosidade de estrelas na busca de exoplanetas ao estudo do movimento de um pêndulo no laboratório de física I, trabalhamos essencialmente com dados discretos.
+</p>
+
+<p>
+Para adequar a transformada aos dados laboratoriais, usamos as substituições \(t_j = j\delta t\), \(f_k = \frac{k}{N\delta t}\), que nos dão:
+</p>
+
+<div class="latex" id="org90038b8">
+<p>
+\label{eq:Transformada discreta}
+</p>
+\begin{equation}
+Y_k = \sum_{j=0}^{j < N/2} y_j e^{2\pi jk i/N}
+\end{equation}
+
+</div>
+<div class="latex" id="org5e48cb8">
+<p>
+\label{eq:Transformada discreta}
+</p>
+\begin{equation}
+y_j = \frac{1}{N}\sum_{k=0}^{k = N} Y_ke^{2\pi jk i/N}
+\end{equation}
+
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
