@@ -29,7 +29,7 @@ end subroutine leTabela
 
 subroutine escreveAmplitude(Yk, N, label)
     complex*16, dimension(100), intent(in) :: Yk
-    real*8:: dt = 0.04d0
+    real*8 :: dt = 0.04d0
     character :: label
     integer :: j
     complex*16 :: y_j, curr_y_j

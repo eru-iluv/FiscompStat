@@ -1,4 +1,4 @@
-
+#+SETUPFILE: ../../setup-file.org
 
 #+begin_abstract
 Nessa tarefa, buscamos analisar a Transformada Discreta de Fourier sem nenhuma aceleração. Criamos um programa que realiza a transformada e outro que realiza sua inversa.
@@ -10,7 +10,6 @@ Por fim, vimos a relação entre o número N de pontos e o tempo de 50 execuçõ
 A transformada de Fourier é uma transformação que nos leva do espaço das amplitude de um sinal para um espaço de frequências. Para sinais contínuos, podemos escrever:
 
 #+begin_latex
-\label{eq:Transformada contínua}
 \begin{equation}
 Y(f) = \int^{\infty}_{-\infty}y(t)e^{2\pi f i t}
 \end{equation}
@@ -18,20 +17,258 @@ Y(f) = \int^{\infty}_{-\infty}y(t)e^{2\pi f i t}
 
 Porém, na física experimental, da análise da luminosidade de estrelas na busca de exoplanetas ao estudo do movimento de um pêndulo no laboratório de física I, trabalhamos essencialmente com dados discretos.
 
-Para adequar a transformada aos dados laboratoriais, usamos as substituições $t_j = j\delta t$, $f_k = \frac{k}{N\delta t}$, que nos dão:
+Para adequar a transformada aos dados laboratoriais, usamos as substituições $t_j = j\Delta t$, $f_k = \frac{k}{N\Delta t}$, que nos dão:
 
 #+begin_latex
-\label{eq:Transformada discreta}
 \begin{equation}
+\label{eq:Transformada discreta}
 Y_k = \sum_{j=0}^{j < N/2} y_j e^{2\pi jk i/N}
 \end{equation}
 #+end_latex
+
+Conseguimos também obter a inversa através de
+
 #+begin_latex
-\label{eq:Transformada discreta}
 \begin{equation}
-y_j = \frac{1}{N}\sum_{k=0}^{k = N} Y_ke^{2\pi jk i/N}
+\label{eq:Transformada inversa discreta}
+y_j = \frac{1}{k}\sum_{k=0}^{k < N/2} Y_ke^{-2\pi jk i/N}
 \end{equation}
 #+end_latex
+
+Nessas equações, a razão de irmos apenas até $k < N/2$ está ligada a frequência de Nyquist, que pode ser entendida como a frequência associada ao menor comprimento de onda que pode formar um modo fundamental entre pontos de data consecutivos.
+
+Caso a frequência do sinal seja maior que a frequência de Nyquist, o gráfico, obtemos um pico relacionada à reflexão da verdadeira frequência do sinal com a de Nyquist.
+
+#+begin_latex
+\begin{equation}
+\label{eq:Frequência encontrada}
+  f_{encontrada} = f_{verdadeira} - f_{Nyquist}
+\end{equation}
+#+end_latex
+
+Como já dito, transformadas de Fourier são amplamente usadas na Física, então é importante que possamos tê-la eficientemente.
+Podemos estimar com facilidade a ordem do tempo de execução. Temos $N$ termos, cada um dos quais é calculado com uma soma de $\frac{N}{2}$ termos. A ordem do tempo de execução é então da ordem de ~$N^2$.
+
+* Geração de dados
+Para gerar os dados, usamos a equação a seguir:
+#+begin_latex
+\begin{equation}
+y_{i} = a_{1}\cos{(\omega_{1}t_{i})} + a_{2}\sen(\omega_{2}t_{i})
+\end{equation}
+$$t_{i} = i\Delta t,\ \ i = 1, \cdots, N$$
+#+end_latex
+
+Que foi executada no programa:
+
+#+begin_src fortran :tangle entrega/tarefa-2/tarefa-2-11820833.f90
+program gerarSinais
+    implicit none
+    real*8, parameter :: pi = 3.1415926537989
+    real*8 :: a1, a2, w1, w2, dt
+    integer :: N
+    ! (a) N = 200, ∆t = 0.04, a1 = 2, a2 = 4, ω1 = 4πHz, ω2 = 2.5πHz
+    ! (b) N = 200, ∆t = 0.04, a1 = 3, a2 = 2, ω1 = 4πHz, ω2 = 2.5πHz
+    ! (c) N = 200, ∆t = 0.4, a1 = 2, a2 = 4, ω1 = 4πHz, ω2 = 0.2πHz
+    ! (d) N = 200, ∆t = 0.4, a1 = 3, a2 = 2 ω1 = 4πHz, ω2 = 0.2πHz
+
+    call escreveSinal(200, 0.04d0, 2.d0, 4.d0, 4.d0*pi, 2.5d0, "a")
+    call escreveSinal(200, 0.04d0, 3.d0, 2.d0, 4.d0*pi, 2.5d0, "b")
+    call escreveSinal(200, 0.4d0, 2.d0, 4.d0, 4.d0*pi, 0.2d0, "c")
+    call escreveSinal(200, 0.4d0, 3.d0, 2.d0, 4.d0*pi, 0.2d0, "d")
+end program gerarSinais
+
+
+subroutine escreveSinal(N, dt, a1,  a2, w1, w2, label)
+    real*8, intent(in) :: a1, a2, w1, w2, dt
+    integer, intent(in) :: N
+    char*8, intent(in) :: label
+    real*8 :: calculaSinal
+    integer :: i
+
+    open(1, file="saida-2-"//label)
+
+    do i = 1, N
+        write(1, *) i*dt, calculaSinal(i*dt, a1, a2, w1, w2)
+    end do
+
+    close(1)
+
+end subroutine escreveSinal
+
+
+function calculaSinal(t, a1, a2, w1, w2) result(retval)
+    real*8, intent(in) :: a1, a2, w1, w2, t
+    real*8 :: retval
+    retval = a1*cos(w1*t) + a2*sin(w2*t)
+
+end function calculaSinal
+#+end_src
+
+O programa foi executado sobre as séries de parâmetros
+
+$$(a)\ \ N = 200, \Delta t = 0,04,\ a_1 = 2,\ a_2 = 4,\ \omega_1 = 4\pi Hz,\ \omega_2 = 2,5\pi Hz$$
+$$(b)\ \ N = 200, \Delta t = 0,04,\ a_1 = 3,\ a_2 = 2, \omega_1 = 4\pi Hz,\ \omega_2 = 2,5\pi Hz$$
+$$(c)\ \ N = 200, \Delta t = 0,4,\ a_1 = 2,\ a_2 = 4,\ \omega_1 = 4\pi Hz,\ \omega_2 = 0,2\pi Hz$$
+$$(d)\ \ N = 200, \Delta t = 0,4,\ a1 = 2,\ a2 = 4, ω1 = 4\pi Hz,\ ω2 = 2,5\pi Hz$$
+
+Os resultados estão no gráfico a seguir
+
+#+caption: Sinais gerados para os testes seguintes.
+#+attr_latex: :width 13cm :height 13cm
+;#+begin_latex
+\begin{figure}
+\centering
+\input{graficos/tarefa-2-graf-11820833.tex}
+\end{figure}
+;#+end_latex
+
+Notamos que as séries representam uma boa variedade de sinais.
+A séries $(a)$ e $(b)$ são parecidas em termos de frequências, mas as amplitudes diferentes implicam em formatos bastantes diferentes, mesmo compartilhando alguns picos e vales, com algo parecido entre as séries $(c)$ e $(d)$.
+Ao mesmo tempo $(a)$ e $(c)$ têm mesma amplitude, o que não chega a fazer uma série parecida, pelos picos e vales serem bastante distintos, com o mesmo ocorrendo entre a $(b)$ e ${d}$
+
+
+* Transformada de Fourier
+
+Para a Transformada de Fourier, usamos o programa a seguir:
+#+begin_src fortran :tangle entrega/tarefa-1/tarefa-1-11820833.f90
+program gerarEspacoFrequencias
+    implicit none
+    real*8, dimension(200) :: y_t
+    real*8 :: dt
+    character :: label
+    integer :: N
+    read(*,*) label
+    call leTabela(label, dt, y_t, N)
+    call escreveFrequencias(y_t, dt, label, N)
+
+
+end program gerarEspacoFrequencias
+
+subroutine leTabela(label, dt, y_t, N)
+    character, intent(in) :: label
+    real*8, dimension(200), intent(out) :: y_t
+    real*8, intent(out) :: dt
+    integer, intent(out) :: N
+    real*8 :: ignorada
+    integer :: i
+
+    open(1, file="data.in")
+
+    do i = 1, 200
+        read(1,*, end=10) ignorada, y_t(i)
+        if ( i == 1 ) then
+            dt = ignorada
+        end if
+10  end do
+    close(1)
+
+    N = i
+
+end subroutine leTabela
+
+subroutine escreveFrequencias(y_t, dt, label, N)
+    real*8, dimension(200), intent(in) :: y_t
+    real*8, intent(in) :: dt
+    character :: label
+    integer :: k, N, M
+    complex*16 :: Yk, currYk
+    M = floor((N-1)/2.d0)
+
+    open(2, file="data.out")
+    do k = 1, M
+        currYk = Yk(k, y_t, N)
+        write(1,*) k/(200*dt), real(currYk), aimag(currYk)
+    end do
+    close(2)
+end subroutine escreveFrequencias
+
+function Yk(k, y_t, N)
+    integer, intent(in) :: k
+    integer, intent(in) :: N
+    real*8, dimension(200):: y_t
+    complex*16 :: Yk, i = (0,1)
+    real*8, parameter :: pi = 3.1415926537989
+    integer :: j
+    Yk = (0,0)
+    somatoria : do  j = 1, N
+        Yk = Yk + y_t(j)*exp(2.d0*pi*i*j*k/N)
+    end do somatoria
+
+end function Yk
+#+end_src
+
+* Transformada Inversa
+
+Usamos, seguindo a $(3)$, o programa
+
+#+begin_src fortran :tangle entrega/tarefa-4/tarefa-4-11820833.f90
+program gerarEspacoAmplitude
+    implicit none
+    complex*16, dimension(100) :: Yk
+    integer :: N
+
+    read(*,*) label
+    call leTabela(N, Yk)
+    call escreveAmplitude(Yk, N, label)
+
+end program gerarEspacoAmplitude
+
+
+subroutine leTabela(N, Yk)
+    real*8 ::  ignorada, Yk_real, Yk_imaginaria
+    complex*16, dimension(100), intent(out) :: Yk
+    integer, intent(out) :: N
+    integer :: i
+
+    open(1, file="../tarefa-1/data.out")
+
+    do 10 i = 1, 100
+        read(1,*) ignorada, Yk_real, Yk_imaginaria
+        Yk(i) = complex(Yk_real, Yk_imaginaria)
+ 10 end do
+        N = i
+end subroutine leTabela
+
+subroutine escreveAmplitude(Yk, N)
+    complex*16, dimension(100), intent(in) :: Yk
+    real*8 :: dt = 0.04d0
+    integer :: j
+    complex*16 :: y_j, curr_y_j
+
+    open(1, file="saida-4-11820833")
+    do j = 1, 2*(N + 1)
+        curr_y_j = y_j(j, N, Yk)
+        write(1,*) j*dt, real(curr_y_j)
+    end do
+    close(1)
+
+end subroutine escreveAmplitude
+
+function y_j(j, N, Yk)
+    integer, intent(in) :: j
+    complex*16, dimension(100), intent(in):: Yk
+    integer, intent(in) :: N
+    complex*16:: i = (0,1)
+    complex*16 :: y_j
+    real*8, parameter :: pi = 3.1415926537989
+    integer :: k
+
+    somatoria : do  k = 1, 100
+        y_j = y_j + Yk(k)*exp(-2.d0*pi*i*j*k/(2*(N+1)))
+    end do somatoria
+
+    y_j = y_j/N
+
+end function y_j
+#+end_src
+
+Obtivemos, para a série $(a)$, o gráfico a seguir
+
+GRAFICO
+
+Nele, observamos uma boa sobreposição entre a nossa série original e a recuperada pela nossa inversa, demonstrando a precisão do Método de Fourier
+
+* Tempo de Execução
 
 * Notebook configuration :noexport:
 :PROPERTIES:
@@ -44,16 +281,13 @@ This section is used for configuring various settings in the notebook appearance
 :VISIBILITY: folded
 :END:
 
-#+TITLE:        [[https://edisciplinas.usp.br/pluginfile.php/7581904/mod_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf][ANÁLISE ESPECTRAL POR TRANSFORMADAS DE FOURIER]]
-#+SUBTITLE:     Edgard Macena Cabral Nº 11820833 — Março 2023
+#+TITLE:        [[https://edisciplinas.usp.br/pluginfile.php/7581904/mod_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf][ANÁLISE ESPECTRAL POR@@latex:\\@@ @@html:<br>@@ @@latex:\\@@ @@html:<br>@@TRANSFORMADAS DE FOURIER]]
+#+SUBTITLE:     Edgard Macena Cabral Nº 11820833 @@latex:\\@@ @@html:<br>@@ Março 2023
 #+AUTHOR:       Edgard Macena Cabral
 #+EMAIL:        edgardmacena@usp.br
 #+DATE:         Março 2023
 #+DESCRIPTION:  A GNU Emacs notebook demonstration
 #+OPTIONS:      toc:nil
-
-
-
 ** HTML export configuration
 :PROPERTIES:
 :VISIBILITY: folded

@@ -1,6 +1,5 @@
 program gerarSinais
     implicit none
-    real*8, parameter :: pi = 3.1415926537989
     real*8 :: a1, a2, w1, w2, dt
     integer :: N
     ! (a) N = 200, ∆t = 0.04, a1 = 2, a2 = 4, ω1 = 4πHz, ω2 = 2.5πHz

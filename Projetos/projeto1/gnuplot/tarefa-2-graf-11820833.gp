@@ -8,11 +8,11 @@ set style line 2 ps 1.5 lw 3
 set style line 3 linecolor 2 ps 1.5 lw 3
 set style line 1 linecolor 1 ps 1.5 lw 3
 
-set xlabel "$t$"
-set ylabel "Amplitude do sinal"
+set xlabel "$Tempo$"
+set ylabel "Amplitude do sinal\n"
 
 set multiplot layout 2,2 \
-    title "Grafico dos sinais produzidos na tarefa 1"\
+    title "Grafico dos sinais produzidos na tarefa 2\n\n "\
     font ",18"
 
 # set size sq
@@ -27,12 +27,12 @@ set key right top
 
 # set pointsize 2.5
 set xrange [-0.2:8.2]
-# set yrange [-6:6.5]
 
-plot  '../dados/arquivo_a.dat' u 1:2 w lp ls 1 lc 4 title "(a)"
-plot  '../dados/arquivo_b.dat' u 1:2 w lp ls 2 lc 7 title "(b)"
 
+plot  '../dados/arquivo_a.dat' u 1:2 w lp ls 1 lc 4 title "(a)" 
+plot  '../dados/arquivo_b.dat' u 1:2 w lp ls 2 lc 7 title "(b)" 
 set xrange [-2:82]
+set yrange [-6:6.5]
 set xtic ("0" 0, "$5\\pi$" 5*pi, "$10\\pi$" 10*pi, "$15\\pi$" 15*pi, "$20\\pi$" 20*pi, "$25\\pi$" 25*pi)
 
 plot  '../dados/arquivo_c.dat' u 1:2 w lp ls 3 lc 2 title "(c)"
