@@ -26,10 +26,10 @@ subroutine leTabela(label, dt, y_t, N)
         if ( i == 1 ) then
             dt = ignorada
         end if
-10  end do
-    close(1)
+    end do
+10  close(1)
     
-    N = i
+    N = i - 1
     
 end subroutine leTabela
 
@@ -44,7 +44,7 @@ subroutine escreveFrequencias(y_t, dt, label, N)
     open(2, file="../dados/saida-"//label//"-11820833.out")
     do k = 1, M
         currYk = Yk(k, y_t, N)
-        write(1,*) k/(200*dt), real(currYk), aimag(currYk)
+        write(2,*) k/(200*dt), real(currYk), aimag(currYk)
     end do
     close(2)
 end subroutine escreveFrequencias
@@ -60,5 +60,4 @@ function Yk(k, y_t, N)
     somatoria : do  j = 1, N
         Yk = Yk + y_t(j)*exp(2.d0*pi*i*j*k/N)
     end do somatoria
-    
 end function Yk

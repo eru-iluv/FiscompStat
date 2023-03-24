@@ -1,66 +1,132 @@
-#+SETUPFILE: ../../setup-file.org
+% Created 2023-03-24 sex 17:25
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage{blindtext}
+\usepackage{subcaption}
+\usepackage{titling}
+\usepackage{titlesec}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{multicol}
+\usepackage{gensymb}
+\usepackage{cancel}
+\usepackage{siunitx}
+\usepackage{colortbl,hhline}
+\usepackage[brazil, american]{babel}
+\usepackage[numbers]{natbib}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{chemfig}
+\usepackage[backend=bibtex,bibencoding=ascii,style=chem-angew,citestyle=numeric-comp,sorting=none]{biblatex}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage[controls]{animate}
+\usepackage{color}
+\usepackage{epigraph}
+\usepackage{empheq}
+\usepackage{indentfirst}
+\usepackage[theorems,skins]{tcolorbox}
+\usepackage[svgnames]{xcolor}
+\usepackage[explicit]{titlesec}
+\usepackage[backend=bibtex]{biblatex}
 
-#+begin_abstract
+\usepackage{physics}
+\usepackage[svgnames]{xcolor}
+\usepackage{framed}
+\DeclareMathOperator{\sen}{sen}
+\usepackage[margin=0.8in]{geometry}
+\titleformat{\section}{\Large\bfseries}{\thesection}{2.5em}{}
+\titlespacing{\section}{0em}{1.5em}{1.5em}
+\titleformat{\subsection}{\large\bfseries}{\thesection}{2.5em}{}[\hrule]
+\titlespacing{\section}{0em}{1.5em}{1.5em}
+\author{Edgard Macena Cabral}
+\date{Março 2023}
+\title{\href{https://edisciplinas.usp.br/pluginfile.php/7581904/mod\_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf}{ANÁLISE ESPECTRAL POR\\  \\ TRANSFORMADAS DE FOURIER}\\\medskip
+\large Edgard Macena Cabral Nº 11820833 \\  Março 2023}
+\hypersetup{
+ pdfauthor={Edgard Macena Cabral},
+ pdftitle={\href{https://edisciplinas.usp.br/pluginfile.php/7581904/mod\_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf}{ANÁLISE ESPECTRAL POR\\  \\ TRANSFORMADAS DE FOURIER}},
+ pdfkeywords={},
+ pdfsubject={A GNU Emacs notebook demonstration},
+ pdfcreator={Emacs 28.2 (Org mode 9.6.1)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\begin{abstract}
 Nessa tarefa, buscamos analisar a Transformada Discreta de Fourier sem nenhuma aceleração. Criamos um programa que realiza a transformada e outro que realiza sua inversa.
 Observamos que, para alguns casos, essas operações são bem comportadas, e conseguimos recuperar o sinal sem dificuldades.
-Observamos também que, para outras sinais obtivemos um reflexo em torno da frequência de Nyquist, provando que a maior frequência que podemos obter com a transformada é $\frac{1}{2\Delta t}$.
+Observamos também que, para outras sinais obtivemos um reflexo em torno da frequência de Nyquist, provando que a maior frequência que podemos obter com a transformada é \(\frac{1}{2\Delta t}\).
 Por fim, vimos a relação entre o número N de pontos e o tempo de 50 execuções do programa.
-#+end_abstract
-* Introdução
+\end{abstract}
+\section*{Introdução}
+\label{sec:orgbcf407c}
 A transformada de Fourier é uma transformação que nos leva do espaço das amplitude de um sinal para um espaço de frequências. Para sinais contínuos, podemos escrever:
 
-#+begin_latex
+\begin{latex}
 \begin{equation}
 Y(f) = \int^{\infty}_{-\infty}y(t)e^{2\pi f i t}
 \end{equation}
-#+end_latex
+\end{latex}
 
 Porém, na física experimental, da análise da luminosidade de estrelas na busca de exoplanetas ao estudo do movimento de um pêndulo no laboratório de física I, trabalhamos essencialmente com dados discretos.
 
-Para adequar a transformada aos dados laboratoriais, usamos as substituições $t_j = j\Delta t$, $f_k = \frac{k}{N\Delta t}$, que nos dão:
+Para adequar a transformada aos dados laboratoriais, usamos as substituições \(t_j = j\Delta t\), \(f_k = \frac{k}{N\Delta t}\), que nos dão:
 
-#+begin_latex
+\begin{latex}
 \begin{equation}
 \label{eq:Transformada discreta}
 Y_k = \sum_{j=0}^{j < N/2} y_j e^{2\pi jk i/N}
 \end{equation}
-#+end_latex
+\end{latex}
 
 Conseguimos também obter a inversa através de
 
-#+begin_latex
+\begin{latex}
 \begin{equation}
 \label{eq:Transformada inversa discreta}
 y_j = \frac{1}{k}\sum_{k=0}^{k < N/2} Y_ke^{-2\pi jk i/N}
 \end{equation}
-#+end_latex
+\end{latex}
 
-Nessas equações, a razão de irmos apenas até $k < N/2$ está ligada a frequência de Nyquist, que pode ser entendida como a frequência associada ao menor comprimento de onda que pode formar um modo fundamental entre pontos de data consecutivos.
+Nessas equações, a razão de irmos apenas até \(k < N/2\) está ligada a frequência de Nyquist, que pode ser entendida como a frequência associada ao menor comprimento de onda que pode formar um modo fundamental entre pontos de data consecutivos.
 
 Caso a frequência do sinal seja maior que a frequência de Nyquist, o gráfico, obtemos um pico relacionada à reflexão da verdadeira frequência do sinal com a de Nyquist.
 
-#+begin_latex
+\begin{latex}
 \begin{equation}
 \label{eq:Frequência encontrada}
   f_{encontrada} = 2f_{Nyquist} - f_{verdadeira}
 \end{equation}
-#+end_latex
+\end{latex}
 
 Como já dito, transformadas de Fourier são amplamente usadas na Física, então é importante que possamos tê-la eficientemente.
-Podemos estimar com facilidade a ordem do tempo de execução. Temos $N$ termos, cada um dos quais é calculado com uma soma de $\frac{N}{2}$ termos. A ordem do tempo de execução é então da ordem de ~$N^2$.
+Podemos estimar com facilidade a ordem do tempo de execução. Temos \(N\) termos, cada um dos quais é calculado com uma soma de \(\frac{N}{2}\) termos. A ordem do tempo de execução é então da ordem de \textasciitilde{}\(N^2\).
 
-* Geração de dados
+\section*{Geração de dados}
+\label{sec:orgdd53280}
 Para gerar os dados, usamos a equação a seguir:
-#+begin_latex
+\begin{latex}
 \begin{equation}
 y_{i} = a_{1}\cos{(\omega_{1}t_{i})} + a_{2}\sen(\omega_{2}t_{i})
 \end{equation}
 $$t_{i} = i\Delta t,\ \ i = 1, \cdots, N$$
-#+end_latex
+\end{latex}
 
 Que foi executada no programa:
 
-#+begin_src fortran :tangle entrega/tarefa-2/tarefa-2-11820833.f90
+\begin{verbatim}
 program gerarSinais
     implicit none
     real*8, parameter :: pi = 3.1415926537989
@@ -102,7 +168,7 @@ function calculaSinal(t, a1, a2, w1, w2) result(retval)
     retval = a1*cos(w1*t) + a2*sin(w2*t)
 
 end function calculaSinal
-#+end_src
+\end{verbatim}
 
 O programa foi executado sobre as séries de parâmetros
 
@@ -113,19 +179,22 @@ $$(d)\ \ N = 200, \Delta t = 0,4,\ a1 = 2,\ a2 = 4, ω1 = 4\pi Hz,\ ω2 = 2,5\pi
 
 Os resultados estão no gráfico a seguir
 
-#+caption: Sinais gerados para os testes seguintes.
-#+attr_latex: :width 13cm :height 13cm
-[[file:graficos/tarefa-2-graf-11820833.jpg]]
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=13cm,height=13cm]{graficos/tarefa-2-graf-11820833.jpg}
+\caption{Sinais gerados para os testes seguintes.}
+\end{figure}
 
 Notamos que as séries representam uma boa variedade de sinais.
-A séries $(a)$ e $(b)$ são parecidas em termos de frequências, mas as amplitudes diferentes implicam em formatos bastantes diferentes, mesmo compartilhando alguns picos e vales, com algo parecido entre as séries $(c)$ e $(d)$.
-Ao mesmo tempo $(a)$ e $(c)$ têm mesma amplitude, o que não chega a fazer uma série parecida, pelos picos e vales serem bastante distintos, com o mesmo ocorrendo entre a $(b)$ e ${d}$
+A séries \((a)\) e \((b)\) são parecidas em termos de frequências, mas as amplitudes diferentes implicam em formatos bastantes diferentes, mesmo compartilhando alguns picos e vales, com algo parecido entre as séries \((c)\) e \((d)\).
+Ao mesmo tempo \((a)\) e \((c)\) têm mesma amplitude, o que não chega a fazer uma série parecida, pelos picos e vales serem bastante distintos, com o mesmo ocorrendo entre a \((b)\) e \({d}\)
 
 
-* Transformada de Fourier
+\section*{Transformada de Fourier}
+\label{sec:orgae7ed45}
 
 Para a Transformada de Fourier, usamos o programa a seguir:
-#+begin_src fortran :tangle entrega/tarefa-1/tarefa-1-11820833.f90
+\begin{verbatim}
 program gerarEspacoFrequencias
     implicit none
     real*8, dimension(200) :: y_t
@@ -186,31 +255,31 @@ function Yk(k, y_t, N)
     end do somatoria
 
 end function Yk
-#+end_src
+\end{verbatim}
 
 Desse programa, produzimos, para os nossos sinais, os seguintes gráficos de espectro:
 
-[[file:graficos/tarefa-3-graf-1-11820833.jpg]]
+\begin{center}
+\includegraphics[width=.9\linewidth]{graficos/tarefa-3-graf-1-11820833.jpg}
+\end{center}
 
-O gráfico mostrado aqui foi produzido de maneira a reforçar os pontos onde temos os dados são relevantes. Nele, podemos ver o que as frequências dos sinais $(a)$ e $(b)$ foram recuperados sem dificuldades. Já para série $(c)$ e $(d)$, vemos que não conseguimos recuperar a frequência angular de $4\pi Hz$ ($2Hz$ em frequência linear).
+O gráfico mostrado aqui foi produzido de maneira a reforçar os pontos onde temos os dados são relevantes. Nele, podemos ver o que as frequências dos sinais \((a)\) e \((b)\) foram recuperados sem dificuldades. Já para série \((c)\) e \((d)\), vemos que não conseguimos recuperar a frequência angular de \(4\pi Hz\) (\(2Hz\) em frequência linear).
 
 Isso ocorre pois essa frequência está bem acima da máxima que Nyquist. De fato, fazendo
 $$f_{Nyquist} = \frac{1}{2\cdot 0,4}$$
 
 $$f_{Nyquist} = 1,25Hz$$
 
-Podemos refletir nossa frequência $2Hz$ em torno de Nyquist através de $(4)$ para obter
+Podemos refletir nossa frequência \(2Hz\) em torno de Nyquist através de \((4)\) para obter
 
-$$f_{encontrada} = 0,5Hz$$
+$$f_{encontrada} = 0,5Hz = \pi\Hz \textbf(frequência angular)$$
 
-Ou, em frequência, $\pi Hz$.
-Como é visto no gráfico!!
+\section*{Transformada Inversa}
+\label{sec:org3ce38e4}
 
-* Transformada Inversa
+Usamos, seguindo a \((3)\), o programa
 
-Usamos, seguindo a $(3)$, o programa
-
-#+begin_src fortran :tangle entrega/tarefa-4/tarefa-4-11820833.f90
+\begin{verbatim}
 program gerarEspacoAmplitude
     implicit none
     complex*16, dimension(100) :: Yk
@@ -269,32 +338,31 @@ function y_j(j, N, Yk)
     y_j = y_j/N
 
 end function y_j
-#+end_src
+\end{verbatim}
 
-Obtivemos, para a série $(a)$, o gráfico a seguir
+Obtivemos, para a série \((a)\), o gráfico a seguir
 
-[[file:graficos/tarefa-4-graf-11820833.jpg]]
+GRAFICO
 
-Nele, observamos uma ótima sobreposição entre a nossa série original e a recuperada pela nossa inversa, demonstrando a precisão do Método de Fourier.
+Nele, observamos uma boa sobreposição entre a nossa série original e a recuperada pela nossa inversa, demonstrando a precisão do Método de Fourier
 
-Ficou até um pouco difícil fazer o gráfico das duas linhas de uma maneira que as duas linhas fossem visíveis!
+\section*{Tempo de Execução}
+\label{sec:org675428c}
 
-* Tempo de Execução
-
-Como comentando na introdução, é esperado que o tempo de execução seja da ordem de $N^2$. 
+Como comentando na introdução, é esperado que o tempo de execução seja da ordem de \(N^2\). 
 Para comprovarmos isso, fizemos um programa que executa a Transformada de Fourier sobre o sinal
-#+begin_latex
+\begin{latex}
 \begin{equation}
 \label{eq: sinais usado pros testes}
 \Delta t = 0,04,\ a_1 = 2,\ a_2 = 4,\ \omega_1 = 4\pi Hz,\ \omega_2 = 2,5\pi Hz
 \end{equation}
-#+end_latex
-Para $N = 50,\ 100,\ 200,\ 400$.
+\end{latex}
+Para \(N = 50,\ 100,\ 200,\ 400\).
 
-Para monitorarmos o tempo de execução de cada N, usamos o módulo de cpu_time sobre 20 execuções da transformada para cada N, e depois tiramos a média aritmética.
-O código foi basicamente o do programa de Transformada, com as alterações girando em torno da contagem de tempo e das saídas:
+Para monitorarmos o tempo de execução de cada N, usamos o módulo de cpu\textsubscript{time} sobre 50 execuções da transformada para cada N, e depois tiramos a média aritmética.
+O código foi basicamente o do programa de Transformada, com as alterações girando em torno da contagem de tempo e das saídas
 
-#+begin_src fortran :tangle entrega/tarefa-5/tarefa5-11820833.f90
+\begin{verbatim}
 
 program tempoPorN
    implicit none
@@ -361,6 +429,7 @@ subroutine calculaFrequencias(y_t, dt, N)
 
    do k = 1, M
       currYk = Yk(k, y_t, N)
+      write(1,*) k/(200*dt), real(currYk), aimag(currYk)
    end do
 end subroutine calculaFrequencias
 
@@ -378,164 +447,5 @@ function Yk(k, y_t, N)
 
 end function Yk
 
-#+end_src
-
-O resultado dos tempos médios está na tabela a seguir
-| N    | Tempo médio $(s)$    | Raiz do tempo médio $(s^{-2})$ |
-|------+----------------------+--------------------------------|
-| $50$ | $3,91\cdot 10 ^{-4}$ | $1.97\cdot 10^{-2}$            |
-|   $100$ |  $6,92\cdot 10 ^{-4}$                      |     $2.63\cdot 10^{-2}$                               |
-|   $200$ |  $1,82\cdot 10 ^{-3}$                          |     $4,27\cdot 10^{-2}$                               |
-|   $400$  |  $5.38\cdot 10 ^{-3}$                              |     $7.33\cdot 10^{-2}$                                   |
-
-Que podemos observar no gráfico a seguir
-
-[[file:graficos/tarefa-5-graf-11820833.jpg]]
-
-Uma relação bem quadrática, de fato!!
-
-
-* Notebook configuration :noexport:
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-This section is used for configuring various settings in the notebook appearance as well as defining various options for the export in HTML or PDF formats. You can change any of these settings.
-** Document information
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-#+TITLE:        [[https://edisciplinas.usp.br/pluginfile.php/7581904/mod_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf][ANÁLISE ESPECTRAL POR@@latex:\\@@ @@html:<br>@@ @@latex:\\@@ @@html:<br>@@TRANSFORMADAS DE FOURIER]]
-#+SUBTITLE:     Edgard Macena Cabral Nº 11820833 @@latex:\\@@ @@html:<br>@@ Março 2023
-#+AUTHOR:       Edgard Macena Cabral
-#+EMAIL:        edgardmacena@usp.br
-#+DATE:         Março 2023
-#+DESCRIPTION:  A GNU Emacs notebook demonstration
-#+OPTIONS:      toc:nil
-** HTML export configuration
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-#+begin_export html
-#+end_export
-
-#+OPTIONS:   num:nil
-#+OPTIONS:   html-style:nil
-#+OPTIONS:   html-scripts:nil
-#+OPTIONS:   html-postamble:nil
-#+OPTIONS:   broken-links:mark
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../../notebook.css" />
-
-** PDF export configuration
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-#+begin_export PDF
-#+end_export
-
-#+OPTIONS:
-
-** Code snippets
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-*** Notebook setup :lisp:
-
-#+name: setup
-#+header:
-#+begin_src emacs-lisp :results none :exports none :eval no-export
-(setq org-cite-csl-styles-dir ".")
-(setq org-babel-python-command "/opt/anaconda3/bin/python")
-(require 'ob-python)
-(require 'oc-csl)
-nil
-#+end_src
-
-*** Notebook run :lisp:
-
-#+name: run
-#+header: :var scope="all"
-#+begin_src emacs-lisp :results none :exports none :eval never
-(org-babel-execute-buffer)
-nil
-#+end_src
-
-*** Notebook export :lisp:
-
-#+name: export
-#+header: :var target="html"
-#+begin_src emacs-lisp :results none :exports none :eval never
-(cond (((string= target "html")   (org-html-export-to-html))
-       ((string= target "pdf")    (org-latex-export-to-pdf))
-       ((string= target "tex")    (org-latex-export-to-latex))
-       ((string= target "latex")  (org-latex-export-to-latex))
-       (t  (message (format "Unknow backend (%s) for export" target)))))
-#+end_src
-
-*** Notebook information :lisp:
-
-#+name: document-info
-#+header: :var python=python-version emacs=emacs-version org=org-version
-#+begin_src python :results raw :exports results
-return f"{emacs}, {org} & {python}"
-#+end_src
-#+RESULTS: document-info
-
-*** Emacs version :lisp:
-
-#+name: emacs-version
-#+begin_src emacs-lisp :export none :results raw
-(format "[[https://www.gnu.org/software/emacs/][Emacs]] %d.%d"
-        emacs-major-version emacs-minor-version)
-#+end_src
-#+RESULTS: emacs-version
-
-*** Org mode version :lisp:
-
-#+name: org-version
-#+begin_src emacs-lisp :export none :results raw
-(format "[[https://www.gnu.org/software/emacs/][Org mode]] %s"
-        (org-version nil nil))
-#+end_src
-#+RESULTS: org-version
-
-*** Python version :python:
-
-#+name: python-version
-#+begin_src python :export none :results raw
-import platform
-version = platform.python_version()
-return f"[[https://www.python.org/][Python]] {version}"
-#+end_src
-
-*** Matplotlib figure preparation :python:
-
-#+name: pyfig-pre
-#+header: :var width=8 height=1
-#+begin_src python :results file :exports none
-import numpy as np
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-fig = plt.figure(figsize=(width,height))
-ax = fig.add_axes([0,0,1,1], frameon=False)
-ax.axis("off")
-#+end_src
-
-*** Matplotlib figure finalization :python:
-
-#+name: pyfig-post
-#+header: :var filename=""
-#+begin_src python :results file :exports none
-if filename:
-    plt.savefig(filename, dpi=300)
-    return filename
-return ""
-#+end_src
-
-#+RESULTS: pyfig-post
-[[file:]]
+\end{verbatim}
+\end{document}

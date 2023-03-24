@@ -20,11 +20,11 @@ subroutine leTabela(label, N, Yk)
 
     open(1, file="../dados/saida-"//label//"-11820833.out")
     
-    do 10 i = 1, 100
-        read(1,*) ignorada, Yk_real, Yk_imaginaria
+    do i = 1, 100
+        read(1,*, end = 10) ignorada, Yk_real, Yk_imaginaria
         Yk(i) = complex(Yk_real, Yk_imaginaria)
  10 end do
-        N = i
+        N = i - 1
 end subroutine leTabela
 
 subroutine escreveAmplitude(Yk, N, label)
@@ -35,7 +35,7 @@ subroutine escreveAmplitude(Yk, N, label)
     complex*16 :: y_j, curr_y_j
     
     open(1, file="../dados/saida-"//label//"inversa-11820833.out")
-    do j = 1, 2*(N + 1)
+    do j = 1, 2*(N)
         curr_y_j = y_j(j, N, Yk)
         write(1,*) j*dt, real(curr_y_j)
     end do
@@ -53,7 +53,7 @@ function y_j(j, N, Yk)
     integer :: k
 
     somatoria : do  k = 1, 100
-        y_j = y_j + Yk(k)*exp(-2.d0*pi*i*j*k/(2*(N+1)))
+        y_j = y_j + Yk(k)*exp(-2.d0*pi*i*j*k/(2*N))
     end do somatoria
     
     y_j = y_j/N

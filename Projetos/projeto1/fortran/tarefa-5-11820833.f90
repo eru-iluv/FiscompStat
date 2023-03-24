@@ -16,7 +16,7 @@ program tempoPorN
          call gerarEspacoFrequencias(files(i))
       end do
       call cpu_time(t_fim)
-      delta_t = (t_fim - t_inicio)/10.d0
+      delta_t = (t_fim - t_inicio)/20.d0
       write(2, *) N, delta_t, sqrt(delta_t) 
       N = N*2
    end do
@@ -29,7 +29,7 @@ subroutine gerarEspacoFrequencias(fileName)
    character*24 :: fileName
    integer :: N
    call leTabela(fileName, dt, y_t, N)
-   call calculaFrequencias(y_t, dt, N)
+   call calculaFrequencias(y_t, N)
 
 end subroutine gerarEspacoFrequencias
 
@@ -55,16 +55,14 @@ subroutine leTabela(fileName, dt, y_t, N)
    N = i - 1
 end subroutine leTabela
 
-subroutine calculaFrequencias(y_t, dt, N)
+subroutine calculaFrequencias(y_t, N)
    real*8, dimension(400), intent(in) :: y_t
-   real*8, intent(in) :: dt
    integer :: k, N, M
    complex*16 :: Yk, currYk
    M = floor((N-1)/2.d0)
 
    do k = 1, M
       currYk = Yk(k, y_t, N)
-      write(1,*) k/(200*dt), real(currYk), aimag(currYk)
    end do
 end subroutine calculaFrequencias
 
