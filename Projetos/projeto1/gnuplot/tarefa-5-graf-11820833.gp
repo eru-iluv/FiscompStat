@@ -10,7 +10,7 @@ set xlabel "Número de pontos analisados"
 set ylabel "Tempo médio"
 
 set multiplot layout 1,2 \
-    title "Tempo para realizar a\nTransformada de Fourier em função do tempo."\
+    title "Tempo para realizar a\nTransformada de Fourier."\
     font ",18"
 
 # set size sq

@@ -4,7 +4,7 @@
 Nessa tarefa, buscamos analisar a Transformada Discreta de Fourier sem nenhuma aceleração. Criamos um programa que realiza a transformada e outro que realiza sua inversa.
 Observamos que, para alguns casos, essas operações são bem comportadas, e conseguimos recuperar o sinal sem dificuldades.
 Observamos também que, para outras sinais obtivemos um reflexo em torno da frequência de Nyquist, provando que a maior frequência que podemos obter com a transformada é $\frac{1}{2\Delta t}$.
-Por fim, vimos a relação entre o número N de pontos e o tempo de 50 execuções do programa.
+Por fim, vimos a relação entre o número N de pontos e o tempo de 50 execuções do programa, observando um padrão bastante quadrático.
 #+end_abstract
 * Introdução
 A transformada de Fourier é uma transformação que nos leva do espaço das amplitude de um sinal para um espaço de frequências. Para sinais contínuos, podemos escrever:
@@ -53,19 +53,18 @@ Podemos estimar com facilidade a ordem do tempo de execução. Temos $N$ termos,
 Para gerar os dados, usamos a equação a seguir:
 #+begin_latex
 \begin{equation}
-y_{i} = a_{1}\cos{(\omega_{1}t_{i})} + a_{2}\sen(\omega_{2}t_{i})
+y_{i} = a_{1}\cos{(\omega_{1}t_{i})} + a_{2}\sin(\omega_{2}t_{i})
 \end{equation}
 $$t_{i} = i\Delta t,\ \ i = 1, \cdots, N$$
 #+end_latex
 
 Que foi executada no programa:
 
+#+caption: Código da tarefa-2: Geração dos sinais.
 #+begin_src fortran :tangle entrega/tarefa-2/tarefa-2-11820833.f90
 program gerarSinais
     implicit none
     real*8, parameter :: pi = 3.1415926537989
-    real*8 :: a1, a2, w1, w2, dt
-    integer :: N
     ! (a) N = 200, ∆t = 0.04, a1 = 2, a2 = 4, ω1 = 4πHz, ω2 = 2.5πHz
     ! (b) N = 200, ∆t = 0.04, a1 = 3, a2 = 2, ω1 = 4πHz, ω2 = 2.5πHz
     ! (c) N = 200, ∆t = 0.4, a1 = 2, a2 = 4, ω1 = 4πHz, ω2 = 0.2πHz
@@ -81,7 +80,7 @@ end program gerarSinais
 subroutine escreveSinal(N, dt, a1,  a2, w1, w2, label)
     real*8, intent(in) :: a1, a2, w1, w2, dt
     integer, intent(in) :: N
-    char*8, intent(in) :: label
+    character, intent(in) :: label
     real*8 :: calculaSinal
     integer :: i
 
@@ -119,12 +118,14 @@ Os resultados estão no gráfico a seguir
 
 Notamos que as séries representam uma boa variedade de sinais.
 A séries $(a)$ e $(b)$ são parecidas em termos de frequências, mas as amplitudes diferentes implicam em formatos bastantes diferentes, mesmo compartilhando alguns picos e vales, com algo parecido entre as séries $(c)$ e $(d)$.
-Ao mesmo tempo $(a)$ e $(c)$ têm mesma amplitude, o que não chega a fazer uma série parecida, pelos picos e vales serem bastante distintos, com o mesmo ocorrendo entre a $(b)$ e ${d}$
+Ao mesmo tempo $(a)$ e $(c)$ têm mesma amplitude, o que não chega a fazer uma série parecida, pelos picos e vales serem bastante distintos, com o mesmo ocorrendo entre a $(b)$ e $(d)$
 
 
 * Transformada de Fourier
 
 Para a Transformada de Fourier, usamos o programa a seguir:
+
+#+caption: Código da tarefa-1: Transformada de Fourier.
 #+begin_src fortran :tangle entrega/tarefa-1/tarefa-1-11820833.f90
 program gerarEspacoFrequencias
     implicit none
@@ -133,8 +134,6 @@ program gerarEspacoFrequencias
     integer :: N
     call leTabela(dt, y_t, N)
     call escreveFrequencias(y_t, dt, N)
-
-
 end program gerarEspacoFrequencias
 
 subroutine leTabela(dt, y_t, N)
@@ -158,11 +157,13 @@ subroutine leTabela(dt, y_t, N)
 
 end subroutine leTabela
 
-subroutine escreveFrequencias(y_t, dt, label, N)
+subroutine escreveFrequencias(y_t, dt, N)
     real*8, dimension(200), intent(in) :: y_t
     real*8, intent(in) :: dt
     integer :: k, N, M
     complex*16 :: Yk, currYk
+
+!   M é o maior natural < N/2
     M = floor((N-1)/2.d0)
 
     open(2, file="data.out")
@@ -190,7 +191,7 @@ end function Yk
 
 Desse programa, produzimos, para os nossos sinais, os seguintes gráficos de espectro:
 
-[[file:graficos/tarefa-3-graf-1-11820833.jpg]]
+[[file:graficos/tarefa-1-graf-11820833.jpg]]
 
 O gráfico mostrado aqui foi produzido de maneira a reforçar os pontos onde temos os dados são relevantes. Nele, podemos ver o que as frequências dos sinais $(a)$ e $(b)$ foram recuperados sem dificuldades. Já para série $(c)$ e $(d)$, vemos que não conseguimos recuperar a frequência angular de $4\pi Hz$ ($2Hz$ em frequência linear).
 
@@ -206,19 +207,43 @@ $$f_{encontrada} = 0,5Hz$$
 Ou, em frequência, $\pi Hz$.
 Como é visto no gráfico!!
 
+
+* Outros Sinais
+
+Pelo mesmo programa da [[Geração de dados]] geramos os sinais a seguir
+
+$$(e)\ \ N = 200, \Delta t = 0,04,\ a_1 = 2,\ a_2 = 4,\ \omega_1 = 4\pi Hz,\ \omega_2 = 1,4\pi Hz$$
+$$(f)\ \ N = 200, \Delta t = 0,04,\ a_1 = 2,\ a_2 = 4,\ \omega_1 = 4,2\pi Hz,\ \omega_2 = 1,4\pi Hz$$
+
+Os gráficos desses dois sinais são os seguintes:
+#+attr_html: :width 300px
+file:graficos/tarefa-3-graf-1-11820833.jpg
+
+Gráficos bastantes normais, mas com dois detalhes importante: As frequências, bastantes próximas por sinal, não estão em harmonia com a frequência de sampleamento $\omega_{Nyquist} = 25\pi Hz$. Ademais, as frequências de $(f)$ estão em harmonia entre si!
+
+É natural de se esperar que essa harmonia e dissonância interfira na capacidade de um método discreto de samplear as frequências.
+Podemos ver isso no gráfico da transformada para essas funções:
+
+[[file:graficos/tarefa-3-graf-2-11820833.jpg]]
+
+
+Não temos mais a recuperação analiticamente perfeita que tinhamos nas séries anteriores, pois a dissonância entre os sinais e o sampleamento faz com que outras frequências representem perfeitamente o sinal no intervalo analisado.
+
+É importante dizer que isso não deveria surpreender. Séries de Fourier analíticas também não tem representação única, e o intervalo tem uma influência sobre o resultado que obtemos.
+
 * Transformada Inversa
 
-Usamos, seguindo a $(3)$, o programa
+Usamos, seguindo a $(3)$, o programa:
 
+#+caption: Código da tarefa-4: Transformada Inversa de Fourier
 #+begin_src fortran :tangle entrega/tarefa-4/tarefa-4-11820833.f90
 program gerarEspacoAmplitude
     implicit none
     complex*16, dimension(100) :: Yk
     integer :: N
 
-    read(*,*) label
     call leTabela(N, Yk)
-    call escreveAmplitude(Yk, N, label)
+    call escreveAmplitude(Yk, N)
 
 end program gerarEspacoAmplitude
 
@@ -231,21 +256,23 @@ subroutine leTabela(N, Yk)
 
     open(1, file="../tarefa-1/data.out")
 
-    do 10 i = 1, 100
-        read(1,*) ignorada, Yk_real, Yk_imaginaria
+    do i = 1, 100
+        read(1,*, end=10) ignorada, Yk_real, Yk_imaginaria
         Yk(i) = complex(Yk_real, Yk_imaginaria)
  10 end do
-        N = i
+        N = i - 1
 end subroutine leTabela
 
 subroutine escreveAmplitude(Yk, N)
     complex*16, dimension(100), intent(in) :: Yk
+    ! Aqui não temos como obter o
+    ! dt de maneira mais orgânica
     real*8 :: dt = 0.04d0
     integer :: j
     complex*16 :: y_j, curr_y_j
 
     open(1, file="saida-4-11820833")
-    do j = 1, 2*(N + 1)
+    do j = 1, 2*N
         curr_y_j = y_j(j, N, Yk)
         write(1,*) j*dt, real(curr_y_j)
     end do
@@ -294,19 +321,20 @@ Para $N = 50,\ 100,\ 200,\ 400$.
 Para monitorarmos o tempo de execução de cada N, usamos o módulo de cpu_time sobre 20 execuções da transformada para cada N, e depois tiramos a média aritmética.
 O código foi basicamente o do programa de Transformada, com as alterações girando em torno da contagem de tempo e das saídas:
 
-#+begin_src fortran :tangle entrega/tarefa-5/tarefa5-11820833.f90
+#+caption: Código da tarefa-5: Cálculo do tempo médio de execução das Transformadas para diferentes N
+#+begin_src fortran :tangle entrega/tarefa-5/tarefa-5-11820833.f90
 
 program tempoPorN
    implicit none
    real*8 :: t_inicio, t_fim, delta_t
    integer :: i, j, N = 50
-   character*24, dimension(4) :: files
-   files(1) = "tarefa-5-050-11820833.in"
-   files(2) = "tarefa-5-100-11820833.in"
-   files(3) = "tarefa-5-200-11820833.in"
-   files(4) = "tarefa-5-400-11820833.in"
+   character*22, dimension(4) :: files
+   files(1) = "entrega-5-050-11820833"
+   files(2) = "entrega-5-100-11820833"
+   files(3) = "entrega-5-200-11820833"
+   files(4) = "entrega-5-400-11820833"
 
-   open(2, file="../dados/tarefa-5-11820833.out")
+   open(2, file="../saida-5-11820833")
    do i = 1, 4
       call cpu_time(t_inicio)
       do j = 1, 20
@@ -314,7 +342,7 @@ program tempoPorN
       end do
       call cpu_time(t_fim)
       delta_t = (t_fim - t_inicio)/10.d0
-      write(2, *) N, delta_t, sqrt(delta_t) 
+      write(2, *) N, delta_t, sqrt(delta_t)
       N = N*2
    end do
 end program tempoPorN
@@ -322,39 +350,35 @@ end program tempoPorN
 subroutine gerarEspacoFrequencias(fileName)
    implicit none
    real*8, dimension(400) :: y_t
-   real*8 :: dt
-   character*24 :: fileName
+   character*22 :: fileName
    integer :: N
-   call leTabela(fileName, dt, y_t, N)
-   call calculaFrequencias(y_t, dt, N)
+   call leTabela(fileName, y_t, N)
+   call calculaFrequencias(y_t, N)
 
 end subroutine gerarEspacoFrequencias
 
-subroutine leTabela(fileName, dt, y_t, N)
-   character*24, intent(in) :: fileName
+subroutine leTabela(fileName, y_t, N)
+   character*22, intent(in) :: fileName
    real*8, dimension(400), intent(out) :: y_t
-   real*8, intent(out) :: dt
    integer, intent(out) :: N
    real*8 :: ignorada
    integer :: i
 
-   open(1, file="../dados/"//fileName)
+   open(1, file=fileName)
 
    do i = 1, 400
       read(1,*, end=1) ignorada, y_t(i)
       if ( i == 1 ) then
-         dt = ignorada
       end if
    end do
-  
+
 1  close(1)
 
    N = i - 1
 end subroutine leTabela
 
-subroutine calculaFrequencias(y_t, dt, N)
+subroutine calculaFrequencias(y_t, N)
    real*8, dimension(400), intent(in) :: y_t
-   real*8, intent(in) :: dt
    integer :: k, N, M
    complex*16 :: Yk, currYk
    M = floor((N-1)/2.d0)
@@ -396,6 +420,7 @@ Uma relação bem quadrática, de fato!!
 
 
 * Notebook configuration :noexport:
+
 :PROPERTIES:
 :VISIBILITY: folded
 :END:

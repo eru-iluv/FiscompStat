@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-03-24 sex 17:52 -->
+<!-- 2023-03-24 sex 23:20 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>[[https://edisciplinas.usp.br/pluginfile.php/7581904/mod_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf][ANÁLISE ESPECTRAL POR@@latex:\\@@ @@html:&lt;br&gt;@@ @@latex:\\@@ @@html:&lt;br&gt;@@TRANSFORMADAS DE FOURIER]]</title>
@@ -50,23 +50,23 @@
 <br />
 <span class="subtitle">Edgard Macena Cabral Nº 11820833  <br> Março 2023</span>
 </h1>
-<div class="abstract" id="org33f178a">
+<div class="abstract" id="orgaa4698e">
 <p>
 Nessa tarefa, buscamos analisar a Transformada Discreta de Fourier sem nenhuma aceleração. Criamos um programa que realiza a transformada e outro que realiza sua inversa.
 Observamos que, para alguns casos, essas operações são bem comportadas, e conseguimos recuperar o sinal sem dificuldades.
 Observamos também que, para outras sinais obtivemos um reflexo em torno da frequência de Nyquist, provando que a maior frequência que podemos obter com a transformada é \(\frac{1}{2\Delta t}\).
-Por fim, vimos a relação entre o número N de pontos e o tempo de 50 execuções do programa.
+Por fim, vimos a relação entre o número N de pontos e o tempo de 50 execuções do programa, observando um padrão bastante quadrático.
 </p>
 
 </div>
-<div id="outline-container-org3b8558a" class="outline-2">
-<h2 id="org3b8558a">Introdução</h2>
-<div class="outline-text-2" id="text-org3b8558a">
+<div id="outline-container-orga2b21b0" class="outline-2">
+<h2 id="orga2b21b0">Introdução</h2>
+<div class="outline-text-2" id="text-orga2b21b0">
 <p>
 A transformada de Fourier é uma transformação que nos leva do espaço das amplitude de um sinal para um espaço de frequências. Para sinais contínuos, podemos escrever:
 </p>
 
-<div class="latex" id="orgf471f3e">
+<div class="latex" id="orgb152c9e">
 \begin{equation}
 Y(f) = \int^{\infty}_{-\infty}y(t)e^{2\pi f i t}
 \end{equation}
@@ -81,7 +81,7 @@ Porém, na física experimental, da análise da luminosidade de estrelas na busc
 Para adequar a transformada aos dados laboratoriais, usamos as substituições \(t_j = j\Delta t\), \(f_k = \frac{k}{N\Delta t}\), que nos dão:
 </p>
 
-<div class="latex" id="org615b4cc">
+<div class="latex" id="org69393d6">
 \begin{equation}
 \label{eq:Transformada discreta}
 Y_k = \sum_{j=0}^{j < N/2} y_j e^{2\pi jk i/N}
@@ -93,7 +93,7 @@ Y_k = \sum_{j=0}^{j < N/2} y_j e^{2\pi jk i/N}
 Conseguimos também obter a inversa através de
 </p>
 
-<div class="latex" id="orgef46b47">
+<div class="latex" id="orge87bf3a">
 \begin{equation}
 \label{eq:Transformada inversa discreta}
 y_j = \frac{1}{k}\sum_{k=0}^{k < N/2} Y_ke^{-2\pi jk i/N}
@@ -109,7 +109,7 @@ Nessas equações, a razão de irmos apenas até \(k < N/2\) está ligada a freq
 Caso a frequência do sinal seja maior que a frequência de Nyquist, o gráfico, obtemos um pico relacionada à reflexão da verdadeira frequência do sinal com a de Nyquist.
 </p>
 
-<div class="latex" id="org7c16e9a">
+<div class="latex" id="org3a4d52f">
 \begin{equation}
 \label{eq:Frequência encontrada}
   f_{encontrada} = 2f_{Nyquist} - f_{verdadeira}
@@ -124,15 +124,15 @@ Podemos estimar com facilidade a ordem do tempo de execução. Temos \(N\) termo
 </div>
 </div>
 
-<div id="outline-container-orgbc88a15" class="outline-2">
-<h2 id="orgbc88a15">Geração de dados</h2>
-<div class="outline-text-2" id="text-orgbc88a15">
+<div id="outline-container-orgf5da13c" class="outline-2">
+<h2 id="orgf5da13c">Geração de dados</h2>
+<div class="outline-text-2" id="text-orgf5da13c">
 <p>
 Para gerar os dados, usamos a equação a seguir:
 </p>
-<div class="latex" id="org94c4abb">
+<div class="latex" id="org17e2047">
 \begin{equation}
-y_{i} = a_{1}\cos{(\omega_{1}t_{i})} + a_{2}\sen(\omega_{2}t_{i})
+y_{i} = a_{1}\cos{(\omega_{1}t_{i})} + a_{2}\sin(\omega_{2}t_{i})
 \end{equation}
 <p>
 \[t_{i} = i\Delta t,\ \ i = 1, \cdots, N\]
@@ -145,11 +145,9 @@ Que foi executada no programa:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-fortran"><span style="color: #51afef;">program</span> <span style="color: #c678dd;">gerarSinais</span>
+<label class="org-src-name"><span class="listing-number">Listing 1: </span>Código da tarefa-2: Geração dos sinais.</label><pre class="src src-fortran"><span style="color: #51afef;">program</span> <span style="color: #c678dd;">gerarSinais</span>
     <span style="color: #ECBE7B;">implicit none</span>
     <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">parameter</span> :: pi = <span style="color: #da8548; font-weight: bold;">3.1415926537989</span>
-    <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span> :: a1, a2, w1, w2, dt
-    <span style="color: #ECBE7B;">integer</span> :: N
     <span style="color: #5B6268;">! </span><span style="color: #5B6268;">(a) N = 200, &#8710;t = 0.04, a1 = 2, a2 = 4, &#969;1 = 4&#960;Hz, &#969;2 = 2.5&#960;Hz</span>
     <span style="color: #5B6268;">! </span><span style="color: #5B6268;">(b) N = 200, &#8710;t = 0.04, a1 = 3, a2 = 2, &#969;1 = 4&#960;Hz, &#969;2 = 2.5&#960;Hz</span>
     <span style="color: #5B6268;">! </span><span style="color: #5B6268;">(c) N = 200, &#8710;t = 0.4, a1 = 2, a2 = 4, &#969;1 = 4&#960;Hz, &#969;2 = 0.2&#960;Hz</span>
@@ -165,7 +163,7 @@ Que foi executada no programa:
 <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">escreveSinal</span>(N, dt, a1,  a2, w1, w2, label)
     <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(in) :: a1, a2, w1, w2, dt
     <span style="color: #ECBE7B;">integer</span>, intent(in) :: N
-    char*<span style="color: #da8548; font-weight: bold;">8</span>, intent(in) :: label
+    <span style="color: #ECBE7B;">character</span>, intent(in) :: label
     <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span> :: calculaSinal
     <span style="color: #ECBE7B;">integer</span> :: i
 
@@ -205,7 +203,7 @@ Os resultados estão no gráfico a seguir
 </p>
 
 
-<div id="orgb331bd5" class="figure">
+<div id="orga8212f8" class="figure">
 <p><img src="graficos/tarefa-2-graf-11820833.jpg" alt="tarefa-2-graf-11820833.jpg" />
 </p>
 <p><span class="figure-number">Figure 1: </span>Sinais gerados para os testes seguintes.</p>
@@ -214,28 +212,27 @@ Os resultados estão no gráfico a seguir
 <p>
 Notamos que as séries representam uma boa variedade de sinais.
 A séries \((a)\) e \((b)\) são parecidas em termos de frequências, mas as amplitudes diferentes implicam em formatos bastantes diferentes, mesmo compartilhando alguns picos e vales, com algo parecido entre as séries \((c)\) e \((d)\).
-Ao mesmo tempo \((a)\) e \((c)\) têm mesma amplitude, o que não chega a fazer uma série parecida, pelos picos e vales serem bastante distintos, com o mesmo ocorrendo entre a \((b)\) e \({d}\)
+Ao mesmo tempo \((a)\) e \((c)\) têm mesma amplitude, o que não chega a fazer uma série parecida, pelos picos e vales serem bastante distintos, com o mesmo ocorrendo entre a \((b)\) e \((d)\)
 </p>
 </div>
 </div>
 
 
-<div id="outline-container-org702dc00" class="outline-2">
-<h2 id="org702dc00">Transformada de Fourier</h2>
-<div class="outline-text-2" id="text-org702dc00">
+<div id="outline-container-orgb1f9363" class="outline-2">
+<h2 id="orgb1f9363">Transformada de Fourier</h2>
+<div class="outline-text-2" id="text-orgb1f9363">
 <p>
 Para a Transformada de Fourier, usamos o programa a seguir:
 </p>
+
 <div class="org-src-container">
-<pre class="src src-fortran"><span style="color: #51afef;">program</span> <span style="color: #c678dd;">gerarEspacoFrequencias</span>
+<label class="org-src-name"><span class="listing-number">Listing 2: </span>Código da tarefa-1: Transformada de Fourier.</label><pre class="src src-fortran"><span style="color: #51afef;">program</span> <span style="color: #c678dd;">gerarEspacoFrequencias</span>
     <span style="color: #ECBE7B;">implicit none</span>
     <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">dimension</span>(<span style="color: #da8548; font-weight: bold;">200</span>) :: y_t
     <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span> :: dt
     <span style="color: #ECBE7B;">integer</span> :: N
     <span style="color: #51afef;">call</span> <span style="color: #c678dd;">leTabela</span>(dt, y_t, N)
     <span style="color: #51afef;">call</span> <span style="color: #c678dd;">escreveFrequencias</span>(y_t, dt, N)
-
-
 <span style="color: #51afef;">end</span> <span style="color: #51afef;">program</span> <span style="color: #c678dd;">gerarEspacoFrequencias</span>
 
 <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">leTabela</span>(dt, y_t, N)
@@ -259,11 +256,13 @@ Para a Transformada de Fourier, usamos o programa a seguir:
 
 <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">leTabela</span>
 
-<span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">escreveFrequencias</span>(y_t, dt, label, N)
+<span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">escreveFrequencias</span>(y_t, dt, N)
     <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">dimension</span>(<span style="color: #da8548; font-weight: bold;">200</span>), intent(in) :: y_t
     <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(in) :: dt
     <span style="color: #ECBE7B;">integer</span> :: k, N, M
     <span style="color: #ECBE7B;">complex</span>*<span style="color: #da8548; font-weight: bold;">16</span> :: Yk, currYk
+
+<span style="color: #5B6268;">!   </span><span style="color: #5B6268;">M &#233; o maior natural &lt; N/2</span>
     M = floor((N-<span style="color: #da8548; font-weight: bold;">1</span>)/2.d0)
 
     <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">2</span>, file=<span style="color: #98be65;">"data.out"</span>)
@@ -295,8 +294,8 @@ Desse programa, produzimos, para os nossos sinais, os seguintes gráficos de esp
 </p>
 
 
-<div id="org018e8ed" class="figure">
-<p><img src="graficos/tarefa-3-graf-1-11820833.jpg" alt="tarefa-3-graf-1-11820833.jpg" />
+<div id="orga5f3c7b" class="figure">
+<p><img src="graficos/tarefa-1-graf-11820833.jpg" alt="tarefa-1-graf-11820833.jpg" />
 </p>
 </div>
 
@@ -328,22 +327,69 @@ Como é visto no gráfico!!
 </div>
 </div>
 
-<div id="outline-container-orge6e8d11" class="outline-2">
-<h2 id="orge6e8d11">Transformada Inversa</h2>
-<div class="outline-text-2" id="text-orge6e8d11">
+
+<div id="outline-container-orgc4370f7" class="outline-2">
+<h2 id="orgc4370f7">Outros Sinais</h2>
+<div class="outline-text-2" id="text-orgc4370f7">
 <p>
-Usamos, seguindo a \((3)\), o programa
+Pelo mesmo programa da <a href="#orgf5da13c">Geração de dados</a> geramos os sinais a seguir
+</p>
+
+<p>
+\[(e)\ \ N = 200, \Delta t = 0,04,\ a_1 = 2,\ a_2 = 4,\ \omega_1 = 4\pi Hz,\ \omega_2 = 1,4\pi Hz\]
+\[(f)\ \ N = 200, \Delta t = 0,04,\ a_1 = 2,\ a_2 = 4,\ \omega_1 = 4,2\pi Hz,\ \omega_2 = 1,4\pi Hz\]
+</p>
+
+<p>
+Os gráficos desses dois sinais são os seguintes:
+</p>
+
+<div id="org4574bc1" class="figure">
+<p><img src="graficos/tarefa-3-graf-1-11820833.jpg" alt="tarefa-3-graf-1-11820833.jpg" width="300px" />
+</p>
+</div>
+
+<p>
+Gráficos bastantes normais, mas com dois detalhes importante: As frequências, bastantes próximas por sinal, não estão em harmonia com a frequência de sampleamento \(\omega_{Nyquist} = 25\pi Hz\). Ademais, as frequências de \((f)\) estão em harmonia entre si!
+</p>
+
+<p>
+É natural de se esperar que essa harmonia e dissonância interfira na capacidade de um método discreto de samplear as frequências.
+Podemos ver isso no gráfico da transformada para essas funções:
+</p>
+
+
+<div id="org065f6bc" class="figure">
+<p><img src="graficos/tarefa-3-graf-2-11820833.jpg" alt="tarefa-3-graf-2-11820833.jpg" />
+</p>
+</div>
+
+
+<p>
+Não temos mais a recuperação analiticamente perfeita que tinhamos nas séries anteriores, pois a dissonância entre os sinais e o sampleamento faz com que outras frequências representem perfeitamente o sinal no intervalo analisado.
+</p>
+
+<p>
+É importante dizer que isso não deveria surpreender. Séries de Fourier analíticas também não tem representação única, e o intervalo tem uma influência sobre o resultado que obtemos.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org78e75f6" class="outline-2">
+<h2 id="org78e75f6">Transformada Inversa</h2>
+<div class="outline-text-2" id="text-org78e75f6">
+<p>
+Usamos, seguindo a \((3)\), o programa:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-fortran"><span style="color: #51afef;">program</span> <span style="color: #c678dd;">gerarEspacoAmplitude</span>
+<label class="org-src-name"><span class="listing-number">Listing 3: </span>Código da tarefa-4: Transformada Inversa de Fourier</label><pre class="src src-fortran"><span style="color: #51afef;">program</span> <span style="color: #c678dd;">gerarEspacoAmplitude</span>
     <span style="color: #ECBE7B;">implicit none</span>
     <span style="color: #ECBE7B;">complex</span>*<span style="color: #da8548; font-weight: bold;">16</span>, <span style="color: #ECBE7B;">dimension</span>(<span style="color: #da8548; font-weight: bold;">100</span>) :: Yk
     <span style="color: #ECBE7B;">integer</span> :: N
 
-    <span style="color: #51afef;">read</span>(*,*) label
     <span style="color: #51afef;">call</span> <span style="color: #c678dd;">leTabela</span>(N, Yk)
-    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">escreveAmplitude</span>(Yk, N, label)
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">escreveAmplitude</span>(Yk, N)
 
 <span style="color: #51afef;">end</span> <span style="color: #51afef;">program</span> <span style="color: #c678dd;">gerarEspacoAmplitude</span>
 
@@ -356,21 +402,23 @@ Usamos, seguindo a \((3)\), o programa
 
     <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">1</span>, file=<span style="color: #98be65;">"../tarefa-1/data.out"</span>)
 
-    <span style="color: #51afef;">do</span> <span style="color: #da8548; font-weight: bold;">10</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">100</span>
-        <span style="color: #51afef;">read</span>(<span style="color: #da8548; font-weight: bold;">1</span>,*) ignorada, Yk_real, Yk_imaginaria
+    <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">100</span>
+        <span style="color: #51afef;">read</span>(<span style="color: #da8548; font-weight: bold;">1</span>,*, <span style="color: #51afef;">end</span>=<span style="color: #da8548; font-weight: bold;">10</span>) ignorada, Yk_real, Yk_imaginaria
         Yk(i) = <span style="color: #ECBE7B;">complex</span>(<span style="color: #dcaeea;">Yk_real</span>, <span style="color: #dcaeea;">Yk_imaginaria</span>)
  <span style="color: #da8548; font-weight: bold;">10</span> <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
-        N = i
+        N = i - <span style="color: #da8548; font-weight: bold;">1</span>
 <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">leTabela</span>
 
 <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">escreveAmplitude</span>(Yk, N)
     <span style="color: #ECBE7B;">complex</span>*<span style="color: #da8548; font-weight: bold;">16</span>, <span style="color: #ECBE7B;">dimension</span>(<span style="color: #da8548; font-weight: bold;">100</span>), intent(in) :: Yk
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Aqui n&#227;o temos como obter o</span>
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">dt de maneira mais org&#226;nica</span>
     <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span> :: dt = 0.04d0
     <span style="color: #ECBE7B;">integer</span> :: j
     <span style="color: #ECBE7B;">complex</span>*<span style="color: #da8548; font-weight: bold;">16</span> :: y_j, curr_y_j
 
     <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">1</span>, file=<span style="color: #98be65;">"saida-4-11820833"</span>)
-    <span style="color: #51afef;">do</span> j = <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">2</span>*(N + <span style="color: #da8548; font-weight: bold;">1</span>)
+    <span style="color: #51afef;">do</span> j = <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">2</span>*N
         curr_y_j = y_j(j, N, Yk)
         <span style="color: #51afef;">write</span>(<span style="color: #da8548; font-weight: bold;">1</span>,*) j*dt, <span style="color: #ECBE7B;">real</span>(<span style="color: #dcaeea;">curr_y_j</span>)
     <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
@@ -402,7 +450,7 @@ Obtivemos, para a série \((a)\), o gráfico a seguir
 </p>
 
 
-<div id="org5184db8" class="figure">
+<div id="org548e003" class="figure">
 <p><img src="graficos/tarefa-4-graf-11820833.jpg" alt="tarefa-4-graf-11820833.jpg" />
 </p>
 </div>
@@ -417,14 +465,14 @@ Ficou até um pouco difícil fazer o gráfico das duas linhas de uma maneira que
 </div>
 </div>
 
-<div id="outline-container-org02bb398" class="outline-2">
-<h2 id="org02bb398">Tempo de Execução</h2>
-<div class="outline-text-2" id="text-org02bb398">
+<div id="outline-container-org9275e40" class="outline-2">
+<h2 id="org9275e40">Tempo de Execução</h2>
+<div class="outline-text-2" id="text-org9275e40">
 <p>
 Como comentando na introdução, é esperado que o tempo de execução seja da ordem de \(N^2\). 
 Para comprovarmos isso, fizemos um programa que executa a Transformada de Fourier sobre o sinal
 </p>
-<div class="latex" id="org18f09fe">
+<div class="latex" id="org1242d43">
 \begin{equation}
 \label{eq: sinais usado pros testes}
 \Delta t = 0,04,\ a_1 = 2,\ a_2 = 4,\ \omega_1 = 4\pi Hz,\ \omega_2 = 2,5\pi Hz
@@ -441,18 +489,18 @@ O código foi basicamente o do programa de Transformada, com as alterações gir
 </p>
 
 <div class="org-src-container">
-<pre class="src src-fortran">
+<label class="org-src-name"><span class="listing-number">Listing 4: </span>Código da tarefa-5: Cálculo do tempo médio de execução das Transformadas para diferentes N</label><pre class="src src-fortran">
 <span style="color: #51afef;">program</span> <span style="color: #c678dd;">tempoPorN</span>
    <span style="color: #ECBE7B;">implicit none</span>
    <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span> :: t_inicio, t_fim, delta_t
    <span style="color: #ECBE7B;">integer</span> :: i, j, N = <span style="color: #da8548; font-weight: bold;">50</span>
-   <span style="color: #ECBE7B;">character</span>*<span style="color: #da8548; font-weight: bold;">24</span>, <span style="color: #ECBE7B;">dimension</span>(<span style="color: #da8548; font-weight: bold;">4</span>) :: files
-   files(<span style="color: #da8548; font-weight: bold;">1</span>) = <span style="color: #98be65;">"tarefa-5-050-11820833.in"</span>
-   files(<span style="color: #da8548; font-weight: bold;">2</span>) = <span style="color: #98be65;">"tarefa-5-100-11820833.in"</span>
-   files(<span style="color: #da8548; font-weight: bold;">3</span>) = <span style="color: #98be65;">"tarefa-5-200-11820833.in"</span>
-   files(<span style="color: #da8548; font-weight: bold;">4</span>) = <span style="color: #98be65;">"tarefa-5-400-11820833.in"</span>
+   <span style="color: #ECBE7B;">character</span>*<span style="color: #da8548; font-weight: bold;">22</span>, <span style="color: #ECBE7B;">dimension</span>(<span style="color: #da8548; font-weight: bold;">4</span>) :: files
+   files(<span style="color: #da8548; font-weight: bold;">1</span>) = <span style="color: #98be65;">"entrega-5-050-11820833"</span>
+   files(<span style="color: #da8548; font-weight: bold;">2</span>) = <span style="color: #98be65;">"entrega-5-100-11820833"</span>
+   files(<span style="color: #da8548; font-weight: bold;">3</span>) = <span style="color: #98be65;">"entrega-5-200-11820833"</span>
+   files(<span style="color: #da8548; font-weight: bold;">4</span>) = <span style="color: #98be65;">"entrega-5-400-11820833"</span>
 
-   <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">2</span>, file=<span style="color: #98be65;">"../dados/tarefa-5-11820833.out"</span>)
+   <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">2</span>, file=<span style="color: #98be65;">"../saida-5-11820833"</span>)
    <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">4</span>
       <span style="color: #51afef;">call</span> <span style="color: #c678dd;">cpu_time</span>(t_inicio)
       <span style="color: #51afef;">do</span> j = <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">20</span>
@@ -460,7 +508,7 @@ O código foi basicamente o do programa de Transformada, com as alterações gir
       <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
       <span style="color: #51afef;">call</span> <span style="color: #c678dd;">cpu_time</span>(t_fim)
       delta_t = (t_fim - t_inicio)/10.d0
-      <span style="color: #51afef;">write</span>(<span style="color: #da8548; font-weight: bold;">2</span>, *) N, delta_t, <span style="color: #c678dd;">sqrt</span>(delta_t) 
+      <span style="color: #51afef;">write</span>(<span style="color: #da8548; font-weight: bold;">2</span>, *) N, delta_t, <span style="color: #c678dd;">sqrt</span>(delta_t)
       N = N*<span style="color: #da8548; font-weight: bold;">2</span>
    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
 <span style="color: #51afef;">end</span> <span style="color: #51afef;">program</span> <span style="color: #c678dd;">tempoPorN</span>
@@ -468,39 +516,35 @@ O código foi basicamente o do programa de Transformada, com as alterações gir
 <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">gerarEspacoFrequencias</span>(fileName)
    <span style="color: #ECBE7B;">implicit none</span>
    <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">dimension</span>(<span style="color: #da8548; font-weight: bold;">400</span>) :: y_t
-   <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span> :: dt
-   <span style="color: #ECBE7B;">character</span>*<span style="color: #da8548; font-weight: bold;">24</span> :: fileName
+   <span style="color: #ECBE7B;">character</span>*<span style="color: #da8548; font-weight: bold;">22</span> :: fileName
    <span style="color: #ECBE7B;">integer</span> :: N
-   <span style="color: #51afef;">call</span> <span style="color: #c678dd;">leTabela</span>(fileName, dt, y_t, N)
-   <span style="color: #51afef;">call</span> <span style="color: #c678dd;">calculaFrequencias</span>(y_t, dt, N)
+   <span style="color: #51afef;">call</span> <span style="color: #c678dd;">leTabela</span>(fileName, y_t, N)
+   <span style="color: #51afef;">call</span> <span style="color: #c678dd;">calculaFrequencias</span>(y_t, N)
 
 <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">gerarEspacoFrequencias</span>
 
-<span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">leTabela</span>(fileName, dt, y_t, N)
-   <span style="color: #ECBE7B;">character</span>*<span style="color: #da8548; font-weight: bold;">24</span>, intent(in) :: fileName
+<span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">leTabela</span>(fileName, y_t, N)
+   <span style="color: #ECBE7B;">character</span>*<span style="color: #da8548; font-weight: bold;">22</span>, intent(in) :: fileName
    <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">dimension</span>(<span style="color: #da8548; font-weight: bold;">400</span>), intent(out) :: y_t
-   <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(out) :: dt
    <span style="color: #ECBE7B;">integer</span>, intent(out) :: N
    <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span> :: ignorada
    <span style="color: #ECBE7B;">integer</span> :: i
 
-   <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">1</span>, file=<span style="color: #98be65;">"../dados/"</span>//fileName)
+   <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">1</span>, file=fileName)
 
    <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">400</span>
       <span style="color: #51afef;">read</span>(<span style="color: #da8548; font-weight: bold;">1</span>,*, <span style="color: #51afef;">end</span>=<span style="color: #da8548; font-weight: bold;">1</span>) ignorada, y_t(i)
       <span style="color: #51afef;">if</span> ( i == <span style="color: #da8548; font-weight: bold;">1</span> ) <span style="color: #51afef;">then</span>
-         dt = ignorada
       <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
-  
+
 <span style="color: #da8548; font-weight: bold;">1</span>  <span style="color: #51afef;">close</span>(<span style="color: #da8548; font-weight: bold;">1</span>)
 
    N = i - <span style="color: #da8548; font-weight: bold;">1</span>
 <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">leTabela</span>
 
-<span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">calculaFrequencias</span>(y_t, dt, N)
+<span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">calculaFrequencias</span>(y_t, N)
    <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">dimension</span>(<span style="color: #da8548; font-weight: bold;">400</span>), intent(in) :: y_t
-   <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(in) :: dt
    <span style="color: #ECBE7B;">integer</span> :: k, N, M
    <span style="color: #ECBE7B;">complex</span>*<span style="color: #da8548; font-weight: bold;">16</span> :: Yk, currYk
    M = floor((N-<span style="color: #da8548; font-weight: bold;">1</span>)/2.d0)
@@ -579,10 +623,14 @@ Que podemos observar no gráfico a seguir
 </p>
 
 
-<div id="orgb53a555" class="figure">
+<div id="org280ee0b" class="figure">
 <p><img src="graficos/tarefa-5-graf-11820833.jpg" alt="tarefa-5-graf-11820833.jpg" />
 </p>
 </div>
+
+<p>
+Uma relação bem quadrática, de fato!!
+</p>
 </div>
 </div>
 </div>
