@@ -2,8 +2,6 @@
 import sys
 import subprocess
 import os
-import re
-
  
 
 try:
