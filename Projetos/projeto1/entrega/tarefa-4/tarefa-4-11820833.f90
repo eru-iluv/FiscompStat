@@ -51,7 +51,7 @@ function y_j(j, N, Yk)
     integer :: k
 
     somatoria : do  k = 1, 100
-        y_j = y_j + Yk(k)*exp(-2.d0*pi*i*j*k/(2*(N+1)))
+        y_j = y_j + Yk(k)*exp(-2.d0*pi*i*j*k/(2*N))
     end do somatoria
 
     y_j = y_j/N
