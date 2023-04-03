@@ -56,7 +56,7 @@ h2 {
 
 
 p {
-    text:align: justify;
+    text-align: justify;
 /*    column-count: 2;*/
     text-align: justify;
     text-justify: inter-word;
@@ -147,8 +147,7 @@ code {
 }
 pre.example::before {
     display: block;
-    background-color: #fffff;
-    content: "Output";
+    background-color: #ffffff;    content: "Output";
     font-family: "Roboto Condensed", sans-serif;
     font-weight: 400;
     padding-bottom: 0.25em;
