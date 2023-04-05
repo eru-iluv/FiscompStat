@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rm -f *-inc*eps* *.log *.aux *.tex
+rm -f *-inc*eps* *.log *.aux *.tex *.dvi

@@ -11,9 +11,9 @@ except:
     extensao = ".gp"
 
 extensao = ".gp"
-pastaArquivo = re.findall(r"(\w+-\d)", nomeArquivo)
+pastaArquivo = re.findall(r"(\w+-\d)", nomeArquivo)[0]
 pastaArquivo = pastaArquivo + "/"
-if (not os.path.isfile("gnuplot-"+nomeArquivo+extensao)):
+if (not os.path.isfile("gnuplot/"+nomeArquivo+extensao)):
     print(nomeArquivo+extensao)
     print("ERRO: Arquivo não existe")
     ValueError
@@ -21,5 +21,5 @@ if (not os.path.isfile("gnuplot-"+nomeArquivo+extensao)):
 subprocess.run(["gnuplot", nomeArquivo + extensao], cwd="gnuplot/")
 subprocess.run(["pdflatex", nomeArquivo+".tex"], cwd="gnuplot/")
 subprocess.run(["limpa.sh"], cwd="gnuplot/")
-subprocess.run(["move.sh", pastaArquivo, nomeArquivo+extensao], cwd="gnuplot/")
+subprocess.run(["moveGrafico.sh", pastaArquivo, "{}.pdf".format(nomeArquivo)], cwd="gnuplot/")
 subprocess.run(["evince", "{}.pdf".format(nomeArquivo)], cwd=pastaArquivo)
