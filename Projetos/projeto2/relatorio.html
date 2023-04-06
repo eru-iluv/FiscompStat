@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-04-05 Wed 23:15 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>[[https://edisciplinas.usp.br/pluginfile.php/7581904/mod_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf][ANÁLISE ESPECTRAL POR@@latex:\\@@ @@html:&lt;br&gt;@@ @@latex:\\@@ @@html:&lt;br&gt;@@TRANSFORMADAS DE FOURIER]]</title>
+<meta name="author" content="Edgard Macena Cabral" />
+<meta name="description" content="A GNU Emacs notebook demonstration" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="../../notebook.css" />
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title"><a href="https://edisciplinas.usp.br/pluginfile.php/7581904/mod_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf">ANÁLISE ESPECTRAL POR <br>  <br>TRANSFORMADAS DE FOURIER</a>
+<br />
+<span class="subtitle">Edgard Macena Cabral Nº 11820833  <br> Março 2023</span>
+</h1>
+
+<div id="outline-container-orgf185f09" class="outline-2">
+<h2 id="orgf185f09">Introdução</h2>
+<div class="outline-text-2" id="text-orgf185f09">
+<p>
+As ondas são uma importante parte da física. Uma onda ideal pode
+ser descrita através da equação
+</p>
+
+<div class="latex" id="org6e204e0">
+\begin{equation}
+  \frac{\partial^{2}y}{\partial t^{2}} = c^{2}\frac{\partial^{2}y}{\partial x^{2}}
+\end{equation}
+
+</div>
+
+<p>
+Sendo uma equação diferencial, é claro, precisamos de condições de contorno bem defindas, que
+alteram profundamente o caráter da solução
+</p>
+
+
+<p>
+Podemos discretizar essa equação através da discretização \(x = i\Delta x,\ t = n\Delta t\) e da derivada simétrica em dois pontos para obter
+</p>
+<div class="latex" id="orga2025ae">
+\begin{equation}
+  \frac{y(i,n+1) - 2y(i,n) + y(i, n-1)}{\Delta t^2} = c^{2}\left[\frac{y(i+1,n) - 2y(i,n) + y(i-1, n)}{\Delta x^2}\right]
+\end{equation}
+
+</div>
+
+<p>
+Que refatoramos para obter
+</p>
+
+<div class="latex" id="orge4801a6">
+\begin{equation}
+  y(i,n+1) = 2[1-r^2] 2y(i,n) + r^{2}\left[y(i+1,n) + y(i-1, n)\right] - y(i, n-1)
+\end{equation}
+
+</div>
+
+<p>
+Onde introduzimos o parâmetro \(r \equiv c\frac{\Delta t}{\Delta x}\). Essa equação é interessante
+pois nos permite descrever a onda quase que como uma automata. A partir de \(y_{n}\) e \(y_{n-1}\), sabemos \(y_n\),
+desde que tenhamos condições de contorno bem definidas
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org54d1316" class="outline-2">
+<h2 id="org54d1316">Tarefa I: Modelando Ondas Gaussianas&#xa0;&#xa0;&#xa0;<span class="tag"><span class="ATTACH">ATTACH</span></span></h2>
+<div class="outline-text-2" id="text-org54d1316">
+<p>
+Buscamos criar um código que simulasse uma onda gaussiana com derivada temporal zero em \(t = 0\).
+Isto é, fizemos:
+</p>
+
+<div class="latex" id="org7b5e237">
+\begin{equation}
+  Y(0,x) = Y_{0}(x) = \exp[-(x-x_{0})^{2}/\sigma^{2}]\ \ \ \frac{dY}{dt}|_{t=0} = 0
+\end{equation}
+
+</div>
+
+<p>
+Ademais, fizemos os parâmetros velocidade de onda $c = 300$m/s, comprimento de corda $L = 1$m,
+\(x_0 = L/3\) e \(\sigma = L/30\).
+</p>
+
+<p>
+Com isso em mente, fizemos o programa
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fortran" id="orga9415ba"><span style="color: #51afef;">program</span> <span style="color: #c678dd;">geraOnda</span>
+    use rotinasDaOnda
+    <span style="color: #ECBE7B;">implicit none</span>
+    <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">parameter</span> :: L = 1.d0, c = 300.d0
+    <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">parameter</span> :: r = 0.25d0, dt = 1.d0/90000.d0, dx = dt*c/r
+    <span style="color: #ECBE7B;">integer</span>, <span style="color: #ECBE7B;">parameter</span> :: size_x = <span style="color: #c678dd;">nint</span>(L/dx), size_t = <span style="color: #da8548; font-weight: bold;">300</span>
+    <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">dimension</span>(<span style="color: #dcaeea;">size_x</span>) :: ondaAnterior, ondaAtual, ondaPosterior
+
+    <span style="color: #ECBE7B;">integer</span> :: i
+    <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">1</span>, file=<span style="color: #98be65;">"saida-1"</span>)
+
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Enfor&#231;a condi&#231;&#227;o para t = 0</span>
+    <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, size_x
+        ondaAnterior(i) = Y0(i, size_x, dx, L/3.d0, L/30.d0)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+    <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, size_x
+        ondaAtual(i) = Y0(i, size_x, dx, L/3.d0, L/30.d0)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Perceba que aqui efetivamente impomos as condi&#231;&#245;es de contorno</span>
+    ondaPosterior = 0.d0
+
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">imprimeOnda</span>(ondaAnterior, size_x)
+
+    <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">2</span>, size_t
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">imprimeOnda</span>(ondaAtual, size_x)
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">propagaOnda</span>(ondaAnterior, ondaAtual, ondaPosterior, r, size<span style="color: #5B6268;">_x)</span>
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">dancaDaCadeira</span>(ondaAnterior, ondaAtual, ondaPosterior)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">imprimeOnda</span>(ondaAtual, size_x)
+    <span style="color: #51afef;">close</span>(<span style="color: #da8548; font-weight: bold;">1</span>)
+<span style="color: #51afef;">end</span> <span style="color: #51afef;">program</span> <span style="color: #c678dd;">geraOnda</span>
+
+module rotinasDaOnda
+    <span style="color: #ECBE7B;">implicit none</span>
+
+    contains
+    <span style="color: #51afef;">function</span> <span style="color: #c678dd;">Y0</span>(i, size_x, dx, x0, sigma)
+        <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(in) :: dx, x0, sigma
+        <span style="color: #ECBE7B;">integer</span>, intent(in) :: i, size_x
+        <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span> :: x, Y0
+        <span style="color: #51afef;">if</span> ( i /= <span style="color: #da8548; font-weight: bold;">0</span> <span style="color: #51afef;">.and.</span> i /= size_x  ) <span style="color: #51afef;">then</span>
+            x = i*dx
+            Y0 = <span style="color: #c678dd;">exp</span>(-<span style="color: #da8548; font-weight: bold;">1</span>*((x-x0)/sigma)**<span style="color: #da8548; font-weight: bold;">2</span>)
+        <span style="color: #51afef;">else</span>
+            Y0 = 0.d0
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">Y0</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">propagaOnda</span>(ondaAnterior, ondaAtual, ondaPosterior, r, si<span style="color: #5B6268;">ze_x)</span>
+        <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(in) :: ondaAnterior(:), ondaAtual(:), r
+        <span style="color: #ECBE7B;">integer</span>, intent(in) :: size_x
+        <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(out) ::  ondaPosterior(:)
+        ondaPosterior(<span style="color: #da8548; font-weight: bold;">2</span>:size_x-<span style="color: #da8548; font-weight: bold;">1</span>) =&amp;
+            <span style="color: #da8548; font-weight: bold;">2</span>*(<span style="color: #da8548; font-weight: bold;">1</span>-r**<span style="color: #da8548; font-weight: bold;">2</span>)*ondaAtual(<span style="color: #da8548; font-weight: bold;">2</span>:size_x-<span style="color: #da8548; font-weight: bold;">1</span>) - ondaAnterior(<span style="color: #da8548; font-weight: bold;">2</span>:size_x) &amp;
+            + (r**<span style="color: #da8548; font-weight: bold;">2</span>)*(ondaAtual(<span style="color: #da8548; font-weight: bold;">3</span>:size_x) + ondaAtual(<span style="color: #da8548; font-weight: bold;">1</span>:size_x-<span style="color: #da8548; font-weight: bold;">2</span>))
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">propagaOnda</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">dancaDaCadeira</span>(ondaAnterior, ondaAtual,  ondaPosterior)
+        <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(inout) :: ondaAnterior(:), ondaAtual(:)
+        <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(out) :: ondaPosterior(:)
+
+        ondaAnterior(:) = ondaAtual(:)
+        ondaAtual(:) = ondaPosterior(:)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">dancaDaCadeira</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">imprimeOnda</span>(ondaAtual, size_x)
+        <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(in) :: ondaAtual(:)
+        <span style="color: #ECBE7B;">integer</span> :: size_x, i
+        <span style="color: #51afef;">write</span>(<span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #98be65;">'(3000F16.8)'</span>) (ondaAtual(i), i=<span style="color: #da8548; font-weight: bold;">1</span>,size_x)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">imprimeOnda</span>
+<span style="color: #51afef;">end</span> module rotinasDaOnda
+</pre>
+</div>
+
+<p>
+Nesse programa, deixamos \(\Delta x\) definido em termos de \(\Delta t\), \(c\) e \(r\).
+Tivemos \(r = 1\), \(\Delta t = \frac{1}{300^{2}}\) e \(\Delta x = \frac{1}{300}\)
+O resultado para essa configuração é exibido no gráfico a seguir:
+</p>
+
+
+
+
+<div id="orga97288a" class="figure">
+<p><img src="tarefa-1/tarefa-1a-graf-11820833.jpg" alt="tarefa-1a-graf-11820833.jpg" />
+</p>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

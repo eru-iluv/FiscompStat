@@ -1,0 +1,290 @@
+#+SETUPFILE: ../../setup-file.org
+
+* Introdução
+
+
+As ondas são uma importante parte da física. Uma onda ideal pode
+ser descrita através da equação
+
+#+name: Equação de onda
+#+begin_latex
+\begin{equation}
+  \frac{\partial^{2}y}{\partial t^{2}} = c^{2}\frac{\partial^{2}y}{\partial x^{2}}
+\end{equation}
+#+end_latex
+
+Sendo uma equação diferencial, é claro, precisamos de condições de contorno bem defindas, que
+alteram profundamente o caráter da solução
+
+
+Podemos discretizar essa equação através da discretização $x = i\Delta x,\ t = n\Delta t$ e da derivada simétrica em dois pontos para obter
+#+name: Equação discretizada da onda
+#+begin_latex
+\begin{equation}
+  \frac{y(i,n+1) - 2y(i,n) + y(i, n-1)}{\Delta t^2} = c^{2}\left[\frac{y(i+1,n) - 2y(i,n) + y(i-1, n)}{\Delta x^2}\right]
+\end{equation}
+#+end_latex
+
+Que refatoramos para obter
+
+#+name: Automota da onda
+#+begin_latex
+\begin{equation}
+  y(i,n+1) = 2[1-r^2] 2y(i,n) + r^{2}\left[y(i+1,n) + y(i-1, n)\right] - y(i, n-1)
+\end{equation}
+#+end_latex
+
+Onde introduzimos o parâmetro $r \equiv c\frac{\Delta t}{\Delta x}$. Essa equação é interessante
+pois nos permite descrever a onda quase que como uma automata. A partir de $y_{n}$ e $y_{n-1}$, sabemos $y_n$,
+desde que tenhamos condições de contorno bem definidas
+
+
+* Tarefa I: Modelando Ondas Gaussianas :ATTACH:
+:PROPERTIES:
+:ID:       097ff357-beb0-48fd-a855-f1d5270daa42
+:END:
+Buscamos criar um código que simulasse uma onda gaussiana com derivada temporal zero em $t = 0$.
+Isto é, fizemos:
+
+#+begin_latex
+\begin{equation}
+  Y(0,x) = Y_{0}(x) = \exp[-(x-x_{0})^{2}/\sigma^{2}]\ \ \ \frac{dY}{dt}|_{t=0} = 0
+\end{equation}
+#+end_latex
+
+Ademais, fizemos os parâmetros velocidade de onda $c = 300$m/s, comprimento de corda $L = 1$m,
+$x_0 = L/3$ e $\sigma = L/30$.
+
+Com isso em mente, fizemos o programa
+
+#+name: tarefa-1
+#+begin_src fortran :tangle tarefa-1/tarefa-1-11820833
+program geraOnda
+    use rotinasDaOnda
+    implicit none
+    real*8, parameter :: L = 1.d0, c = 300.d0
+    real*8, parameter :: r = 0.25d0, dt = 1.d0/90000.d0, dx = dt*c/r
+    integer, parameter :: size_x = nint(L/dx), size_t = 300
+    real*8, dimension(size_x) :: ondaAnterior, ondaAtual, ondaPosterior
+
+    integer :: i
+    open(1, file="saida-1")
+
+    ! Enforça condição para t = 0
+    do i = 1, size_x
+        ondaAnterior(i) = Y0(i, size_x, dx, L/3.d0, L/30.d0)
+    end do
+    do i = 1, size_x
+        ondaAtual(i) = Y0(i, size_x, dx, L/3.d0, L/30.d0)
+    end do
+    ! Perceba que aqui efetivamente impomos as condições de contorno
+    ondaPosterior = 0.d0
+
+    call imprimeOnda(ondaAnterior, size_x)
+
+    do i = 2, size_t
+        call imprimeOnda(ondaAtual, size_x)
+        call propagaOnda(ondaAnterior, ondaAtual, ondaPosterior, r, size_x)
+        call dancaDaCadeira(ondaAnterior, ondaAtual, ondaPosterior)
+    end do
+
+    call imprimeOnda(ondaAtual, size_x)
+    close(1)
+end program geraOnda
+
+module rotinasDaOnda
+    implicit none
+
+    contains
+    function Y0(i, size_x, dx, x0, sigma)
+        real*8, intent(in) :: dx, x0, sigma
+        integer, intent(in) :: i, size_x
+        real*8 :: x, Y0
+        if ( i /= 0 .and. i /= size_x  ) then
+            x = i*dx
+            Y0 = exp(-1*((x-x0)/sigma)**2)
+        else
+            Y0 = 0.d0
+        end if
+    end function Y0
+
+
+    subroutine propagaOnda(ondaAnterior, ondaAtual, ondaPosterior, r, size_x)
+        real*8, intent(in) :: ondaAnterior(:), ondaAtual(:), r
+        integer, intent(in) :: size_x
+        real*8, intent(out) ::  ondaPosterior(:)
+        ondaPosterior(2:size_x-1) =&
+            2*(1-r**2)*ondaAtual(2:size_x-1) - ondaAnterior(2:size_x) &
+            + (r**2)*(ondaAtual(3:size_x) + ondaAtual(1:size_x-2))
+    end subroutine propagaOnda
+
+
+    subroutine dancaDaCadeira(ondaAnterior, ondaAtual,  ondaPosterior)
+        real*8, intent(inout) :: ondaAnterior(:), ondaAtual(:)
+        real*8, intent(out) :: ondaPosterior(:)
+
+        ondaAnterior(:) = ondaAtual(:)
+        ondaAtual(:) = ondaPosterior(:)
+    end subroutine dancaDaCadeira
+
+
+    subroutine imprimeOnda(ondaAtual, size_x)
+        real*8, intent(in) :: ondaAtual(:)
+        integer :: size_x, i
+        write(1, '(3000F16.8)') (ondaAtual(i), i=1,size_x)
+    end subroutine imprimeOnda
+end module rotinasDaOnda
+#+end_src
+
+Nesse programa, deixamos $\Delta x$ definido em termos de $\Delta t$, $c$ e $r$.
+Tivemos $r = 1$, $\Delta t = \frac{1}{300^{2}}$ e $\Delta x = \frac{1}{300}$
+O resultado para essa configuração é exibido no gráfico a seguir:
+
+
+
+[[file:tarefa-1/tarefa-1a-graf-11820833.jpg]]
+* Notebook configuration :noexport:
+
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+This section is used for configuring various settings in the notebook appearance as well as defining various options for the export in HTML or PDF formats. You can change any of these settings.
+** Document information
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+TITLE:        [[https://edisciplinas.usp.br/pluginfile.php/7581904/mod_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf][ANÁLISE ESPECTRAL POR@@latex:\\@@ @@html:<br>@@ @@latex:\\@@ @@html:<br>@@TRANSFORMADAS DE FOURIER]]
+#+SUBTITLE:     Edgard Macena Cabral Nº 11820833 @@latex:\\@@ @@html:<br>@@ Março 2023
+#+AUTHOR:       Edgard Macena Cabral
+#+EMAIL:        edgardmacena@usp.br
+#+DATE:         Março 2023
+#+DESCRIPTION:  A GNU Emacs notebook demonstration
+#+OPTIONS:      toc:nil
+** HTML export configuration
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_export html
+#+end_export
+
+#+OPTIONS:   num:nil
+#+OPTIONS:   html-style:nil
+#+OPTIONS:   html-scripts:nil
+#+OPTIONS:   html-postamble:nil
+#+OPTIONS:   broken-links:mark
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../../notebook.css" />
+
+** PDF export configuration
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_export PDF
+#+end_export
+
+#+OPTIONS:
+
+** Code snippets
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+*** Notebook setup :lisp:
+
+#+name: setup
+#+header:
+#+begin_src emacs-lisp :results none :exports none :eval no-export
+(setq org-cite-csl-styles-dir ".")
+(setq org-babel-python-command "/opt/anaconda3/bin/python")
+(require 'ob-python)
+(require 'oc-csl)
+nil
+#+end_src
+
+*** Notebook run :lisp:
+
+#+name: run
+#+header: :var scope="all"
+#+begin_src emacs-lisp :results none :exports none :eval never
+(org-babel-execute-buffer)
+nil
+#+end_src
+
+*** Notebook export :lisp:
+
+#+name: export
+#+header: :var target="html"
+#+begin_src emacs-lisp :results none :exports none :eval never
+(cond (((string= target "html")   (org-html-export-to-html))
+       ((string= target "pdf")    (org-latex-export-to-pdf))
+       ((string= target "tex")    (org-latex-export-to-latex))
+       ((string= target "latex")  (org-latex-export-to-latex))
+       (t  (message (format "Unknow backend (%s) for export" target)))))
+#+end_src
+
+*** Notebook information :lisp:
+
+#+name: document-info
+#+header: :var python=python-version emacs=emacs-version org=org-version
+#+begin_src python :results raw :exports results
+return f"{emacs}, {org} & {python}"
+#+end_src
+#+RESULTS: document-info
+
+*** Emacs version :lisp:
+
+#+name: emacs-version
+#+begin_src emacs-lisp :export none :results raw
+(format "[[https://www.gnu.org/software/emacs/][Emacs]] %d.%d"
+        emacs-major-version emacs-minor-version)
+#+end_src
+#+RESULTS: emacs-version
+
+*** Org mode version :lisp:
+
+#+name: org-version
+#+begin_src emacs-lisp :export none :results raw
+(format "[[https://www.gnu.org/software/emacs/][Org mode]] %s"
+        (org-version nil nil))
+#+end_src
+#+RESULTS: org-version
+
+*** Python version :python:
+
+#+name: python-version
+#+begin_src python :export none :results raw
+import platform
+version = platform.python_version()
+return f"[[https://www.python.org/][Python]] {version}"
+#+end_src
+
+*** Matplotlib figure preparation :python:
+
+#+name: pyfig-pre
+#+header: :var width=8 height=1
+#+begin_src python :results file :exports none
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+fig = plt.figure(figsize=(width,height))
+ax = fig.add_axes([0,0,1,1], frameon=False)
+ax.axis("off")
+#+end_src
+
+*** Matplotlib figure finalization :python:
+
+#+name: pyfig-post
+#+header: :var filename=""
+#+begin_src python :results file :exports none
+if filename:
+    plt.savefig(filename, dpi=300)
+    return filename
+return ""
+#+end_src
+
+#+RESULTS: pyfig-post
+[[file:]]
