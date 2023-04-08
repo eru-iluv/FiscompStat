@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-04-05 Wed 23:15 -->
+<!-- 2023-04-08 Sat 18:26 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>[[https://edisciplinas.usp.br/pluginfile.php/7581904/mod_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf][ANÁLISE ESPECTRAL POR@@latex:\\@@ @@html:&lt;br&gt;@@ @@latex:\\@@ @@html:&lt;br&gt;@@TRANSFORMADAS DE FOURIER]]</title>
+<title>EQUACÕES DE ONDA</title>
 <meta name="author" content="Edgard Macena Cabral" />
 <meta name="description" content="A GNU Emacs notebook demonstration" />
 <meta name="generator" content="Org Mode" />
@@ -46,20 +46,20 @@
 </head>
 <body>
 <div id="content" class="content">
-<h1 class="title"><a href="https://edisciplinas.usp.br/pluginfile.php/7581904/mod_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf">ANÁLISE ESPECTRAL POR <br>  <br>TRANSFORMADAS DE FOURIER</a>
+<h1 class="title">EQUACÕES DE ONDA
 <br />
-<span class="subtitle">Edgard Macena Cabral Nº 11820833  <br> Março 2023</span>
+<span class="subtitle">Edgard Macena Cabral Nº 11820833  <br> Abril 2023</span>
 </h1>
 
-<div id="outline-container-orgf185f09" class="outline-2">
-<h2 id="orgf185f09">Introdução</h2>
-<div class="outline-text-2" id="text-orgf185f09">
+<div id="outline-container-org073d948" class="outline-2">
+<h2 id="org073d948">Introdução</h2>
+<div class="outline-text-2" id="text-org073d948">
 <p>
 As ondas são uma importante parte da física. Uma onda ideal pode
 ser descrita através da equação
 </p>
 
-<div class="latex" id="org6e204e0">
+<div class="latex" id="org2ab1db7">
 \begin{equation}
   \frac{\partial^{2}y}{\partial t^{2}} = c^{2}\frac{\partial^{2}y}{\partial x^{2}}
 \end{equation}
@@ -75,7 +75,7 @@ alteram profundamente o caráter da solução
 <p>
 Podemos discretizar essa equação através da discretização \(x = i\Delta x,\ t = n\Delta t\) e da derivada simétrica em dois pontos para obter
 </p>
-<div class="latex" id="orga2025ae">
+<div class="latex" id="orgf81962d">
 \begin{equation}
   \frac{y(i,n+1) - 2y(i,n) + y(i, n-1)}{\Delta t^2} = c^{2}\left[\frac{y(i+1,n) - 2y(i,n) + y(i-1, n)}{\Delta x^2}\right]
 \end{equation}
@@ -86,7 +86,7 @@ Podemos discretizar essa equação através da discretização \(x = i\Delta x,\
 Que refatoramos para obter
 </p>
 
-<div class="latex" id="orge4801a6">
+<div class="latex" id="orgbdd3fb4">
 \begin{equation}
   y(i,n+1) = 2[1-r^2] 2y(i,n) + r^{2}\left[y(i+1,n) + y(i-1, n)\right] - y(i, n-1)
 \end{equation}
@@ -102,15 +102,15 @@ desde que tenhamos condições de contorno bem definidas
 </div>
 
 
-<div id="outline-container-org54d1316" class="outline-2">
-<h2 id="org54d1316">Tarefa I: Modelando Ondas Gaussianas&#xa0;&#xa0;&#xa0;<span class="tag"><span class="ATTACH">ATTACH</span></span></h2>
-<div class="outline-text-2" id="text-org54d1316">
+<div id="outline-container-orga31ce6c" class="outline-2">
+<h2 id="orga31ce6c">Tarefa I: Modelando Ondas Gaussianas</h2>
+<div class="outline-text-2" id="text-orga31ce6c">
 <p>
 Buscamos criar um código que simulasse uma onda gaussiana com derivada temporal zero em \(t = 0\).
 Isto é, fizemos:
 </p>
 
-<div class="latex" id="org7b5e237">
+<div class="latex" id="org639d95d">
 \begin{equation}
   Y(0,x) = Y_{0}(x) = \exp[-(x-x_{0})^{2}/\sigma^{2}]\ \ \ \frac{dY}{dt}|_{t=0} = 0
 \end{equation}
@@ -127,11 +127,11 @@ Com isso em mente, fizemos o programa
 </p>
 
 <div class="org-src-container">
-<pre class="src src-fortran" id="orga9415ba"><span style="color: #51afef;">program</span> <span style="color: #c678dd;">geraOnda</span>
+<label class="org-src-name"><span class="listing-number">Listing 1: </span>Código da tarefa 1: Modelação de ondas Gaussianas</label><pre class="src src-fortran" id="orgd0807ad"><span style="color: #51afef;">program</span> <span style="color: #c678dd;">geraOnda</span>
     use rotinasDaOnda
     <span style="color: #ECBE7B;">implicit none</span>
     <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">parameter</span> :: L = 1.d0, c = 300.d0
-    <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">parameter</span> :: r = 0.25d0, dt = 1.d0/90000.d0, dx = dt*c/r
+    <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">parameter</span> :: r = 1.d0, dt = 1.d0/90000.d0, dx = dt*c/r
     <span style="color: #ECBE7B;">integer</span>, <span style="color: #ECBE7B;">parameter</span> :: size_x = <span style="color: #c678dd;">nint</span>(L/dx), size_t = <span style="color: #da8548; font-weight: bold;">300</span>
     <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">dimension</span>(<span style="color: #dcaeea;">size_x</span>) :: ondaAnterior, ondaAtual, ondaPosterior
 
@@ -140,11 +140,10 @@ Com isso em mente, fizemos o programa
 
     <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Enfor&#231;a condi&#231;&#227;o para t = 0</span>
     <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, size_x
-        ondaAnterior(i) = Y0(i, size_x, dx, L/3.d0, L/30.d0)
-    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
-    <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, size_x
         ondaAtual(i) = Y0(i, size_x, dx, L/3.d0, L/30.d0)
     <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+    ondaAnterior(:) = ondaAtual(:)
+
     <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Perceba que aqui efetivamente impomos as condi&#231;&#245;es de contorno</span>
     ondaPosterior = 0.d0
 
@@ -182,7 +181,229 @@ module rotinasDaOnda
         <span style="color: #ECBE7B;">integer</span>, intent(in) :: size_x
         <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(out) ::  ondaPosterior(:)
         ondaPosterior(<span style="color: #da8548; font-weight: bold;">2</span>:size_x-<span style="color: #da8548; font-weight: bold;">1</span>) =&amp;
-            <span style="color: #da8548; font-weight: bold;">2</span>*(<span style="color: #da8548; font-weight: bold;">1</span>-r**<span style="color: #da8548; font-weight: bold;">2</span>)*ondaAtual(<span style="color: #da8548; font-weight: bold;">2</span>:size_x-<span style="color: #da8548; font-weight: bold;">1</span>) - ondaAnterior(<span style="color: #da8548; font-weight: bold;">2</span>:size_x) &amp;
+            <span style="color: #da8548; font-weight: bold;">2</span>*(<span style="color: #da8548; font-weight: bold;">1</span>-r**<span style="color: #da8548; font-weight: bold;">2</span>)*ondaAtual(<span style="color: #da8548; font-weight: bold;">2</span>:size_x-<span style="color: #da8548; font-weight: bold;">1</span>) - ondaAnterior(<span style="color: #da8548; font-weight: bold;">2</span>:size_x-<span style="color: #da8548; font-weight: bold;">1</span>) <span style="color: #5B6268;">&amp;</span>
+            + (r**<span style="color: #da8548; font-weight: bold;">2</span>)*(ondaAtual(<span style="color: #da8548; font-weight: bold;">3</span>:size_x) + ondaAtual(<span style="color: #da8548; font-weight: bold;">1</span>:size_x-<span style="color: #da8548; font-weight: bold;">2</span>))
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">propagaOnda</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">dancaDaCadeira</span>(ondaAnterior, ondaAtual,  ondaPosterior)
+        <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(inout) :: ondaAnterior(:), ondaAtual(:)
+        <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(out) :: ondaPosterior(:)
+
+        ondaAnterior(:) = ondaAtual(:)
+        ondaAtual(:) = ondaPosterior(:)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">dancaDaCadeira</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">imprimeOnda</span>(ondaAtual, size_x)
+        <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(in) :: ondaAtual(:)
+        <span style="color: #ECBE7B;">integer</span> :: size_x, i
+        <span style="color: #51afef;">write</span>(<span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #98be65;">'(3000F16.8)'</span>) (ondaAtual(i), i=<span style="color: #da8548; font-weight: bold;">1</span>,size_x)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">imprimeOnda</span>
+<span style="color: #51afef;">end</span> module rotinasDaOnda
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org4dba160" class="outline-3">
+<h3 id="org4dba160">Resultados para \(r = 1\)</h3>
+<div class="outline-text-3" id="text-org4dba160">
+<p>
+Nesse programa, deixamos \(\Delta x\) definido em termos de \(\Delta t\), \(c\) e \(r\).
+Tivemos \(r = 1\), \(\Delta t = \frac{1}{300^{2}}\) e \(\Delta x = \frac{1}{300}\)
+O resultado para essa configuração é exibido no gráfico a seguir:
+</p>
+
+
+<div id="org9199975" class="figure">
+<p><img src="tarefa-1/tarefa-1a-graf-11820833.jpg" alt="tarefa-1a-graf-11820833.jpg" width="300px" />
+</p>
+</div>
+
+<p>
+O resultado é bem interessante! A primeira coisa que chama atenção é que,
+para esse valor de \(\Delta x\), o resultado é bastante exato.
+Mesmo para valores um pouco maiores, como \(\Delta x = 0,01\),
+observamos uma pequena deformação na geometria da onda, com um lado
+levemente mais pontudo que o outro.
+De fato, foi com base nisso que escolhemos esse valor.
+</p>
+</div>
+
+<div id="outline-container-orgad9f750" class="outline-4">
+<h4 id="orgad9f750">Ia2 - Deformação</h4>
+<div class="outline-text-4" id="text-orgad9f750">
+<p>
+Outra coisa que notamos é que o pacote nunca se deforma! Mesmo no
+final da simulação, e, de fato, mesmo que continuassemos pelo dobro de
+iterações, não observariamos qualquer deformação,
+</p>
+</div>
+</div>
+
+<div id="outline-container-org89458c9" class="outline-4">
+<h4 id="org89458c9">Ia3 - Reflexões</h4>
+<div class="outline-text-4" id="text-org89458c9">
+<p>
+É interessante que, para esse valor de \(\Delta t\), as reflexões para meio
+período de onda, ocorreram em torno de \(n = 100\) ao lado esquerdo
+e em torno de \(n = 200\) para o lado direito. Isso não surpreende,
+considerando que a onda parte de \(L/3\), de modo que a extremidade
+direita está ao dobro da distância da esquenda em relação a \(x_{0}\)
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2146fb6" class="outline-4">
+<h4 id="org2146fb6">Ia4 - Interferências</h4>
+<div class="outline-text-4" id="text-org2146fb6">
+<p>
+As interferências em nosso exemplo ocorrem em torno de \(n = 0\) e \(n = 300\).
+Nesses casos, temos interferências construtivas para \(0\) e \(1/2 \lambda\), respectivamente.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga606b1f" class="outline-4">
+<h4 id="orga606b1f">Ia4 - Repetição da condição inicial</h4>
+<div class="outline-text-4" id="text-orga606b1f">
+<p>
+Como não surpreende pelo gráfico, a condição inicial se repete em
+\(n = 600\), quando teremos caminhado \(\Delta t \cdot 600 \cdot v = 2\) m
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc964f60" class="outline-3">
+<h3 id="orgc964f60">Resultados para \(r = 2\)</h3>
+<div class="outline-text-3" id="text-orgc964f60">
+<p>
+Para obter esses resultados, usamos o mesmo programa da tarefa Ia,
+bastando alterar o valor de \(r\) e observar que isso altera
+também \(\Delta x\). De tal forma, usamos \(\Delta = \frac{1}{300^2}\),
+\(r = 2\) e \(\Delta x = \frac{1}{600} \approx 1/600\)
+</p>
+
+<p>
+O resultado, claro como a luz do dia, é uma divergência aceleradíssima.
+Inclusive, tivemos que parar as iterações em torno de \(n = 20\) porque
+nesse ponto a divergência já explodia catrastoficamente.
+</p>
+
+
+<div id="org15395a1" class="figure">
+<p><img src="tarefa-1/tarefa-1b-graf-11820833.jpg" alt="tarefa-1b-graf-11820833.jpg" width="300px" />
+</p>
+</div>
+
+<p>
+Percebe-se que, se a &ldquo;velocidade da malha&rdquo; é menor que a velocidade da onda,
+falhamos miseravelmente em representar a onda, e portanto
+a menor velocidade de onda a que sempre devemos prestar
+atenção a qual é a menor velocidade de onda sempre que tivermos
+a propagação por dois materiais diferentes
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5af850c" class="outline-3">
+<h3 id="org5af850c">Resultado para \(r = 0,25\)</h3>
+<div class="outline-text-3" id="text-org5af850c">
+<p>
+Para \(r = 0,25\), fizemos novamente a alteração de \(\Delta x\) baseado em \(\Delta t\) e \(r\),
+obtendo \(\Delta x = 4/300 \approx 0,0133\).
+</p>
+
+
+<div id="orgb601b5b" class="figure">
+<p><img src="tarefa-1/tarefa-1c-graf-11820833.jpg" alt="tarefa-1c-graf-11820833.jpg" width="300px" />
+</p>
+</div>
+
+<p>
+Observe que temos uma pequena perda de precisão associado a \(\Delta x\). Talvez devessemos ter buscado alterar \(\Delta t\) no lugar. De qualquer forma, a perda de precisão mais interessante é visível basicamente no final, quando começa a ter pequenas ondinhas sendo deixadas para trás pelo nosso sinal original.
+</p>
+
+<p>
+Essas ondinhas são uma deformação, no sentido em que tiram informação da nossa onda original, mas não podemos compará-lo ao erro que tinhamos para \(r =2\)
+</p>
+
+<p>
+Não há nada de catrastófico nesse erro
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdb185bd" class="outline-2">
+<h2 id="orgdb185bd">Ondas da corda do Violão</h2>
+<div class="outline-text-2" id="text-orgdb185bd">
+<p>
+Temos essencialmente o mesmo problema, só precisamos alterar \(Y_0\). Os resultados estão
+a seguir
+</p>
+
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 2: </span>Código da tarefa 2: Modelação de ondas Gaussianas</label><pre class="src src-fortran" id="orga504cab"><span style="color: #51afef;">program</span> <span style="color: #c678dd;">geraOnda</span>
+    use rotinasDaOnda
+    <span style="color: #ECBE7B;">implicit none</span>
+    <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">parameter</span> :: L = 1.d0, c = 300.d0
+    <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">parameter</span> :: r = 1.d0, dt = 1.d0/90000.d0, dx = dt*c/r
+    <span style="color: #ECBE7B;">integer</span>, <span style="color: #ECBE7B;">parameter</span> :: size_x = <span style="color: #c678dd;">nint</span>(L/dx), size_t = <span style="color: #da8548; font-weight: bold;">300</span>
+    <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, <span style="color: #ECBE7B;">dimension</span>(<span style="color: #dcaeea;">size_x</span>) :: ondaAnterior, ondaAtual, ondaPosterior
+
+    <span style="color: #ECBE7B;">integer</span> :: i
+    <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">1</span>, file=<span style="color: #98be65;">"saida-2"</span>)
+
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Enfor&#231;a condi&#231;&#227;o para t = 0</span>
+    <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, size_x
+        ondaAtual(i) = Y0(i, size_x, dx)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+    ondaAnterior(:) = ondaAtual(:)
+
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Perceba que aqui efetivamente impomos as condi&#231;&#245;es de contorno</span>
+    ondaPosterior = 0.d0
+
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">imprimeOnda</span>(ondaAnterior, size_x)
+
+    <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">2</span>, size_t
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">imprimeOnda</span>(ondaAtual, size_x)
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">propagaOnda</span>(ondaAnterior, ondaAtual, ondaPosterior, r, size<span style="color: #5B6268;">_x)</span>
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">dancaDaCadeira</span>(ondaAnterior, ondaAtual, ondaPosterior)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">imprimeOnda</span>(ondaAtual, size_x)
+
+    <span style="color: #51afef;">close</span>(<span style="color: #da8548; font-weight: bold;">1</span>)
+<span style="color: #51afef;">end</span> <span style="color: #51afef;">program</span> <span style="color: #c678dd;">geraOnda</span>
+
+
+module rotinasDaOnda
+    <span style="color: #ECBE7B;">implicit none</span>
+
+    contains
+    <span style="color: #51afef;">function</span> <span style="color: #c678dd;">Y0</span>(i, size_x, dx)
+        <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(in) :: dx
+        <span style="color: #ECBE7B;">integer</span>, intent(in) :: i, size_x
+        <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span> :: x, Y0, L
+
+        x = (i-<span style="color: #da8548; font-weight: bold;">1</span>)*dx
+        L = (size_x - <span style="color: #da8548; font-weight: bold;">1</span>)* dx
+        <span style="color: #51afef;">if</span> (i <span style="color: #51afef;">.le.</span> size_x/<span style="color: #da8548; font-weight: bold;">4</span> + <span style="color: #da8548; font-weight: bold;">1</span>) <span style="color: #51afef;">then</span>
+            Y0 = x
+        <span style="color: #51afef;">else</span>
+           Y0 = 1.d0/3.d0 *  (L - x)
+        <span style="color: #51afef;">endif</span>
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">Y0</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">propagaOnda</span>(ondaAnterior, ondaAtual, ondaPosterior, r, si<span style="color: #5B6268;">ze_x)</span>
+        <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(in) :: ondaAnterior(:), ondaAtual(:), r
+        <span style="color: #ECBE7B;">integer</span>, intent(in) :: size_x
+        <span style="color: #ECBE7B;">real</span>*<span style="color: #da8548; font-weight: bold;">8</span>, intent(out) ::  ondaPosterior(:)
+        ondaPosterior(<span style="color: #da8548; font-weight: bold;">2</span>:size_x-<span style="color: #da8548; font-weight: bold;">1</span>) =&amp;
+            <span style="color: #da8548; font-weight: bold;">2</span>*(<span style="color: #da8548; font-weight: bold;">1</span>-r**<span style="color: #da8548; font-weight: bold;">2</span>)*ondaAtual(<span style="color: #da8548; font-weight: bold;">2</span>:size_x-<span style="color: #da8548; font-weight: bold;">1</span>) - ondaAnterior(<span style="color: #da8548; font-weight: bold;">2</span>:size_x-<span style="color: #da8548; font-weight: bold;">1</span>) <span style="color: #5B6268;">&amp;</span>
             + (r**<span style="color: #da8548; font-weight: bold;">2</span>)*(ondaAtual(<span style="color: #da8548; font-weight: bold;">3</span>:size_x) + ondaAtual(<span style="color: #da8548; font-weight: bold;">1</span>:size_x-<span style="color: #da8548; font-weight: bold;">2</span>))
     <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">propagaOnda</span>
 
@@ -206,16 +427,110 @@ module rotinasDaOnda
 </div>
 
 <p>
-Nesse programa, deixamos \(\Delta x\) definido em termos de \(\Delta t\), \(c\) e \(r\).
-Tivemos \(r = 1\), \(\Delta t = \frac{1}{300^{2}}\) e \(\Delta x = \frac{1}{300}\)
-O resultado para essa configuração é exibido no gráfico a seguir:
+Usamos novamente os mesmos valores de \(\Delta x\) e \(\Delta t\).
+</p>
+</div>
+
+<div id="outline-container-org2f132d0" class="outline-3">
+<h3 id="org2f132d0">Para \(r = 1\)</h3>
+<div class="outline-text-3" id="text-org2f132d0">
+<p>
+O resultado está na figura a seguir
 </p>
 
 
+<div id="org41bb644" class="figure">
+<p><img src="tarefa-2/tarefa-2a-graf-11820833.jpg" alt="tarefa-2a-graf-11820833.jpg" width="300px" />
+</p>
+</div>
+</div>
+
+<div id="outline-container-org358de94" class="outline-4">
+<h4 id="org358de94">Ia2 - Deformação</h4>
+<div class="outline-text-4" id="text-org358de94">
+<p>
+Novamente, notamos que o pacote não se deforma, embora seja
+um pouco mais difícil de reparar numa onda tão grande e com uma amplitude tão pequena.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4027dc6" class="outline-4">
+<h4 id="org4027dc6">Ia3 - Reflexão</h4>
+<div class="outline-text-4" id="text-org4027dc6">
+<p>
+Aqui é um pouco difícil notar a reflexão, mas podemos ver
+ela acontecendo entre \(n = 50\) e \(n = 100\) ou entre
+\(n = 200\) e \(n = 250\). Mas é mais difícil.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org33fe617" class="outline-4">
+<h4 id="org33fe617">Ia4 - Interferências</h4>
+<div class="outline-text-4" id="text-org33fe617">
+<p>
+As interferências construtivas podem ser notadas em \(n = 0\) e \(n = 300\)
+</p>
+</div>
+</div>
 
 
-<div id="orga97288a" class="figure">
-<p><img src="tarefa-1/tarefa-1a-graf-11820833.jpg" alt="tarefa-1a-graf-11820833.jpg" />
+<div id="outline-container-orgc9163c8" class="outline-4">
+<h4 id="orgc9163c8">Ia4 - Repetição da condição inicial</h4>
+<div class="outline-text-4" id="text-orgc9163c8">
+<p>
+Novamente, a condição inicial se repete em
+\(n = 600\), quando teremos caminhado \(\Delta t \cdot 600 \cdot v = 2L\)
+e os sinais terão retornado a condição inicial.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd11ffe8" class="outline-3">
+<h3 id="orgd11ffe8">Para \(r = 2\)</h3>
+<div class="outline-text-3" id="text-orgd11ffe8">
+<p>
+Usando o mesmo \(\Delta x\) e \(\Delta t\) da tarefa 1, obtemos:
+</p>
+
+<div id="org16838eb" class="figure">
+<p><img src="tarefa-2/tarefa-2b-graf-11820833.jpg" alt="tarefa-2b-graf-11820833.jpg" width="100px" />
+</p>
+</div>
+
+<p>
+Ainda mais bizarra que a gaussiana, essa onda
+possui uma divergência extremamente localizada.
+</p>
+
+<p>
+O fato dela acontecer na 6º iteração mostra o quão
+destrutivo \(r > 1\) é.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-org8983a8a" class="outline-3">
+<h3 id="org8983a8a">Para \(r = 0,25\)</h3>
+<div class="outline-text-3" id="text-org8983a8a">
+<p>
+Usando o mesmo \(\Delta x\) e \(\Delta t\) da tarefa 1, obtemos:
+</p>
+
+<div id="org41ac92a" class="figure">
+<p><img src="tarefa-2/tarefa-2c-graf-11820833.jpg" alt="tarefa-2c-graf-11820833.jpg" width="300px" />
+</p>
+</div>
+
+<p>
+A diferença é ainda mais difícil de ver!
+Mas notamos uma pequena deformação. O topo da onda no final é
+menos pontudo e mais arredondado, e isso corresponde
+as pequenas deformações que viamos na onda gaussiana!
 </p>
 </div>
 </div>

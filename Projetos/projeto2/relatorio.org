@@ -39,7 +39,7 @@ pois nos permite descrever a onda quase que como uma automata. A partir de $y_{n
 desde que tenhamos condições de contorno bem definidas
 
 
-* Tarefa I: Modelando Ondas Gaussianas :ATTACH:
+* Tarefa I: Modelando Ondas Gaussianas
 :PROPERTIES:
 :ID:       097ff357-beb0-48fd-a855-f1d5270daa42
 :END:
@@ -58,12 +58,13 @@ $x_0 = L/3$ e $\sigma = L/30$.
 Com isso em mente, fizemos o programa
 
 #+name: tarefa-1
-#+begin_src fortran :tangle tarefa-1/tarefa-1-11820833
+#+caption: Código da tarefa 1: Modelação de ondas Gaussianas
+#+begin_src fortran :tangle tarefa-1/tarefa-1-11820833.f9
 program geraOnda
     use rotinasDaOnda
     implicit none
     real*8, parameter :: L = 1.d0, c = 300.d0
-    real*8, parameter :: r = 0.25d0, dt = 1.d0/90000.d0, dx = dt*c/r
+    real*8, parameter :: r = 1.d0, dt = 1.d0/90000.d0, dx = dt*c/r
     integer, parameter :: size_x = nint(L/dx), size_t = 300
     real*8, dimension(size_x) :: ondaAnterior, ondaAtual, ondaPosterior
 
@@ -72,11 +73,10 @@ program geraOnda
 
     ! Enforça condição para t = 0
     do i = 1, size_x
-        ondaAnterior(i) = Y0(i, size_x, dx, L/3.d0, L/30.d0)
-    end do
-    do i = 1, size_x
         ondaAtual(i) = Y0(i, size_x, dx, L/3.d0, L/30.d0)
     end do
+    ondaAnterior(:) = ondaAtual(:)
+
     ! Perceba que aqui efetivamente impomos as condições de contorno
     ondaPosterior = 0.d0
 
@@ -114,7 +114,7 @@ module rotinasDaOnda
         integer, intent(in) :: size_x
         real*8, intent(out) ::  ondaPosterior(:)
         ondaPosterior(2:size_x-1) =&
-            2*(1-r**2)*ondaAtual(2:size_x-1) - ondaAnterior(2:size_x) &
+            2*(1-r**2)*ondaAtual(2:size_x-1) - ondaAnterior(2:size_x-1) &
             + (r**2)*(ondaAtual(3:size_x) + ondaAtual(1:size_x-2))
     end subroutine propagaOnda
 
@@ -136,13 +136,214 @@ module rotinasDaOnda
 end module rotinasDaOnda
 #+end_src
 
+** Resultados para $r = 1$
 Nesse programa, deixamos $\Delta x$ definido em termos de $\Delta t$, $c$ e $r$.
 Tivemos $r = 1$, $\Delta t = \frac{1}{300^{2}}$ e $\Delta x = \frac{1}{300}$
 O resultado para essa configuração é exibido no gráfico a seguir:
 
+#+ATTR_HTML: :width 300px
+file:tarefa-1/tarefa-1a-graf-11820833.jpg
+
+O resultado é bem interessante! A primeira coisa que chama atenção é que,
+para esse valor de $\Delta x$, o resultado é bastante exato.
+Mesmo para valores um pouco maiores, como $\Delta x = 0,01$,
+observamos uma pequena deformação na geometria da onda, com um lado
+levemente mais pontudo que o outro.
+De fato, foi com base nisso que escolhemos esse valor.
+
+*** Ia2 - Deformação
+Outra coisa que notamos é que o pacote nunca se deforma! Mesmo no
+final da simulação, e, de fato, mesmo que continuassemos pelo dobro de
+iterações, não observariamos qualquer deformação,
+
+*** Ia3 - Reflexões
+É interessante que, para esse valor de $\Delta t$, as reflexões para meio
+período de onda, ocorreram em torno de $n = 100$ ao lado esquerdo
+e em torno de $n = 200$ para o lado direito. Isso não surpreende,
+considerando que a onda parte de $L/3$, de modo que a extremidade
+direita está ao dobro da distância da esquenda em relação a $x_{0}$
+
+*** Ia4 - Interferências
+As interferências em nosso exemplo ocorrem em torno de $n = 0$ e $n = 300$.
+Nesses casos, temos interferências construtivas para $0$ e $1/2 \lambda$, respectivamente.
+
+*** Ia4 - Repetição da condição inicial
+Como não surpreende pelo gráfico, a condição inicial se repete em
+$n = 600$, quando teremos caminhado $\Delta t \cdot 600 \cdot v = 2$ m
+
+** Resultados para $r = 2$
+
+Para obter esses resultados, usamos o mesmo programa da tarefa Ia,
+bastando alterar o valor de $r$ e observar que isso altera
+também $\Delta x$. De tal forma, usamos $\Delta = \frac{1}{300^2}$,
+$r = 2$ e $\Delta x = \frac{1}{600} \approx 1/600$
+
+O resultado, claro como a luz do dia, é uma divergência aceleradíssima.
+Inclusive, tivemos que parar as iterações em torno de $n = 20$ porque
+nesse ponto a divergência já explodia catrastoficamente.
+
+#+ATTR_HTML: :width 300px
+[[file:tarefa-1/tarefa-1b-graf-11820833.jpg]]
+
+Percebe-se que, se a "velocidade da malha" é menor que a velocidade da onda,
+falhamos miseravelmente em representar a onda, e portanto
+a menor velocidade de onda a que sempre devemos prestar
+atenção a qual é a menor velocidade de onda sempre que tivermos
+a propagação por dois materiais diferentes
+
+** Resultado para $r = 0,25$
+Para $r = 0,25$, fizemos novamente a alteração de $\Delta x$ baseado em $\Delta t$ e $r$,
+obtendo $\Delta x = 4/300 \approx 0,0133$.
+
+#+ATTR_HTML: :width 300px
+[[file:tarefa-1/tarefa-1c-graf-11820833.jpg]]
+
+Observe que temos uma pequena perda de precisão associado a $\Delta x$. Talvez devessemos ter buscado alterar $\Delta t$ no lugar. De qualquer forma, a perda de precisão mais interessante é visível basicamente no final, quando começa a ter pequenas ondinhas sendo deixadas para trás pelo nosso sinal original.
+
+Essas ondinhas são uma deformação, no sentido em que tiram informação da nossa onda original, mas não podemos compará-lo ao erro que tinhamos para $r =2$
+
+Não há nada de catrastófico nesse erro
+
+* Ondas da corda do Violão
+
+Temos essencialmente o mesmo problema, só precisamos alterar $Y_0$. Os resultados estão
+a seguir
 
 
-[[file:tarefa-1/tarefa-1a-graf-11820833.jpg]]
+#+name: tarefa-2
+#+caption: Código da tarefa 2: Modelação de ondas Gaussianas
+#+begin_src fortran :tangle tarefa-2/tarefa-2-11820833.f90
+program geraOnda
+    use rotinasDaOnda
+    implicit none
+    real*8, parameter :: L = 1.d0, c = 300.d0
+    real*8, parameter :: r = 1.d0, dt = 1.d0/90000.d0, dx = dt*c/r
+    integer, parameter :: size_x = nint(L/dx), size_t = 300
+    real*8, dimension(size_x) :: ondaAnterior, ondaAtual, ondaPosterior
+
+    integer :: i
+    open(1, file="saida-2")
+
+    ! Enforça condição para t = 0
+    do i = 1, size_x
+        ondaAtual(i) = Y0(i, size_x, dx)
+    end do
+    ondaAnterior(:) = ondaAtual(:)
+
+    ! Perceba que aqui efetivamente impomos as condições de contorno
+    ondaPosterior = 0.d0
+
+    call imprimeOnda(ondaAnterior, size_x)
+
+    do i = 2, size_t
+        call imprimeOnda(ondaAtual, size_x)
+        call propagaOnda(ondaAnterior, ondaAtual, ondaPosterior, r, size_x)
+        call dancaDaCadeira(ondaAnterior, ondaAtual, ondaPosterior)
+    end do
+    call imprimeOnda(ondaAtual, size_x)
+
+    close(1)
+end program geraOnda
+
+
+module rotinasDaOnda
+    implicit none
+
+    contains
+    function Y0(i, size_x, dx)
+        real*8, intent(in) :: dx
+        integer, intent(in) :: i, size_x
+        real*8 :: x, Y0, L
+
+        x = (i-1)*dx
+        L = (size_x - 1)* dx
+        if (i .le. size_x/4 + 1) then
+            Y0 = x
+        else
+           Y0 = 1.d0/3.d0 *  (L - x)
+        endif
+    end function Y0
+
+
+    subroutine propagaOnda(ondaAnterior, ondaAtual, ondaPosterior, r, size_x)
+        real*8, intent(in) :: ondaAnterior(:), ondaAtual(:), r
+        integer, intent(in) :: size_x
+        real*8, intent(out) ::  ondaPosterior(:)
+        ondaPosterior(2:size_x-1) =&
+            2*(1-r**2)*ondaAtual(2:size_x-1) - ondaAnterior(2:size_x-1) &
+            + (r**2)*(ondaAtual(3:size_x) + ondaAtual(1:size_x-2))
+    end subroutine propagaOnda
+
+
+    subroutine dancaDaCadeira(ondaAnterior, ondaAtual,  ondaPosterior)
+        real*8, intent(inout) :: ondaAnterior(:), ondaAtual(:)
+        real*8, intent(out) :: ondaPosterior(:)
+
+        ondaAnterior(:) = ondaAtual(:)
+        ondaAtual(:) = ondaPosterior(:)
+    end subroutine dancaDaCadeira
+
+
+    subroutine imprimeOnda(ondaAtual, size_x)
+        real*8, intent(in) :: ondaAtual(:)
+        integer :: size_x, i
+        write(1, '(3000F16.8)') (ondaAtual(i), i=1,size_x)
+    end subroutine imprimeOnda
+end module rotinasDaOnda
+#+end_src
+
+Usamos novamente os mesmos valores de $\Delta x$ e $\Delta t$.
+
+** Para $r = 1$
+
+O resultado está na figura a seguir
+
+#+ATTR_HTML: :width 300px
+[[file:tarefa-2/tarefa-2a-graf-11820833.jpg]]
+
+*** Ia2 - Deformação
+Novamente, notamos que o pacote não se deforma, embora seja
+um pouco mais difícil de reparar numa onda tão grande e com uma amplitude tão pequena.
+
+*** Ia3 - Reflexão
+Aqui é um pouco difícil notar a reflexão, mas podemos ver
+ela acontecendo entre $n = 50$ e $n = 100$ ou entre
+$n = 200$ e $n = 250$. Mas é mais difícil.
+
+*** Ia4 - Interferências
+As interferências construtivas podem ser notadas em $n = 0$ e $n = 300$
+
+
+*** Ia4 - Repetição da condição inicial
+Novamente, a condição inicial se repete em
+$n = 600$, quando teremos caminhado $\Delta t \cdot 600 \cdot v = 2L$
+e os sinais terão retornado a condição inicial.
+
+** Para $r = 2$
+
+Usando o mesmo $\Delta x$ e $\Delta t$ da tarefa 1, obtemos:
+#+ATTR_HTML: :width 100px
+[[file:tarefa-2/tarefa-2b-graf-11820833.jpg]]
+
+Ainda mais bizarra que a gaussiana, essa onda
+possui uma divergência extremamente localizada.
+
+O fato dela acontecer na 6º iteração mostra o quão
+destrutivo $r > 1$ é.
+
+
+
+** Para $r = 0,25$
+
+Usando o mesmo $\Delta x$ e $\Delta t$ da tarefa 1, obtemos:
+#+ATTR_HTML: :width 300px
+[[file:tarefa-2/tarefa-2c-graf-11820833.jpg]]
+
+A diferença é ainda mais difícil de ver!
+Mas notamos uma pequena deformação. O topo da onda no final é
+menos pontudo e mais arredondado, e isso corresponde
+as pequenas deformações que viamos na onda gaussiana!
+
 * Notebook configuration :noexport:
 
 :PROPERTIES:
@@ -155,11 +356,11 @@ This section is used for configuring various settings in the notebook appearance
 :VISIBILITY: folded
 :END:
 
-#+TITLE:        [[https://edisciplinas.usp.br/pluginfile.php/7581904/mod_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf][ANÁLISE ESPECTRAL POR@@latex:\\@@ @@html:<br>@@ @@latex:\\@@ @@html:<br>@@TRANSFORMADAS DE FOURIER]]
-#+SUBTITLE:     Edgard Macena Cabral Nº 11820833 @@latex:\\@@ @@html:<br>@@ Março 2023
+#+TITLE:        EQUACÕES DE ONDA
+#+SUBTITLE:     Edgard Macena Cabral Nº 11820833 @@latex:\\@@ @@html:<br>@@ Abril 2023
 #+AUTHOR:       Edgard Macena Cabral
 #+EMAIL:        edgardmacena@usp.br
-#+DATE:         Março 2023
+#+DATE:         Abril 2023
 #+DESCRIPTION:  A GNU Emacs notebook demonstration
 #+OPTIONS:      toc:nil
 ** HTML export configuration

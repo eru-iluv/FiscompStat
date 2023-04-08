@@ -5,7 +5,7 @@ set output "tarefa-1b-graf-11820833.tex"
 set title "Evolução da onda com o tempo" 
 
 set ylabel "Iteração $(n)$"
-set xlabel "Espaço $(L)$"
+set xlabel "Espaço $(m)$"
 # set size sq
 unset key
 set pointsize 0.1
