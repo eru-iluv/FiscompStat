@@ -1,0 +1,424 @@
+#+SETUPFILE:  ../../setup-file.org
+
+* Introdução
+Nesse projeto, estamos interessados em misturar o que
+fizemos nos dois projetos anteriores. Notoriamente,
+vamos usar a equação discretizada da onda,
+que, quando unida as condições de contorno, nos permite
+descrever ondas lineares. E observar o resultado para diferentes pontos iniciais da onda.
+
+
+
+#+name: Automota da onda
+#+begin_latex
+\begin{equation}
+  y(i,n+1) = 2[1-r^2] 2y(i,n) + r^{2}\left[y(i+1,n) + y(i-1, n)\right] - y(i, n-1)
+\end{equation}
+#+end_latex
+
+e a transformada discretizada de Fourier
+
+#+begin_latex
+\begin{equation}
+\label{eq:Transformada discreta}
+Y_k = \sum_{j=0}^{j < N/2} y_j e^{2\pi jk i/N}
+\end{equation}
+#+end_latex
+
+Com o detalhe de que medimos o espectro de
+potências, isso é
+
+\[P_k = \mathbb{I}(Y_{k})^2 +  \mathbb{R}(Y_{k})^2 \]
+
+
+A questão principal se torna: como as frequências
+observadas em um ponto dependem da posição inicial
+da onda.
+
+Poderíamos pensar, pela natureza de um sinal \(y (t  + T) = y (t)\),
+isto é, por ele sempre se repetir, com a posição inicial
+sendo apenas uma fase, que as frequências observadas
+não dependeriam.
+
+Mas sabemos que séries de Fourier não são únicas e,
+pensando com cuidado, podemos nos lembrar que os
+harmônicos apresentam nós. Se posicionamos nossa
+observação em um ponto que, por azar, seja o nó de
+uma das frequências do sinal, (alás!) não poderemos
+observa-la.
+
+Essa questão que buscamos entender nesse projeto.
+
+* Módulos usados
+
+Buscamos modularizar os projetos anteriores de maneira
+a podermos reusa-los nesse. Os arquivos produzidos
+estão a seguir:
+
+** Módulo da transformada de Fourier
+#+caption: Módulo da Transformada de Fourier
+#+begin_src fortran :tangle modulos/fourierMod.f90
+module fourierMod
+    implicit none
+    public :: escreveFrequencias
+
+contains
+
+    subroutine escreveFrequencias(y_t, dt, N, file)
+        real*8, intent(in) :: dt, y_t(:)
+        real*8 :: frequencia
+        integer :: k, N, M, file
+        complex*16 :: currYk
+
+        ! M é o maior natural < N/2
+        M = floor((N-1)/2.d0)
+        write(*,*) "M (M/2-1): ", M, "N :", N
+        do k = 0, M
+            currYk = Yk(k, y_t, N)
+            frequencia = k/(N*dt)
+            write(file,'(3000F20.8)') frequencia, &
+                real(currYk)**2 + aimag(currYk)**2
+        end do
+    end subroutine escreveFrequencias
+
+    complex*16  function Yk(k, y_t, N)
+        integer, intent(in) :: k
+        integer, intent(in) :: N
+        real*8:: y_t(:)
+        complex*16 :: i = (0,1)
+        real*8, parameter :: pi = acos(-1.d0)
+        integer :: j
+        Yk = (0,0)
+        somatoria : do  j = 1, N
+            Yk = Yk + y_t(j)*exp(2.d0*pi*i*j*k/N)
+        end do somatoria
+    end function Yk
+
+end module fourierMod
+
+#+end_src
+
+Note aqui que não estamos diferenciando os
+senos dos cossenos, observando apenas a
+"potência" associada a frequência
+
+** Módulo de ondas
+e
+
+#+caption: Módulo de Ondas
+#+begin_src fortran :tangle modulos/ondasMod.f90
+module ondasMod
+    implicit none
+    public :: Gaussiana, dancaDaCadeira, propagaPresoPreso, imprimeOnda
+
+    contains
+    function Gaussiana(i, dx, x0, sigma)
+        real*8, intent(in) :: dx, x0, sigma
+        integer, intent(in) :: i
+        real*8 :: x, Gaussiana
+            x = i*dx
+            Gaussiana = exp(-1*((x-x0)/sigma)**2)
+    end function Gaussiana
+
+
+    subroutine propagaPresoPreso(ondaAnterior, ondaAtual, ondaPosterior, r, size_x)
+        real*8, intent(in) :: ondaAnterior(:), ondaAtual(:), r
+        integer, intent(in) :: size_x
+        real*8, intent(out) ::  ondaPosterior(:)
+
+        ! y_n+1(i) = 2(1-r^2)*y_n(i) - y_n-1(i) + r^2*y_n(i+1) + y_n(i-1)
+        ondaPosterior(2:size_x-1) =&
+            2*(1-r**2)*ondaAtual(2:size_x-1) - ondaAnterior(2:size_x-1) &
+            + (r**2)*(ondaAtual(3:size_x) + ondaAtual(1:size_x-2))
+    end subroutine propagaPresoPreso
+
+
+    subroutine propagaPresoLivre(ondaAnterior, ondaAtual, ondaPosterior, r, size_x)
+        real*8, intent(in) :: ondaAnterior(:), ondaAtual(:), r
+        integer, intent(in) :: size_x
+        real*8, intent(out) ::  ondaPosterior(:)
+        ondaPosterior(2:size_x-1) =&
+            2*(1-r**2)*ondaAtual(2:size_x-1) - ondaAnterior(2:size_x-1) &
+            + (r**2)*(ondaAtual(3:size_x) + ondaAtual(1:size_x-2))
+
+        ! Derivada na ponta livre é nula
+        ondaPosterior(size_x) =  ondaPosterior(size_x-1)
+    end subroutine propagaPresoLivre
+
+
+    subroutine dancaDaCadeira(ondaAnterior, ondaAtual,  ondaPosterior)
+        real*8, intent(inout) :: ondaAnterior(:), ondaAtual(:)
+        real*8, intent(out) :: ondaPosterior(:)
+
+        ondaAnterior(:) = ondaAtual(:)
+        ondaAtual(:) = ondaPosterior(:)
+    end subroutine dancaDaCadeira
+
+
+    subroutine imprimeOnda(ondaAtual, file, size_x)
+        real*8, intent(in) :: ondaAtual(:)
+        integer :: size_x, file
+        integer :: i
+        write(file, '(3000F16.8)') (ondaAtual(i), i=1,size_x)
+    end subroutine imprimeOnda
+end module ondasMod
+
+#+end_src
+
+
+* Programa principal
+
+Para realizar os estudos de frequências obtidas,
+usamos o programa a seguir, colocado no diretório
+da tarefa (a) e com a observação das frequências
+ocorrendo em torno de \(L_{observado} = L/4\)
+
+#+caption: Programa Principal
+#+begin_src fortran :tangle tarefa-a/tarefa-a-11820833.f90
+program tarefa_a
+    use fourierMod
+    use ondasMod
+    implicit none
+
+    real(8), parameter :: L = 1.d0, c = 300.d0
+    real(8), parameter :: r = 1.d0, dx = 1.0/200.d0, dt = dx*r/c
+    integer, parameter :: size_x = L/dx + 1, size_t = 1/(3*dt)
+    real(8), dimension(size_x) :: ondaAnterior, ondaAtual, ondaPosterior
+    real(8), dimension(size_t) :: pontoGravado ! y(L/4 ,t)
+    integer :: i
+
+    ! Ajustamos as condições iniciais
+    ondaAtual = 0.d0
+    do i = 2, size_x-1
+        ondaAtual(i) = Gaussiana(i-1, dx, L/2.d0, L/30.d0)
+    end do
+    ondaAnterior(:) = ondaAtual(:) ! Fazemos ponto inicial
+
+    ondaPosterior = 0.d0
+    pontoGravado(1) = ondaAnterior((size_x-1)/4+1) ! Iniciamos gravação de L/4
+
+
+    do i = 2, size_t
+        pontoGravado(i) = ondaAtual((size_x-1)/4+1)
+        call propagaPresoPreso(ondaAnterior, ondaAtual, ondaPosterior, r, size_x)
+        call dancaDaCadeira(ondaAnterior, ondaAtual, ondaPosterior)
+    end do
+
+    open(1, file="saida")
+    call escreveFrequencias(pontoGravado, dt, size_t, 1)
+    close(1)
+end program tarefa_a
+#+end_src
+
+
+onde apenas alteramos as condiçõs iniciais ou a
+propagação conforme o necessário.
+
+* Tarefa (a)
+
+** Condições e resultados
+#+attr_html: :width 200px
+file:tarefa-a/tarefa-a1-graf-11820833.jpg
+
+Para a tarefa (a), usamos o pacote gaussiano,
+com nós fixos, centrada em torno de
+\(L_{0} = \frac{L}{2}\), com
+\( \sigma = \frac{L}{30}\).
+
+Os resultados obtidos estão a seguir
+
+[[file:tarefa-a/tarefa-a-graf-11820833.jpg]]
+
+Onde obsevamos que as freqências \(2n\cdot 150Hz\)
+estão faltando.
+
+** Conclusão sobre os resultados
+
+A ausência de modos normais pares esperado!
+
+Considerando o caráter da onda,
+com uma subida bem definida em torno de
+\(L = L_0\), seria estranho esperar
+encontrar modos pares, que estariam
+agindo destrutivamente justo no ponto
+de maior amplitude do sinal.
+
+Por causa disso, não conseguimos notar
+nenhum obscuração de frequências resultante
+da posição que estamos observando,
+que deve ocorrer apenas com modos
+normais múltiplos de 4.
+
+O modo fundamental observado,
+\(f_{fundamental} = 150Hz\), também nos
+é esperado! Já sabemos do projeto anterior
+que o comprimento de onda desse sinal é
+\(\lambda = 2m\) e a velocidade foi
+explicitada no código como \(v = 300 m/s\).
+Nada mais esperado que a nossa
+frequência fundamenetal obtida.
+
+
+* Tarefa (b)
+** Condições e resultados
+Para tarefa (b), apenas alteramos
+\(L_0\) para \(\frac{L}{4}\)
+
+O resultado obtido está a seguir
+
+[[file:tarefa-b/tarefa-b-graf-11820833.jpg]]
+
+Obsevamos que os modos normais associados
+a 4 vezes a frequência inicial estão ausentes.
+Ademais as frequências pares restantes
+são muito mais potentes que as frequências
+ímpares
+
+** Conclusão sobre os resultados
+
+
+* Notebook configuration :noexport:
+
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+This section is used for configuring various settings in the notebook appearance as well as defining various options for the export in HTML or PDF formats. You can change any of these settings.
+** Document information
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+TITLE:        [[https://edisciplinas.usp.br/pluginfile.php/7668052/mod_resource/content/1/projeto-fiscompII-terceiro-2023.pdf][EQUACÕES DE ONDA II @@latex:\\@@ @@html:<br>@@ @@latex:\\@@ @@html:<br>@@  Análise de Fourier]]
+#+SUBTITLE:     Edgard Macena Cabral Nº 11820833 @@latex:\\@@ @@html:<br>@@ Abril 2023
+#+AUTHOR:       Edgard Macena Cabral
+#+EMAIL:        edgardmacena@usp.br
+#+DATE:         Abril 2023
+#+DESCRIPTION:  A GNU Emacs notebook demonstration
+#+OPTIONS:      toc:nil
+** HTML export configuration
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_export html
+#+end_export
+
+#+OPTIONS:   num:nil
+#+OPTIONS:   html-style:nil
+#+OPTIONS:   html-scripts:nil
+#+OPTIONS:   html-postamble:nil
+#+OPTIONS:   broken-links:mark
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../../notebook.css"/>
+
+** PDF export configuration
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_export PDF
+#+end_export
+
+#+OPTIONS:
+
+** Code snippets
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+*** Notebook setup :lisp:
+
+#+name: setup
+#+header:
+#+begin_src emacs-lisp :results none :exports none :eval no-export
+(setq org-cite-csl-styles-dir ".")
+(setq org-babel-python-command "/opt/anaconda3/bin/python")
+(require 'ob-python)
+(require 'oc-csl)
+nil
+#+end_src
+
+*** Notebook run :lisp:
+
+#+name: run
+#+header: :var scope="all"
+#+begin_src emacs-lisp :results none :exports none :eval never
+(org-babel-execute-buffer)
+nil
+#+end_src
+
+*** Notebook export :lisp:
+
+#+name: export
+#+header: :var target="html"
+#+begin_src emacs-lisp :results none :exports none :eval never
+(cond (((string= target "html")   (org-html-export-to-html))
+       ((string= target "pdf")    (org-latex-export-to-pdf))
+       ((string= target "tex")    (org-latex-export-to-latex))
+       ((string= target "latex")  (org-latex-export-to-latex))
+       (t  (message (format "Unknow backend (%s) for export" target)))))
+#+end_src
+
+*** Notebook information :lisp:
+
+#+name: document-info
+#+header: :var python=python-version emacs=emacs-version org=org-version
+#+begin_src python :results raw :exports results
+return f"{emacs}, {org} & {python}"
+#+end_src
+#+RESULTS: document-info
+
+*** Emacs version :lisp:
+
+#+name: emacs-version
+#+begin_src emacs-lisp :export none :results raw
+(format "[[https://www.gnu.org/software/emacs/][Emacs]] %d.%d"
+        emacs-major-version emacs-minor-version)
+#+end_src
+#+RESULTS: emacs-version
+
+*** Org mode version :lisp:
+
+#+name: org-version
+#+begin_src emacs-lisp :export none :results raw
+(format "[[https://www.gnu.org/software/emacs/][Org mode]] %s"
+        (org-version nil nil))
+#+end_src
+#+RESULTS: org-version
+
+*** Python version :python:
+
+#+name: python-version
+#+begin_src python :export none :results raw
+import platform
+version = platform.python_version()
+return f"[[https://www.python.org/][Python]] {version}"
+#+end_src
+
+*** Matplotlib figure preparation :python:
+
+#+name: pyfig-pre
+#+header: :var width=8 height=1
+#+begin_src python :results file :exports none
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+fig = plt.figure(figsize=(width,height))
+ax = fig.add_axes([0,0,1,1], frameon=False)
+ax.axis("off")
+#+end_src
+
+*** Matplotlib figure finalization :python:
+
+#+name: pyfig-post
+#+header: :var filename=""
+#+begin_src python :results file :exports none
+if filename:
+    plt.savefig(filename, dpi=300)
+    return filename
+return ""
+#+end_src
+
+#+RESULTS: pyfig-post
+[[file:]]
