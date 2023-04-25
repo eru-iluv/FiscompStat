@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-04-24 Mon 21:40 -->
+<!-- 2023-04-24 Mon 22:15 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>[[https://edisciplinas.usp.br/pluginfile.php/7668052/mod_resource/content/1/projeto-fiscompII-terceiro-2023.pdf][EQUACÕES DE ONDA II @@latex:\\@@ @@html:&lt;br&gt;@@ @@latex:\\@@ @@html:&lt;br&gt;@@  Análise de Fourier]]</title>
@@ -51,9 +51,9 @@
 <span class="subtitle">Edgard Macena Cabral Nº 11820833  <br> Abril 2023</span>
 </h1>
 
-<div id="outline-container-orgfe302b7" class="outline-2">
-<h2 id="orgfe302b7">Introdução</h2>
-<div class="outline-text-2" id="text-orgfe302b7">
+<div id="outline-container-org82fe9ae" class="outline-2">
+<h2 id="org82fe9ae">Introdução</h2>
+<div class="outline-text-2" id="text-org82fe9ae">
 <p>
 Nesse projeto, estamos interessados em misturar o que
 fizemos nos dois projetos anteriores. Notoriamente,
@@ -64,7 +64,7 @@ descrever ondas lineares. E observar o resultado para diferentes pontos iniciais
 
 
 
-<div class="latex" id="orgf1181ee">
+<div class="latex" id="org3f5dbba">
 \begin{equation}
   y(i,n+1) = 2[1-r^2] 2y(i,n) + r^{2}\left[y(i+1,n) + y(i-1, n)\right] - y(i, n-1)
 \end{equation}
@@ -75,7 +75,7 @@ descrever ondas lineares. E observar o resultado para diferentes pontos iniciais
 e a transformada discretizada de Fourier
 </p>
 
-<div class="latex" id="orgbc0f778">
+<div class="latex" id="org18d2aa5">
 \begin{equation}
 \label{eq:Transformada discreta}
 Y_k = \sum_{j=0}^{j < N/2} y_j e^{2\pi jk i/N}
@@ -121,9 +121,9 @@ Essa questão que buscamos entender nesse projeto.
 </div>
 </div>
 
-<div id="outline-container-org1c3e155" class="outline-2">
-<h2 id="org1c3e155">Módulos usados</h2>
-<div class="outline-text-2" id="text-org1c3e155">
+<div id="outline-container-org6da7e88" class="outline-2">
+<h2 id="org6da7e88">Módulos usados</h2>
+<div class="outline-text-2" id="text-org6da7e88">
 <p>
 Buscamos modularizar os projetos anteriores de maneira
 a podermos reusa-los nesse. Os arquivos produzidos
@@ -131,9 +131,9 @@ estão a seguir:
 </p>
 </div>
 
-<div id="outline-container-org55ed428" class="outline-3">
-<h3 id="org55ed428">Módulo da transformada de Fourier</h3>
-<div class="outline-text-3" id="text-org55ed428">
+<div id="outline-container-org5ce903c" class="outline-3">
+<h3 id="org5ce903c">Módulo da transformada de Fourier</h3>
+<div class="outline-text-3" id="text-org5ce903c">
 <div class="org-src-container">
 <label class="org-src-name"><span class="listing-number">Listing 1: </span>Módulo da Transformada de Fourier</label><pre class="src src-fortran">module fourierMod
     <span style="color: #FCCE7B;">implicit none</span>
@@ -184,9 +184,9 @@ senos dos cossenos, observando apenas a
 </div>
 </div>
 
-<div id="outline-container-orgd94cb33" class="outline-3">
-<h3 id="orgd94cb33">Módulo de ondas</h3>
-<div class="outline-text-3" id="text-orgd94cb33">
+<div id="outline-container-org29b61ef" class="outline-3">
+<h3 id="org29b61ef">Módulo de ondas</h3>
+<div class="outline-text-3" id="text-org29b61ef">
 <p>
 e
 </p>
@@ -255,9 +255,9 @@ e
 </div>
 
 
-<div id="outline-container-orgc789ce3" class="outline-2">
-<h2 id="orgc789ce3">Programa principal</h2>
-<div class="outline-text-2" id="text-orgc789ce3">
+<div id="outline-container-org03c0368" class="outline-2">
+<h2 id="org03c0368">Programa principal</h2>
+<div class="outline-text-2" id="text-org03c0368">
 <p>
 Para realizar os estudos de frequências obtidas,
 usamos o programa a seguir, colocado no diretório
@@ -310,15 +310,15 @@ propagação conforme o necessário.
 </div>
 </div>
 
-<div id="outline-container-org7c26c85" class="outline-2">
-<h2 id="org7c26c85">Tarefa (a)</h2>
-<div class="outline-text-2" id="text-org7c26c85">
+<div id="outline-container-orga67b607" class="outline-2">
+<h2 id="orga67b607">Tarefa a (\(L_0 = L/2\))</h2>
+<div class="outline-text-2" id="text-orga67b607">
 </div>
-<div id="outline-container-org8dbb8c7" class="outline-3">
-<h3 id="org8dbb8c7">Condições e resultados</h3>
-<div class="outline-text-3" id="text-org8dbb8c7">
+<div id="outline-container-org983ccc3" class="outline-3">
+<h3 id="org983ccc3">Condições e resultados</h3>
+<div class="outline-text-3" id="text-org983ccc3">
 
-<div id="orga96442b" class="figure">
+<div id="org2655936" class="figure">
 <p><img src="tarefa-a/tarefa-a1-graf-11820833.jpg" alt="tarefa-a1-graf-11820833.jpg" width="200px" />
 </p>
 </div>
@@ -335,7 +335,7 @@ Os resultados obtidos estão a seguir
 </p>
 
 
-<div id="orgcb30076" class="figure">
+<div id="orgec54100" class="figure">
 <p><img src="tarefa-a/tarefa-a-graf-11820833.jpg" alt="tarefa-a-graf-11820833.jpg" />
 </p>
 </div>
@@ -347,9 +347,9 @@ estão faltando.
 </div>
 </div>
 
-<div id="outline-container-orgd88ca97" class="outline-3">
-<h3 id="orgd88ca97">Conclusão sobre os resultados</h3>
-<div class="outline-text-3" id="text-orgd88ca97">
+<div id="outline-container-orgab22299" class="outline-3">
+<h3 id="orgab22299">Conclusão sobre os resultados</h3>
+<div class="outline-text-3" id="text-orgab22299">
 <p>
 A ausência de modos normais pares esperado!
 </p>
@@ -386,13 +386,13 @@ frequência fundamenetal obtida.
 </div>
 
 
-<div id="outline-container-orgc091883" class="outline-2">
-<h2 id="orgc091883">Tarefa (b)</h2>
-<div class="outline-text-2" id="text-orgc091883">
+<div id="outline-container-org7ea561e" class="outline-2">
+<h2 id="org7ea561e">Tarefa b (\(L_0 = L/4\))</h2>
+<div class="outline-text-2" id="text-org7ea561e">
 </div>
-<div id="outline-container-org689647c" class="outline-3">
-<h3 id="org689647c">Condições e resultados</h3>
-<div class="outline-text-3" id="text-org689647c">
+<div id="outline-container-org7581911" class="outline-3">
+<h3 id="org7581911">Condições e resultados</h3>
+<div class="outline-text-3" id="text-org7581911">
 <p>
 Para tarefa (b), apenas alteramos
 \(L_0\) para \(\frac{L}{4}\)
@@ -403,7 +403,7 @@ O resultado obtido está a seguir
 </p>
 
 
-<div id="orgc250e3a" class="figure">
+<div id="orgce3f30a" class="figure">
 <p><img src="tarefa-b/tarefa-b-graf-11820833.jpg" alt="tarefa-b-graf-11820833.jpg" />
 </p>
 </div>
@@ -418,8 +418,59 @@ são muito mais potentes que as frequências
 </div>
 </div>
 
-<div id="outline-container-org20b656c" class="outline-3">
-<h3 id="org20b656c">Conclusão sobre os resultados</h3>
+<div id="outline-container-orgd2466c7" class="outline-3">
+<h3 id="orgd2466c7">Conclusão sobre os resultados</h3>
+<div class="outline-text-3" id="text-orgd2466c7">
+<p>
+Faz sentido que uma onda cujo máximo
+está em \(L/4\) seja melhor representado
+com frequências de senos que tenham
+máximos no entorno desse valor. embora
+nunca nele.
+</p>
+
+<p>
+Esse último fato pode nos ajudar a explicar
+os termos (muito fracos) dos modos normais
+ímpares. Eles parecem refletir um toque de
+mestre na onda, para caracterizar o máximo
+bem definido da Gaussiana.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9afe20f" class="outline-2">
+<h2 id="org9afe20f">Tarefa c (\(L_0 = L/3\))</h2>
+<div class="outline-text-2" id="text-org9afe20f">
+</div>
+<div id="outline-container-org31b7476" class="outline-3">
+<h3 id="org31b7476">Condições e resultados</h3>
+<div class="outline-text-3" id="text-org31b7476">
+<p>
+Para tarefa (c), alteramos
+\(L_0\) para \(\frac{L}{3}\)
+</p>
+
+<p>
+O resultado obtido está a seguir
+</p>
+
+
+<div id="org2a4f407" class="figure">
+<p><img src="tarefa-c/tarefa-c-graf-11820833.jpg" alt="tarefa-c-graf-11820833.jpg" />
+</p>
+</div>
+
+<p>
+Álas! Os modos normais ausentes dessa parecem
+bem mais patológicos.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5f0522a" class="outline-3">
+<h3 id="org5f0522a">Conclusão sobre os resultados</h3>
 </div>
 </div>
 </div>

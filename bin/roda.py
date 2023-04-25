@@ -7,13 +7,14 @@ import re
  
 
 try:
-    nomeArquivo, extensao = re.split(sys.argv[1])
+    nomeArquivo, extensao = sys.argv[1].split(".")
+    extensao = ".f90"
 except:
     nomeArquivo = sys.argv[1]
     extensao = ".f90"
 
 # Queremos pegar a tarefa relacionada ao arquivo
-pastaArquivo = re.findall(r"([a-z]+-\d)", nomeArquivo)[0]
+pastaArquivo = re.findall(r"([a-z]+-.)", nomeArquivo)[0]
 pastaArquivo = pastaArquivo + "/"
 
 if ( not os.path.isfile(pastaArquivo+nomeArquivo+extensao)):

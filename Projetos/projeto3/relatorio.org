@@ -214,7 +214,7 @@ end program tarefa_a
 onde apenas alteramos as condiçõs iniciais ou a
 propagação conforme o necessário.
 
-* Tarefa (a)
+* Tarefa a (\(L_0 = L/2\))
 
 ** Condições e resultados
 #+attr_html: :width 200px
@@ -259,7 +259,7 @@ Nada mais esperado que a nossa
 frequência fundamenetal obtida.
 
 
-* Tarefa (b)
+* Tarefa b (\(L_0 = L/4\))
 ** Condições e resultados
 Para tarefa (b), apenas alteramos
 \(L_0\) para \(\frac{L}{4}\)
@@ -273,6 +273,33 @@ a 4 vezes a frequência inicial estão ausentes.
 Ademais as frequências pares restantes
 são muito mais potentes que as frequências
 ímpares
+
+** Conclusão sobre os resultados
+
+Faz sentido que uma onda cujo máximo
+está em \(L/4\) seja melhor representado
+com frequências de senos que tenham
+máximos no entorno desse valor. embora
+nunca nele.
+
+Esse último fato pode nos ajudar a explicar
+os termos (muito fracos) dos modos normais
+ímpares. Eles parecem refletir um toque de
+mestre na onda, para caracterizar o máximo
+bem definido da Gaussiana.
+
+* Tarefa c (\(L_0 = L/3\))
+
+** Condições e resultados
+Para tarefa (c), alteramos
+\(L_0\) para \(\frac{L}{3}\)
+
+O resultado obtido está a seguir
+
+[[file:tarefa-c/tarefa-c-graf-11820833.jpg]]
+
+Álas! Os modos normais ausentes dessa parecem
+bem mais patológicos.
 
 ** Conclusão sobre os resultados
 

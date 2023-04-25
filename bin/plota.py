@@ -18,7 +18,7 @@ except:
     extensao = ".gp"
 
 extensao = ".gp"
-pastaArquivo = re.findall(r"(\w+-\d)", nomeArquivo)[0]
+pastaArquivo = re.findall(r"(\w+-.)", nomeArquivo)[0]
 pastaArquivo = pastaArquivo + "/"
 if (not os.path.isfile("gnuplot/"+nomeArquivo+extensao)):
     print(nomeArquivo+extensao)
