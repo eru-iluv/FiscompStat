@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-04-24 Mon 23:55 -->
+<!-- 2023-04-25 Tue 09:13 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>[[https://edisciplinas.usp.br/pluginfile.php/7668052/mod_resource/content/1/projeto-fiscompII-terceiro-2023.pdf][EQUACÕES DE ONDA II @@latex:\\@@ @@html:&lt;br&gt;@@ @@latex:\\@@ @@html:&lt;br&gt;@@  Análise de Fourier]]</title>
@@ -51,9 +51,9 @@
 <span class="subtitle">Edgard Macena Cabral Nº 11820833  <br> Abril 2023</span>
 </h1>
 
-<div id="outline-container-org00a4807" class="outline-2">
-<h2 id="org00a4807">Introdução</h2>
-<div class="outline-text-2" id="text-org00a4807">
+<div id="outline-container-orgcfe33de" class="outline-2">
+<h2 id="orgcfe33de">Introdução</h2>
+<div class="outline-text-2" id="text-orgcfe33de">
 <p>
 Nesse projeto, estamos interessados em misturar o que
 fizemos nos dois projetos anteriores. Notoriamente,
@@ -64,7 +64,7 @@ descrever ondas lineares. E observar o resultado para diferentes pontos iniciais
 
 
 
-<div class="latex" id="org62b93e2">
+<div class="latex" id="org0ee8104">
 \begin{equation}
   y(i,n+1) = 2[1-r^2] 2y(i,n) + r^{2}\left[y(i+1,n) + y(i-1, n)\right] - y(i, n-1)
 \end{equation}
@@ -75,7 +75,7 @@ descrever ondas lineares. E observar o resultado para diferentes pontos iniciais
 e a transformada discretizada de Fourier
 </p>
 
-<div class="latex" id="org716d6cf">
+<div class="latex" id="org0c53343">
 \begin{equation}
 \label{eq:Transformada discreta}
 Y_k = \sum_{j=0}^{j < N/2} y_j e^{2\pi jk i/N}
@@ -121,9 +121,9 @@ Essa questão que buscamos entender nesse projeto.
 </div>
 </div>
 
-<div id="outline-container-org5a86904" class="outline-2">
-<h2 id="org5a86904">Módulos usados</h2>
-<div class="outline-text-2" id="text-org5a86904">
+<div id="outline-container-orgc984259" class="outline-2">
+<h2 id="orgc984259">Módulos usados</h2>
+<div class="outline-text-2" id="text-orgc984259">
 <p>
 Buscamos modularizar os projetos anteriores de maneira
 a podermos reusa-los nesse. Os arquivos produzidos
@@ -131,9 +131,9 @@ estão a seguir:
 </p>
 </div>
 
-<div id="outline-container-org44debf2" class="outline-3">
-<h3 id="org44debf2">Módulo da transformada de Fourier</h3>
-<div class="outline-text-3" id="text-org44debf2">
+<div id="outline-container-org1fe8dbe" class="outline-3">
+<h3 id="org1fe8dbe">Módulo da transformada de Fourier</h3>
+<div class="outline-text-3" id="text-org1fe8dbe">
 <div class="org-src-container">
 <label class="org-src-name"><span class="listing-number">Listing 1: </span>Módulo da Transformada de Fourier</label><pre class="src src-fortran">module fourierMod
     <span style="color: #FCCE7B;">implicit none</span>
@@ -184,9 +184,9 @@ senos dos cossenos, observando apenas a
 </div>
 </div>
 
-<div id="outline-container-org1990af5" class="outline-3">
-<h3 id="org1990af5">Módulo de ondas</h3>
-<div class="outline-text-3" id="text-org1990af5">
+<div id="outline-container-org8b5aa41" class="outline-3">
+<h3 id="org8b5aa41">Módulo de ondas</h3>
+<div class="outline-text-3" id="text-org8b5aa41">
 <p>
 e
 </p>
@@ -255,9 +255,9 @@ e
 </div>
 
 
-<div id="outline-container-orge3131df" class="outline-2">
-<h2 id="orge3131df">Programa principal</h2>
-<div class="outline-text-2" id="text-orge3131df">
+<div id="outline-container-org79fb7b7" class="outline-2">
+<h2 id="org79fb7b7">Programa principal</h2>
+<div class="outline-text-2" id="text-org79fb7b7">
 <p>
 Para realizar os estudos de frequências obtidas,
 usamos o programa a seguir, colocado no diretório
@@ -310,15 +310,15 @@ propagação conforme o necessário.
 </div>
 </div>
 
-<div id="outline-container-org8c6a1c7" class="outline-2">
-<h2 id="org8c6a1c7">Tarefa a (\(L_0 = L/2\))</h2>
-<div class="outline-text-2" id="text-org8c6a1c7">
+<div id="outline-container-orgc2c053c" class="outline-2">
+<h2 id="orgc2c053c">Tarefa a (\(L_0 = L/2\))</h2>
+<div class="outline-text-2" id="text-orgc2c053c">
 </div>
-<div id="outline-container-org137e713" class="outline-3">
-<h3 id="org137e713">Condições e resultados</h3>
-<div class="outline-text-3" id="text-org137e713">
+<div id="outline-container-org6e3fbd8" class="outline-3">
+<h3 id="org6e3fbd8">Condições e resultados</h3>
+<div class="outline-text-3" id="text-org6e3fbd8">
 
-<div id="org2aa41f8" class="figure">
+<div id="org5d44e59" class="figure">
 <p><img src="tarefa-a/tarefa-a1-graf-11820833.jpg" alt="tarefa-a1-graf-11820833.jpg" width="200px" />
 </p>
 </div>
@@ -335,7 +335,7 @@ Os resultados obtidos estão a seguir
 </p>
 
 
-<div id="orgc516c94" class="figure">
+<div id="orgc6a5917" class="figure">
 <p><img src="tarefa-a/tarefa-a-graf-11820833.jpg" alt="tarefa-a-graf-11820833.jpg" />
 </p>
 </div>
@@ -347,9 +347,9 @@ estão faltando.
 </div>
 </div>
 
-<div id="outline-container-org881745e" class="outline-3">
-<h3 id="org881745e">Conclusão sobre os resultados</h3>
-<div class="outline-text-3" id="text-org881745e">
+<div id="outline-container-org74dedf8" class="outline-3">
+<h3 id="org74dedf8">Conclusão sobre os resultados</h3>
+<div class="outline-text-3" id="text-org74dedf8">
 <p>
 A ausência de modos normais pares esperado!
 </p>
@@ -386,13 +386,13 @@ frequência fundamenetal obtida.
 </div>
 
 
-<div id="outline-container-org3281087" class="outline-2">
-<h2 id="org3281087">Tarefa b (\(L_0 = L/4\))</h2>
-<div class="outline-text-2" id="text-org3281087">
+<div id="outline-container-org37d7b54" class="outline-2">
+<h2 id="org37d7b54">Tarefa b (\(L_0 = L/4\))</h2>
+<div class="outline-text-2" id="text-org37d7b54">
 </div>
-<div id="outline-container-org4ca7ab0" class="outline-3">
-<h3 id="org4ca7ab0">Condições e resultados</h3>
-<div class="outline-text-3" id="text-org4ca7ab0">
+<div id="outline-container-org1d3b28c" class="outline-3">
+<h3 id="org1d3b28c">Condições e resultados</h3>
+<div class="outline-text-3" id="text-org1d3b28c">
 <p>
 Para tarefa (b), apenas alteramos
 \(L_0\) para \(\frac{L}{4}\)
@@ -403,7 +403,7 @@ O resultado obtido está a seguir
 </p>
 
 
-<div id="org104b987" class="figure">
+<div id="orgee7bb52" class="figure">
 <p><img src="tarefa-b/tarefa-b-graf-11820833.jpg" alt="tarefa-b-graf-11820833.jpg" />
 </p>
 </div>
@@ -418,9 +418,9 @@ são muito mais potentes que as frequências
 </div>
 </div>
 
-<div id="outline-container-orgceb77f7" class="outline-3">
-<h3 id="orgceb77f7">Conclusão sobre os resultados</h3>
-<div class="outline-text-3" id="text-orgceb77f7">
+<div id="outline-container-org2ca012f" class="outline-3">
+<h3 id="org2ca012f">Conclusão sobre os resultados</h3>
+<div class="outline-text-3" id="text-org2ca012f">
 <p>
 Faz sentido que uma onda cujo máximo
 está em \(L/4\) seja melhor representado
@@ -440,13 +440,13 @@ bem definido da Gaussiana.
 </div>
 </div>
 
-<div id="outline-container-orgaa177e1" class="outline-2">
-<h2 id="orgaa177e1">Tarefa c (\(L_0 = L/3\))</h2>
-<div class="outline-text-2" id="text-orgaa177e1">
+<div id="outline-container-org7d85d15" class="outline-2">
+<h2 id="org7d85d15">Tarefa c (\(L_0 = L/3\))</h2>
+<div class="outline-text-2" id="text-org7d85d15">
 </div>
-<div id="outline-container-org3d73d8f" class="outline-3">
-<h3 id="org3d73d8f">Condições e resultados</h3>
-<div class="outline-text-3" id="text-org3d73d8f">
+<div id="outline-container-orgae21945" class="outline-3">
+<h3 id="orgae21945">Condições e resultados</h3>
+<div class="outline-text-3" id="text-orgae21945">
 <p>
 Para tarefa (c), alteramos
 \(L_0\) para \(\frac{L}{3}\)
@@ -457,8 +457,8 @@ O resultado obtido está a seguir
 </p>
 
 
-<div id="org46a1b60" class="figure">
-<p><img src="tarefa-c/tarefa-c-graf-11820833.jpg" alt="tarefa-c-graf-11820833.jpg" />
+<div id="orgc70d443" class="figure">
+<p><img src="tarefa-c/tarefa-c-graf1-11820833.jpg" alt="tarefa-c-graf1-11820833.jpg" />
 </p>
 </div>
 
@@ -475,9 +475,9 @@ simples: Faltam os modos normais múltiplos de
 </div>
 </div>
 
-<div id="outline-container-orga2ae871" class="outline-3">
-<h3 id="orga2ae871">Conclusão sobre os resultados</h3>
-<div class="outline-text-3" id="text-orga2ae871">
+<div id="outline-container-orgd1a1af4" class="outline-3">
+<h3 id="orgd1a1af4">Conclusão sobre os resultados</h3>
+<div class="outline-text-3" id="text-orgd1a1af4">
 <p>
 As frequência \(3n\cdot 150Hz\) estarem ausentes
 não surpreendem. Seus senos, em \(t = 0\) colaboram
@@ -487,10 +487,23 @@ faria delas um deserviço a nossa reprentação.
 </p>
 
 <p>
-Os máximos mais elvados tem forma \((2 + 4n)150HZ\)
-para \(2 + 4n\) não divísivel por \(3\).
-Mas não consegui entender o porquê
+Os máximos mais elevados são os modos normais
+pares. Isso se dá porque os modos pares que
+restam tem que absorver a potência dos
+múltiplos de 4.
 </p>
+
+<p>
+Para referência, um grafico absorvendo
+as frequências de tipo \(4n\cdot 150Hz\)
+está a seguir
+</p>
+
+
+<div id="org76b2af8" class="figure">
+<p><img src="tarefa-c/tarefa-c-graf2-11820833.jpg" alt="tarefa-c-graf2-11820833.jpg" />
+</p>
+</div>
 </div>
 </div>
 </div>

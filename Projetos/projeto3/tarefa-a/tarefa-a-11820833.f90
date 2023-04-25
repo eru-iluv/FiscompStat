@@ -11,7 +11,7 @@ program tarefa_a
     integer :: i
     ondaAtual = 0.d0
     do i = 2, size_x-1
-        ondaAtual(i) = Gaussiana(i-1, dx, L/2.d0, L/30.d0)
+        ondaAtual(i) = Gaussiana(i-1, dx, L/20.d0, L/30.d0)
     end do
     
     ondaPosterior = 0.d0
