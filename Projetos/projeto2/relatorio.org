@@ -52,7 +52,7 @@ Isto é, fizemos:
 \end{equation}
 #+end_latex
 
-Ademais, fizemos os parâmetros velocidade de onda $c = 300$m/s, comprimento de corda $L = 1$m,
+Ademais, fizemos os parâmetros velocidade de onda $c = 300$m/s, comprimento de corda  \(L = 1\)m,
 $x_0 = L/3$ e $\sigma = L/30$.
 
 Com isso em mente, fizemos o programa
