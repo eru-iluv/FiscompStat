@@ -11,7 +11,7 @@ set xlabel "Frequência ($Hz$)"
 set pointsize 2
 set xtics 150, 300, 6000
 set mxtics 2
-set grid mxtics xtics ls 100, ls 101
+set grid mxtics xtics ls 103, ls 100
 
 
 

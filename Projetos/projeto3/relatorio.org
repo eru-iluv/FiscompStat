@@ -301,8 +301,21 @@ O resultado obtido está a seguir
 Álas! Os modos normais ausentes dessa parecem
 bem mais patológicos.
 
+A ordem, bonita, na verdade esconde um padrão
+simples: Faltam os modos normais múltiplos de
+3 e 4.
+
 ** Conclusão sobre os resultados
 
+As frequência \(3n\cdot 150Hz\) estarem ausentes
+não surpreendem. Seus senos, em \(t = 0\) colaboram
+positivamente de um lado e negativamente de
+outro. Um comportamente que certamente
+faria delas um deserviço a nossa reprentação.
+
+Os máximos mais elvados tem forma \((2 + 4n)150HZ\)
+para \(2 + 4n\) não divísivel por \(3\).
+Mas não consegui entender o porquê
 
 * Notebook configuration :noexport:
 
