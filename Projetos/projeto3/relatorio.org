@@ -336,14 +336,9 @@ Para tarefa (d), alteramos
 
 O resultado obtido está a seguir
 
-[[file:tarefa-c/tarefa-d-graf-11820833.jpg]]
+[[file:tarefa-d/tarefa-d-graf-11820833.jpg]]
 
-Álas! Os modos normais ausentes dessa parecem
-bem mais patológicos.
-
-A ordem, bonita, na verdade esconde um padrão
-simples: Faltam os modos normais múltiplos de
-3 e 4.
+Um resultado bonito! A pr
 
 ** Conclusão sobre os resultados
 
