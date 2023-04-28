@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-03-24 sex 23:23 -->
+<!-- 2023-04-25 Tue 11:08 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>[[https://edisciplinas.usp.br/pluginfile.php/7581904/mod_resource/content/1/projeto-fiscompII-primeiro-2023-completo.pdf][ANÁLISE ESPECTRAL POR@@latex:\\@@ @@html:&lt;br&gt;@@ @@latex:\\@@ @@html:&lt;br&gt;@@TRANSFORMADAS DE FOURIER]]</title>
@@ -50,7 +50,7 @@
 <br />
 <span class="subtitle">Edgard Macena Cabral Nº 11820833  <br> Março 2023</span>
 </h1>
-<div class="abstract" id="org3cb1dd4">
+<div class="abstract" id="org48ea30c">
 <p>
 Nessa tarefa, buscamos analisar a Transformada Discreta de Fourier sem nenhuma aceleração. Criamos um programa que realiza a transformada e outro que realiza sua inversa.
 Observamos que, para alguns casos, essas operações são bem comportadas, e conseguimos recuperar o sinal sem dificuldades.
@@ -59,14 +59,14 @@ Por fim, vimos a relação entre o número N de pontos e o tempo de 50 execuçõ
 </p>
 
 </div>
-<div id="outline-container-orge2cfaff" class="outline-2">
-<h2 id="orge2cfaff">Introdução</h2>
-<div class="outline-text-2" id="text-orge2cfaff">
+<div id="outline-container-org3536452" class="outline-2">
+<h2 id="org3536452">Introdução</h2>
+<div class="outline-text-2" id="text-org3536452">
 <p>
 A transformada de Fourier é uma transformação que nos leva do espaço das amplitude de um sinal para um espaço de frequências. Para sinais contínuos, podemos escrever:
 </p>
 
-<div class="latex" id="org704d1b7">
+<div class="latex" id="org5d9929a">
 \begin{equation}
 Y(f) = \int^{\infty}_{-\infty}y(t)e^{2\pi f i t}
 \end{equation}
@@ -81,7 +81,7 @@ Porém, na física experimental, da análise da luminosidade de estrelas na busc
 Para adequar a transformada aos dados laboratoriais, usamos as substituições \(t_j = j\Delta t\), \(f_k = \frac{k}{N\Delta t}\), que nos dão:
 </p>
 
-<div class="latex" id="org2b5273b">
+<div class="latex" id="orga601c8f">
 \begin{equation}
 \label{eq:Transformada discreta}
 Y_k = \sum_{j=0}^{j < N/2} y_j e^{2\pi jk i/N}
@@ -93,7 +93,7 @@ Y_k = \sum_{j=0}^{j < N/2} y_j e^{2\pi jk i/N}
 Conseguimos também obter a inversa através de
 </p>
 
-<div class="latex" id="orgc5bfb1b">
+<div class="latex" id="org0cefde0">
 \begin{equation}
 \label{eq:Transformada inversa discreta}
 y_j = \frac{1}{k}\sum_{k=0}^{k < N/2} Y_ke^{-2\pi jk i/N}
@@ -109,7 +109,7 @@ Nessas equações, a razão de irmos apenas até \(k < N/2\) está ligada a freq
 Caso a frequência do sinal seja maior que a frequência de Nyquist, o gráfico, obtemos um pico relacionada à reflexão da verdadeira frequência do sinal com a de Nyquist.
 </p>
 
-<div class="latex" id="orgbf64048">
+<div class="latex" id="org4ffa53e">
 \begin{equation}
 \label{eq:Frequência encontrada}
   f_{encontrada} = 2f_{Nyquist} - f_{verdadeira}
@@ -124,13 +124,13 @@ Podemos estimar com facilidade a ordem do tempo de execução. Temos \(N\) termo
 </div>
 </div>
 
-<div id="outline-container-org9c4afd0" class="outline-2">
-<h2 id="org9c4afd0">Geração de dados</h2>
-<div class="outline-text-2" id="text-org9c4afd0">
+<div id="outline-container-org24ddbb8" class="outline-2">
+<h2 id="org24ddbb8">Geração de dados</h2>
+<div class="outline-text-2" id="text-org24ddbb8">
 <p>
 Para gerar os dados, usamos a equação a seguir:
 </p>
-<div class="latex" id="orgc3d7667">
+<div class="latex" id="orgaa29f4a">
 \begin{equation}
 y_{i} = a_{1}\cos{(\omega_{1}t_{i})} + a_{2}\sin(\omega_{2}t_{i})
 \end{equation}
@@ -203,7 +203,7 @@ Os resultados estão no gráfico a seguir
 </p>
 
 
-<div id="org4edba27" class="figure">
+<div id="org1a62dfe" class="figure">
 <p><img src="graficos/tarefa-2-graf-11820833.jpg" alt="tarefa-2-graf-11820833.jpg" />
 </p>
 <p><span class="figure-number">Figure 1: </span>Sinais gerados para os testes seguintes.</p>
@@ -218,9 +218,9 @@ Ao mesmo tempo \((a)\) e \((c)\) têm mesma amplitude, o que não chega a fazer 
 </div>
 
 
-<div id="outline-container-org9d2ee4e" class="outline-2">
-<h2 id="org9d2ee4e">Transformada de Fourier</h2>
-<div class="outline-text-2" id="text-org9d2ee4e">
+<div id="outline-container-orgf569b67" class="outline-2">
+<h2 id="orgf569b67">Transformada de Fourier</h2>
+<div class="outline-text-2" id="text-orgf569b67">
 <p>
 Para a Transformada de Fourier, usamos o programa a seguir:
 </p>
@@ -294,7 +294,7 @@ Desse programa, produzimos, para os nossos sinais, os seguintes gráficos de esp
 </p>
 
 
-<div id="orgcf48200" class="figure">
+<div id="org3a21330" class="figure">
 <p><img src="graficos/tarefa-1-graf-11820833.jpg" alt="tarefa-1-graf-11820833.jpg" />
 </p>
 </div>
@@ -328,11 +328,11 @@ Como é visto no gráfico!!
 </div>
 
 
-<div id="outline-container-orgc87bb25" class="outline-2">
-<h2 id="orgc87bb25">Outros Sinais</h2>
-<div class="outline-text-2" id="text-orgc87bb25">
+<div id="outline-container-org3277d00" class="outline-2">
+<h2 id="org3277d00">Outros Sinais</h2>
+<div class="outline-text-2" id="text-org3277d00">
 <p>
-Pelo mesmo programa da <a href="#org9c4afd0">Geração de dados</a> geramos os sinais a seguir
+Pelo mesmo programa da <a href="#org24ddbb8">Geração de dados</a> geramos os sinais a seguir
 </p>
 
 <p>
@@ -344,7 +344,7 @@ Pelo mesmo programa da <a href="#org9c4afd0">Geração de dados</a> geramos os s
 Os gráficos desses dois sinais são os seguintes:
 </p>
 
-<div id="org51054f1" class="figure">
+<div id="org086f529" class="figure">
 <p><img src="graficos/tarefa-3-graf-1-11820833.jpg" alt="tarefa-3-graf-1-11820833.jpg" width="300px" />
 </p>
 </div>
@@ -359,7 +359,7 @@ Podemos ver isso no gráfico da transformada para essas funções:
 </p>
 
 
-<div id="org555a876" class="figure">
+<div id="orgbfeb0b2" class="figure">
 <p><img src="graficos/tarefa-3-graf-2-11820833.jpg" alt="tarefa-3-graf-2-11820833.jpg" />
 </p>
 </div>
@@ -375,9 +375,9 @@ Não temos mais a recuperação analiticamente perfeita que tinhamos nas séries
 </div>
 </div>
 
-<div id="outline-container-org5461931" class="outline-2">
-<h2 id="org5461931">Transformada Inversa</h2>
-<div class="outline-text-2" id="text-org5461931">
+<div id="outline-container-orgcfa74f4" class="outline-2">
+<h2 id="orgcfa74f4">Transformada Inversa</h2>
+<div class="outline-text-2" id="text-orgcfa74f4">
 <p>
 Usamos, seguindo a \((3)\), o programa:
 </p>
@@ -436,7 +436,7 @@ Usamos, seguindo a \((3)\), o programa:
     <span style="color: #ECBE7B;">integer</span> :: k
 
     somatoria : <span style="color: #51afef;">do</span>  k = <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">100</span>
-        y_j = y_j + Yk(k)*<span style="color: #c678dd;">exp</span>(-2.d0*pi*i*j*k/(<span style="color: #da8548; font-weight: bold;">2</span>*(N+<span style="color: #da8548; font-weight: bold;">1</span>)))
+        y_j = y_j + Yk(k)*<span style="color: #c678dd;">exp</span>(-2.d0*pi*i*j*k/(<span style="color: #da8548; font-weight: bold;">2</span>*N))
     <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span> somatoria
 
     y_j = y_j/N
@@ -450,7 +450,7 @@ Obtivemos, para a série \((a)\), o gráfico a seguir
 </p>
 
 
-<div id="org218cff8" class="figure">
+<div id="org6c8b4f9" class="figure">
 <p><img src="graficos/tarefa-4-graf-11820833.jpg" alt="tarefa-4-graf-11820833.jpg" />
 </p>
 </div>
@@ -465,14 +465,14 @@ Ficou até um pouco difícil fazer o gráfico das duas linhas de uma maneira que
 </div>
 </div>
 
-<div id="outline-container-org16e30bd" class="outline-2">
-<h2 id="org16e30bd">Tempo de Execução</h2>
-<div class="outline-text-2" id="text-org16e30bd">
+<div id="outline-container-org917746e" class="outline-2">
+<h2 id="org917746e">Tempo de Execução</h2>
+<div class="outline-text-2" id="text-org917746e">
 <p>
 Como comentando na introdução, é esperado que o tempo de execução seja da ordem de \(N^2\). 
 Para comprovarmos isso, fizemos um programa que executa a Transformada de Fourier sobre o sinal
 </p>
-<div class="latex" id="org85cf736">
+<div class="latex" id="orga3e74ef">
 \begin{equation}
 \label{eq: sinais usado pros testes}
 \Delta t = 0,04,\ a_1 = 2,\ a_2 = 4,\ \omega_1 = 4\pi Hz,\ \omega_2 = 2,5\pi Hz
@@ -623,7 +623,7 @@ Que podemos observar no gráfico a seguir
 </p>
 
 
-<div id="org92ca02e" class="figure">
+<div id="org0596e1c" class="figure">
 <p><img src="graficos/tarefa-5-graf-11820833.jpg" alt="tarefa-5-graf-11820833.jpg" />
 </p>
 </div>

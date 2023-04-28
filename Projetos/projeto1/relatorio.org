@@ -300,7 +300,7 @@ end function y_j
 
 Obtivemos, para a série $(a)$, o gráfico a seguir
 
-[[file:graficos/tarefa-4-graf-11820833.jpg]]
+[[file:tarefa-4/tarefa-4-graf-11820833.jpg]]
 
 Nele, observamos uma ótima sobreposição entre a nossa série original e a recuperada pela nossa inversa, demonstrando a precisão do Método de Fourier.
 
