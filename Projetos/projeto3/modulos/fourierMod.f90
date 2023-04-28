@@ -1,3 +1,4 @@
+program main
 module fourierMod
     implicit none
     public :: escreveFrequencias
@@ -10,13 +11,13 @@ contains
         integer :: k, N, M, file
         complex*16 :: currYk
 
-    !   M é o maior natural < N/2
+        ! M é o maior natural < N/2
         M = floor((N-1)/2.d0)
-        write(*,*) "M (M/2-1): ", M, "N :", N
         do k = 0, M
             currYk = Yk(k, y_t, N)
             frequencia = k/(N*dt)
-            write(file,'(3000F20.8)') frequencia, real(currYk)**2 + aimag(currYk)**2
+            write(file,'(3000F20.8)') frequencia, &
+                real(currYk)**2 + aimag(currYk)**2
         end do
     end subroutine escreveFrequencias
 
@@ -34,3 +35,5 @@ contains
     end function Yk
 
 end module fourierMod
+
+end program main

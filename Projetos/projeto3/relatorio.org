@@ -35,25 +35,20 @@ A questão principal se torna: como as frequências
 observadas em um ponto dependem da posição inicial
 da onda.
 
-Poderíamos pensar, pela natureza de um sinal \(y (t  + T) = y (t)\),
-isto é, por ele sempre se repetir, com a posição inicial
-sendo apenas uma fase, que as frequências observadas
-não dependeriam.
-
-Mas sabemos que séries de Fourier não são únicas e,
+Como sabemos, séries de Fourier não são únicas e,
 pensando com cuidado, podemos nos lembrar que os
 harmônicos apresentam nós. Se posicionamos nossa
 observação em um ponto que, por azar, seja o nó de
-uma das frequências do sinal, (alás!) não poderemos
-observa-la.
+uma das frequências do sinal (alás!) não poderemos
+observá-la.
 
-Essa questão que buscamos entender nesse projeto.
+Isso que buscamos entender na prática nesse projeto.
 
 
 * Módulos usados
 
 Buscamos modularizar os projetos anteriores de maneira
-a podermos reusa-los nesse. Os arquivos produzidos
+a podermos reusá-los nesse. Os arquivos produzidos
 estão a seguir:
 
 ** Módulo da transformada de Fourier
@@ -73,7 +68,6 @@ contains
 
         ! M é o maior natural < N/2
         M = floor((N-1)/2.d0)
-        write(*,*) "M (M/2-1): ", M, "N :", N
         do k = 0, M
             currYk = Yk(k, y_t, N)
             frequencia = k/(N*dt)
@@ -110,7 +104,8 @@ e
 #+begin_src fortran :tangle modulos/ondasMod.f90
 module ondasMod
     implicit none
-    public :: Gaussiana, dancaDaCadeira, propagaPresoPreso, imprimeOnda
+    public :: Gaussiana, dancaDaCadeira, propagaPresoPreso,&
+      propagaPresoLivre imprimeOnda
 
     contains
     function Gaussiana(i, dx, x0, sigma)
@@ -219,8 +214,9 @@ propagação conforme o necessário.
 * Tarefa a  (\(L_0 = L/2\))
 
 ** Condições e resultados
-#+attr_html: :width 200px
-file:tarefa-a/tarefa-a1-graf-11820833.jpg
+
+#+attr_html: :width 500 :height 500
+. file:tarefa-a/tarefa-a-graf1-11820833.jpg
 
 Para a tarefa (a), usamos o pacote gaussiano,
 com nós fixos, centrada em torno de
@@ -229,21 +225,24 @@ com nós fixos, centrada em torno de
 
 Os resultados obtidos estão a seguir
 
-[[file:tarefa-a/tarefa-a-graf-11820833.jpg]]
+[[file:tarefa-a/tarefa-a-graf2-11820833.jpg]]
 
-Onde obsevamos que as freqências \(2n\cdot 150Hz\)
-estão faltando.
+Onde obsevamos que as frequências
+de forma \(2n\cdot 150Hz\) estão faltando.
 
 ** Conclusão sobre os resultados
 
 A ausência de modos normais pares esperado!
 
 Considerando o caráter da onda,
-com uma subida bem definida em torno de
-\(L = L_0\), seria estranho esperar
-encontrar modos pares, que estariam
-agindo destrutivamente justo no ponto
-de maior amplitude do sinal.
+com uma subida bem definida e
+simétrica em torno de \(x = L_0\),
+seria estranho esperar encontrar
+modos pares, que estariam agindo
+construtivamente de um lado e
+destrutivamente de outro justo
+no ponto de maior simetria local
+da onda.
 
 Por causa disso, não conseguimos notar
 nenhum obscuração de frequências resultante
@@ -274,21 +273,14 @@ Obsevamos que os modos normais associados
 a 4 vezes a frequência inicial estão ausentes.
 Ademais as frequências pares restantes
 são muito mais potentes que as frequências
-ímpares
+ímpares.
 
 ** Conclusão sobre os resultados
 
-Faz sentido que uma onda cujo máximo
-está em \(L/4\) seja melhor representado
-com frequências de senos que tenham
-máximos no entorno desse valor. embora
-nunca nele.
-
-Esse último fato pode nos ajudar a explicar
-os termos (muito fracos) dos modos normais
-ímpares. Eles parecem refletir um toque de
-mestre na onda, para caracterizar o máximo
-bem definido da Gaussiana.
+ O fato das frequêcias pares serem muito mais
+ fortes que as frequêcias ímpares está relacionado
+ com a ausência dos modos múltiplos de $4$, como
+ também será observado na tarefa c.
 
 
 * Tarefa c  (\(L_0 = L/3\))
@@ -304,17 +296,19 @@ O resultado obtido está a seguir
 Álas! Os modos normais ausentes dessa parecem
 bem mais patológicos.
 
-A ordem, bonita, na verdade esconde um padrão
+A ordem, bonita, esconde um padrão
 simples: Faltam os modos normais múltiplos de
-3 e 4.
+3 e 4, o que é ressaltado nas linhas vermelhas
+da imagem.
 
 ** Conclusão sobre os resultados
 
-As frequência \(3n\cdot 150Hz\) estarem ausentes
+As frequência \(3n \cdot 150Hz\) estarem ausentes
 não surpreendem. Seus senos, em \(t = 0\) colaboram
 positivamente de um lado e negativamente de
-outro. Um comportamente que certamente
-faria delas um deserviço a nossa reprentação.
+outro do máximo de nossa onda. Um
+comportamente que certamente faria
+delas um deserviço a nossa reprentação.
 
 Os máximos mais elevados são os modos normais
 pares. Isso se dá porque os modos pares que
@@ -322,11 +316,14 @@ restam tem que absorver a potência dos
 múltiplos de 4.
 
 Para referência, um grafico absorvendo
-as frequências de tipo \(4n\cdot 150Hz\)
+as frequências de tipo \(4n \cdot 150Hz\)
 está a seguir
 
 [[file:tarefa-c/tarefa-c-graf2-11820833.jpg]]
 
+Esse efeito é o mesmo que tornou os
+modos pares (muito) mais potentes na
+tarefa b
 
 
 * Tarefa d  (\(L_0 = L/20\))
@@ -338,26 +335,87 @@ O resultado obtido está a seguir
 
 [[file:tarefa-d/tarefa-d-graf-11820833.jpg]]
 
-Um resultado bonito! A pr
+Um resultado bonito! Vemos duas sequências de
+amplitudes associadas as frequências, ambas
+com aparência de gaussiana.
 
 ** Conclusão sobre os resultados
 
-As frequência \(3n\cdot 150Hz\) estarem ausentes
-não surpreendem. Seus senos, em \(t = 0\) colaboram
-positivamente de um lado e negativamente de
-outro. Um comportamente que certamente
-faria delas um deserviço a nossa reprentação.
+Novamente as amplitudes elevadas estão
+relacionadas as frequências pares, que
+precisam absorver as amplitudes faltantes
+de \(4n\cdot 150 Hz\).
 
-Os máximos mais elevados são os modos normais
-pares. Isso se dá porque os modos pares que
-restam tem que absorver a potência dos
-múltiplos de 4.
+Ademais, observamos uma aversão a frequências
+mais baixas, que eram mais potentes até agora.
+Ao contrário, as frequências médias são as
+protagonistas. Isso é especialmente notável
+em \(f = 2\cdot 150 Hz\), muito baixa,
+enquanto \(6\cdot 150Hz\) explode. Isso
+se deve ao pico elevado já no início
+da corda em \(t = 0\).
 
-Para referência, um grafico absorvendo
-as frequências de tipo \(4n\cdot 150Hz\)
-está a seguir
 
-[[file:tarefa-c/tarefa-c-graf2-11820833.jpg]]
+* Tarefa e  (Nós livres)
+** Condições e resultados
+Para tarefa (e), tivemos uma alteração
+significativa: Passamos a considerar uma
+das pontas como soltas.
+
+A mudança se resumiu a modar a chamada
+da src_fortran[:exports code]{propagaPresoPreso} para
+src_fortran[:exports code]{propagaPresoLivre}. Mas
+a diferença no resultado foi significativa.
+
+A onda obtida está a seguir:
+#+attr_html: :width 500 :height 500
+#+name: Gráfico da onda com ponta presa-livre
+. file:tarefa-e/tarefa-e-graf1-11820833.jpg
+
+Onde a onda em \(n = 400\) está representada !!
+Ela é plana até aonde a vista alcança.
+
+
+[[file:tarefa-e/tarefa-e-graf2-11820833.jpg]]
+
+Onde se destaca o fato de as frequências
+passam a assumir a forma \(f_n = (75 + 150n)Hz\),
+com uma pequena diferença para frequências muito
+grandes.
+
+Nota-se que aqui obtemos uma distribuição
+de frequências muito mais espalhadas. A ponta
+solta aumenta consideravelmente sua complexidade
+harmônica.
+
+
+** Conclusão sobre os resultados
+
+
+
+A forma das frequências é facilmente explicável
+pelo fato de que os senos precisam poder
+apresentar um máximo em \(x = L\), então
+você precisa adicionar \(1/2 \pi\) a fase,
+que é justamente o que esse \(75 Hz\) está fazendo.
+
+Notamos que as frequências aparecem para todos
+os \(n\)s. Em especial, aparecem as frêquencias
+que tem nós nos máximos da onda em \(t = 0 \).
+Essas frequêcias não apareciam para pontas
+presos.
+
+Isso deve se dar pelas condições da onda
+em n = 390 no gráfico. Temos um perfil
+de onda que parece justamente o seno em
+torno de um nó. As freqûencias aparecem
+para formar esse perfil.
+
+Mas elas são contraprodutivas para onda
+em \(t = 0\), então precisamos adicionar
+mais frequências para corrigir a onda
+nesse instante. Isso dá o perfil errático
+da onda.
 
 
 
