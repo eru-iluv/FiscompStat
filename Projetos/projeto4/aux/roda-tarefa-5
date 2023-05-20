@@ -1,0 +1,7 @@
+#!/bin/bash
+for i in $(seq 21 29)
+do
+    ./tarefa-5/tarefa-5-11820833.exe
+    mv saida-5-11820833 saidas/tarefa-5/saida-$i
+    echo "done exec $i"
+done

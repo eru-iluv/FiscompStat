@@ -1,0 +1,552 @@
+#+LATEX_HEADER: \usepackage{\fontsize{2.5}{1.5}\selectfontverbatim}
+
+#+SETUPFILE: ../../setup-file.org
+
+* Introdução
+
+Nessa tarefa, buscamos estudar modelos de
+crescimento. Dinâmicas de crescimento
+ocorrem por toda natureza, desde do
+crescimento de cristais à reprodução
+de sistemas biológicos e sociais.
+
+Os modelos que estudamos
+podem ser divididos em dois tipos:
+Autômatas Celulares Determinísticos (ACD)
+e modelos de crescimento com aleatoriedade.
+
+No primeiro, o crescimento é dado por
+uma regra, que no nosso caso podia ser
+dada pela representação binária de um
+número. Sabendo essa regra, pode-se
+determinar o modelo para qualquer interação.
+
+No segundo, o crescimento acontece de
+maneira aleatória, sendo o modelo de
+crescimento mais associado a fenômenos
+como cristais e descargas elétricas.
+
+* ACD
+
+Aqui, buscamos reproduzir 3 regras
+que dependem apenas dos vizinhos
+imediatos da célula em \(t-1\). Isso é
+
+#+begin_latex
+\begin{equation}
+c_{i}^{t+1} = f(c_{i-1}^{t}, c_{i}^{t}, c_{i+1}^{t})
+\end{equation}
+#+end_latex
+
+- A regra da maioria,
+  ou regra 232, onde o valor de \(c_{i}\)
+  é o da maioria dos vizinhos em \(t-1\),
+
+- A regra epidemia,
+  ou regra 254, onde basta um vizinho
+  ser \(1\) para a célula positivar.
+
+- A regra do contra,
+  ou regra 54, onde a célula simplesmente
+  assume o valor oposto ao que tinha
+  anteriormente.
+
+  Testamos essas regras para 3 condições:
+  Quando todos os valores iniciais
+  são 1, quando todos são 0, ou
+  quando eles assumem valores
+  aleatórios=
+
+** Programa
+
+Usamos um programa que permitisse rodar
+um ACD para qualquer que seja nossa
+regra. Fizemos
+
+#+name: tarefa-1
+#+caption: Programa da tarefa 1
+#+begin_src fortran :tangle tarefa-1/tarefa-1-11820833.f90
+module AcdModules
+    implicit none
+
+    public :: bernoulli, vetorBinario, &
+        propagaRegra, dancaDaCadeira, imprimeConfig
+    contains
+
+    ! Função de bernoulli
+    ! Para p = 0.5, se torna um gerador
+    ! de 0 ou 1 com probabilidade identica
+    integer function bernoulli(p)
+        real(8) :: p, numAleatorio
+        call random_number(numAleatorio)
+        if ( numAleatorio < p ) then
+            bernoulli = 1
+        else
+            bernoulli = 0
+        end if
+    end function bernoulli
+
+    ! Converte o valor decimal em um vetor binário
+    subroutine vetorBinario(vetorRegra, regra)
+        integer, intent(out) ::  vetorRegra(0:7)
+        integer :: regra, index, N
+
+        N = regra
+
+        do index = 0, 7
+            vetorRegra(index) = mod(N,2)
+            N = N/2
+        end do
+
+    end subroutine vetorBinario
+
+
+    subroutine &
+        propagaRegra(configAtual, configSeguinte, vetorRegra, L)
+        integer, intent(in) :: configAtual(:), &
+            vetorRegra(0:7), L
+        integer, intent(out) ::  configSeguinte(:)
+
+        ! Se a maioria dos vizinhos
+        configSeguinte(2:L-1) = &
+            vetorRegra((configAtual(1:L-2)*2**2 &
+            + configAtual(2:L-1)*2 + configAtual(3:L)))
+
+
+        ! Ajusta as bordas
+        configSeguinte(1) = &
+            vetorRegra(configAtual(L)*2**2 &
+            + configAtual(1)*2 + configAtual(2))
+
+        configSeguinte(L) = &
+            vetorRegra(configAtual(L-1)*2**2 &
+            +  configAtual(L-2)*2 + configAtual(1))
+    end subroutine propagaRegra
+
+
+    subroutine dancaDaCadeira(configAtual, configSeguinte)
+        integer, intent(inout) :: configAtual(:), configSeguinte(:)
+        configatual(:) = configSeguinte(:)
+    end subroutine dancaDaCadeira
+
+
+    subroutine imprimeConfig(configAtual, file, L)
+        integer, intent(in) :: configAtual(:)
+        integer :: L, file
+        integer :: i
+        character :: ascii(0:1)
+
+        ascii(0) = "."
+        ascii(1) = '$'
+        write(file, *) (ascii(configAtual(i)), i=1, L)
+    end subroutine imprimeConfig
+
+    subroutine setConfig(configAtual, config,  L)
+        integer, intent(in) :: config, L
+        integer, intent(out) :: configAtual(:)
+        integer :: i
+
+        if ( config == 0 ) then
+            configAtual = 0
+        else if ( config == 1 ) then
+            configAtual = 1
+        else if ( config == -1 ) then
+            do i = 1, L
+                configAtual(i) = bernoulli(0.5d0)
+            end do
+        end if
+
+    end subroutine setConfig
+
+    subroutine acdRegra(regra, config)
+        integer, intent(in) :: regra, config
+        integer, parameter :: L = 200
+        integer :: vetorRegra(0:7), configAtual(L), configSeguinte(L)
+        integer :: i
+        character(len=26) :: filename
+
+
+        write (filename, "(A6, I3, A5, I2)")&
+            "saida-", regra, "_con_", config
+
+
+        call vetorBinario(vetorRegra, regra)
+
+        open(1, file = trim(filename))
+
+        call setConfig(configAtual, config, L)
+
+        do i = 0, 100
+            call imprimeConfig(configAtual, 1, L)
+            call propagaRegra(configAtual, configSeguinte, vetorRegra, L)
+            call dancaDaCadeira(configAtual, configSeguinte)
+        end do
+        call imprimeConfig(configAtual, 1, L)
+        close(1)
+
+
+    end subroutine acdRegra
+
+end module
+
+program ACD
+    use AcdModules
+
+    ! Regra do Contra
+    call acdRegra(51, 0)
+    call acdRegra(51, 1)
+    call acdRegra(51,-1)
+
+    ! Regra da Maioria
+    call acdRegra(232, 0)
+    call acdRegra(232, 1)
+    call acdRegra(232,-1)
+
+    ! Regra da Infecção
+    call acdRegra(254, 0)
+    call acdRegra(254, 1)
+    call acdRegra(254,-1)
+end program ACD
+
+#+end_src
+
+
+** Resultados
+*** Regra *51*
+#+BEGIN_SRC shell :wrap example :results output :exports both
+ cat saidas/tarefa-1/regra-51/saida_-1
+#+END_SRC
+
+#+BEGIN_SRC shell :wrap example :results output :exports both
+ cat saidas/tarefa-1/regra-51/saida_0
+#+END_SRC
+
+#+BEGIN_SRC shell :wrap example :results output :exports both
+ cat saidas/tarefa-1/regra-51/saida_1
+#+END_SRC
+
+
+*** Regra *232*
+Para regra 232, vimos
+
+
+#+BEGIN_SRC shell :wrap example :results output :exports both
+ cat saidas/tarefa-1/regra-232/saida_-1
+#+END_SRC
+
+#+BEGIN_SRC shell :wrap example :results output :exports both
+ cat saidas/tarefa-1/regra-232/saida_0
+#+END_SRC
+
+#+BEGIN_SRC shell :wrap example :results output :exports both
+ cat saidas/tarefa-1/regra-232/saida_1
+#+END_SRC
+
+
+*** Regra 254
+
+#+BEGIN_SRC shell :wrap example :results output :exports both
+ cat saidas/tarefa-1/regra-254/saida_-1
+#+END_SRC
+
+#+BEGIN_SRC shell :wrap example :results output :exports both
+ cat saidas/tarefa-1/regra-254/saida_0
+#+END_SRC
+
+#+BEGIN_SRC shell :wrap example :results output :exports both
+ cat saidas/tarefa-1/regra-254/saida_1
+#+END_SRC
+
+
+* DLA
+No estudo de modelos aleatórios, geramos
+moléculas dentro de um raio \(r = r_{a} + 5\)
+até \(1,5r\) de um aglomerado de raio \(r_{a}\).
+
+Essas moléculas então apresentavam um
+andar de bêbado ou até alcançar uma vizinhança
+próxima do aglomerado, quado se depositavam,
+ou até sair superiormente de r, onde
+elas ficam muito custosas
+computacionalmente
+
+** Programa
+
+Para o programa do DLA, o foco
+do código foi em ter
+um algoritmo capaz de criar
+posições aleatórias dentro
+do intervalo comentado
+num tabuleiro 200x200.
+
+Para isso, é criada uma
+posição em coordenadas
+polares que depois é convertido
+em posições *x* e *y*.
+
+#+begin_src fortran :tangle tarefa-2/tarefa-2-11820833.f90
+module DlaModule
+    implicit none
+    real(8), parameter :: pi =  acos(-1.d0)
+    integer, parameter :: idx(0:8) = (/-1, -1, -1,  0, 0, 0,  1, 1, 1/),&
+                          idy(0:8) = (/-1,  0,  1, -1, 0, 1, -1, 0, 1/)
+contains
+
+    subroutine andarDoBebado(x,  y)
+        integer, intent(out) :: x, y
+        real(8) ::  numAleatorio
+        integer ::  idr
+
+        call random_number(numAleatorio)
+        idr = nint(8*numAleatorio)
+
+        x = x + idx(idr)
+        y = y + idy(idr)
+    end subroutine andarDoBebado
+
+
+    subroutine escrevePonto(x,  y, numPontos, r)
+        integer, intent(in) :: x, y, numPontos
+        real(8) :: r
+        write(1, *) x, y, numPontos, r
+    end subroutine escrevePonto
+
+
+    integer function numVizinhos(x, y,tabuleiro)
+        integer :: x, y, tabuleiro(-100:100,-100:100)
+        numVizinhos = tabuleiro(x+1,y) &
+            + tabuleiro(x-1,y) + tabuleiro(x,y+1) &
+            + tabuleiro(x, y-1)
+    end function numVizinhos
+
+
+    integer function raioQuad(x, y)
+        integer, intent(in) :: x, y
+        raioQuad = x**2 + y**2
+    end function raioQuad
+
+
+    subroutine geraPonto(r, tabuleiro, numPontos)
+        integer :: x, y, tabuleiro(-100:100,-100:100), numPontos
+        real(8), intent(out) :: r
+        real(8) :: teta, numAleatorio
+        ! rho pertence [rhoMin, rhoMin + drho]
+        real(8) :: rhoMin, drho, rho
+
+        ! gera teta
+        call random_number(numAleatorio)
+        teta =  2*pi*numAleatorio
+
+        ! gera p
+        call random_number(numAleatorio)
+        rhoMin = r + 5
+        drho = 0.5d0*rhoMin
+        rho = rhoMin + drho*numAleatorio
+        x = floor(rho*cos(teta))
+        y = floor(rho*sin(teta))
+
+        do while ( raioQuad(x, y) .le. (1.5d0*rhoMin)**2 &
+             .and. abs(x) < 99 .and. abs(y) < 99 )
+            call andarDoBebado(x,y)
+
+            ! Achou local para acoplar, atualiza tabuleiro
+            if ( numVizinhos(x,y,tabuleiro) > 0 ) then
+                numPontos = numPontos + 1
+                tabuleiro(x,y) = numPontos
+                if ( raioQuad(x,y) > r**2  ) then
+                    r = raioQuad(x,y)**(1.d0/2.d0)
+                end if
+                call escrevePonto(x, y, numPontos,r)
+
+                exit
+            end if
+
+        end do
+
+    end subroutine geraPonto
+
+end module DlaModule
+
+program DLA
+    use DlaModule
+    integer, save :: tabuleiro(-100:100,-100:100)
+    integer :: numPontos
+    real(8) :: r
+
+    ! Iniciamos nosso tabuleiro
+    tabuleiro = 0
+    tabuleiro(0,0) = 1
+    numPontos = 1
+
+    open(1, file="saida-1-11820833")
+
+    r = 0.d0
+
+    do while (numPontos .le. 3000 .and. r < 98)
+        call geraPonto(r, tabuleiro, numPontos)
+    end do
+    close(1)
+
+end program DLA
+#+end_src
+
+** Resultados
+
+Rodamos 50 interações do programa da tarefa 2
+e obtemos um valor médio de \(df = 1,64\),
+com desvio padrão \(\sigma = 0,10\), em concordância
+com o valor esperado de \(1,65\).
+Apesar dos resultados concordantes,
+nota-se a incerteza relativamente
+grande.
+
+Embora seja inviável mostrar os gráficos
+de cada interação, os de quatro delas
+estão a seguir
+
+[[file:tarefa-2/tarefa-2-graf-1-11820833.png]]
+* Notebook configuration :noexport:
+
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+This section is used for configuring various settings in the notebook appearance as well as defining various options for the export in HTML or PDF formats. You can change any of these settings.
+** Document information
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+TITLE:        [[https://edisciplinas.usp.br/pluginfile.php/7686722/mod_resource/content/1/projeto-fiscompII-quarto-2023-scan.pdf][MODELOS DE CRESCIMENTO]]
+#+SUBTITLE:     Edgard Macena Cabral Nº 11820833 @@latex:\\@@ @@html:<br>@@ Maio 2023
+#+AUTHOR:       Edgard Macena Cabral
+#+EMAIL:        edgardmacena@usp.br
+#+DATE:         Maio 2023
+#+DESCRIPTION:  A GNU Emacs notebook demonstration
+#+OPTIONS:      toc:nil
+** HTML export configuration
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_export html
+#+end_export
+
+#+OPTIONS:   num:nil
+#+OPTIONS:   html-style:nil
+#+OPTIONS:   html-scripts:nil
+#+OPTIONS:   html-postamble:nil
+#+OPTIONS:   broken-links:mark
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../../notebook.css" />
+
+** PDF export configuration
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_export PDF
+#+end_export
+
+#+OPTIONS:
+
+** Code snippets
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+*** Notebook setup :lisp:
+
+#+name: setup
+#+header:
+#+begin_src emacs-lisp :results none :exports none :eval no-export
+(setq org-cite-csl-styles-dir ".")
+(setq org-babel-python-command "/opt/anaconda3/bin/python")
+(require 'ob-python)
+(require 'oc-csl)
+nil
+#+end_src
+
+*** Notebook run :lisp:
+
+#+name: run
+#+header: :var scope="all"
+#+begin_src emacs-lisp :results none :exports none :eval never
+(org-babel-execute-buffer)
+nil
+#+end_src
+
+*** Notebook export :lisp:
+
+#+name: export
+#+header: :var target="html"
+#+begin_src emacs-lisp :results none :exports none :eval never
+(cond (((string= target "html")   (org-html-export-to-html))
+       ((string= target "pdf")    (org-latex-export-to-pdf))
+       ((string= target "tex")    (org-latex-export-to-latex))
+       ((string= target "latex")  (org-latex-export-to-latex))
+       (t  (message (format "Unknow backend (%s) for export" target)))))
+#+end_src
+
+*** Notebook information :lisp:
+
+#+name: document-info
+#+header: :var python=python-version emacs=emacs-version org=org-version
+#+begin_src python :results raw :exports results
+return f"{emacs}, {org} & {python}"
+#+end_src
+#+RESULTS: document-info
+
+*** Emacs version :lisp:
+
+#+name: emacs-version
+#+begin_src emacs-lisp :export none :results raw
+(format "[[https://www.gnu.org/software/emacs/][Emacs]] %d.%d"
+        emacs-major-version emacs-minor-version)
+#+end_src
+#+RESULTS: emacs-version
+
+*** Org mode version :lisp:
+
+#+name: org-version
+#+begin_src emacs-lisp :export none :results raw
+(format "[[https://www.gnu.org/software/emacs/][Org mode]] %s"
+        (org-version nil nil))
+#+end_src
+#+RESULTS: org-version
+
+*** Python version :python:
+
+#+name: python-version
+#+begin_src python :export none :results raw
+import platform
+version = platform.python_version()
+return f"[[https://www.python.org/][Python]] {version}"
+#+end_src
+
+*** Matplotlib figure preparation :python:
+
+#+name: pyfig-pre
+#+header: :var width=8 height=1
+#+begin_src python :results file :exports none
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+fig = plt.figure(figsize=(width,height))
+ax = fig.add_axes([0,0,1,1], frameon=False)
+ax.axis("off")
+#+end_src
+
+*** Matplotlib figure finalization :python:
+
+#+name: pyfig-post
+#+header: :var filename=""
+#+begin_src python :results file :exports none
+if filename:
+    plt.savefig(filename, dpi=300)
+    return filename
+return ""
+#+end_src
+
+#+RESULTS: pyfig-post
+[[file:]]

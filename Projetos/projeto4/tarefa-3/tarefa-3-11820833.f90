@@ -1,4 +1,4 @@
-module DlaModules
+module DlaModule
     implicit none
     real(8), parameter :: pi =  acos(-1.d0)
 
@@ -104,21 +104,21 @@ contains
         
         r = 0.d0
         
-        do while (numPontos .le. 3000 .and. r < 98)
+        do while (numPontos .le. 10000 .and. r < 70)
             call geraPonto(r, tabuleiro, numPontos)
         end do
         close(1)
             
         end subroutine main
         
-end module DlaModules
+end module DlaModule
 
 program DLA_3D
-    use DlaModules
+    use DlaModule
     implicit none
     integer :: i
 
-    do i = 0, 9
+    do i = 2, 9
         call main(i)        
     end do
 

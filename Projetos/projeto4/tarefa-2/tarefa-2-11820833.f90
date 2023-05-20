@@ -1,4 +1,4 @@
-module DlaModules
+module DlaModule
     implicit none
     real(8), parameter :: pi =  acos(-1.d0)
     integer, parameter :: idx(0:8) = (/-1, -1, -1,  0, 0, 0,  1, 1, 1/),&
@@ -77,40 +77,27 @@ contains
         end do
 
     end subroutine geraPonto
-
-    subroutine main(i)
-        integer, save :: tabuleiro(-100:100,-100:100)
-        integer :: numPontos, i 
-        real(8) :: r
-        character(len=27) :: filename
-
-        ! Iniciamos nosso tabuleiro
-        tabuleiro = 0
-        tabuleiro(0,0) = 1
-        numPontos = 1
         
-        write (filename, "(A25, I2)") "../saidas/tarefa-2/saida-", i    
-        open(1, file=trim(filename))
-        
-        r = 0.d0
-        
-        do while (numPontos .le. 3000 .and. r < 98)
-            call geraPonto(r, tabuleiro, numPontos)
-        end do
-        close(1)
-            
-        end subroutine main
-        
-end module DlaModules
+end module DlaModule
 
 program DLA
-    use DlaModules
-    implicit none
-    integer :: i
+    use DlaModule
+    integer, save :: tabuleiro(-100:100,-100:100)
+    integer :: numPontos
+    real(8) :: r
 
-    do i = 0, 50
-        call main(i)        
+    ! Iniciamos nosso tabuleiro
+    tabuleiro = 0
+    tabuleiro(0,0) = 1
+    numPontos = 1
+    
+    open(1, file="saida-1-11820833")
+    
+    r = 0.d0
+    
+    do while (numPontos .le. 3000 .and. r < 98)
+        call geraPonto(r, tabuleiro, numPontos)
     end do
-
+    close(1)
 
 end program DLA

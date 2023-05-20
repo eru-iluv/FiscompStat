@@ -48,13 +48,12 @@ contains
         integer, intent(out) :: z
         real(8) :: numAleatorio
         ! y0 pertence [yMin - dy, yMin + dy]
-        integer :: yMin, dy, sinal 
+        integer :: yMin, dy
         
         ! gera x
         call random_number(numAleatorio)
         yMin = z + 5
         dy = nint(0.5d0*yMin)
-        sinal = (2*bernoulli(0.5d0)-1) 
         y = (yMin + nint(dy*numAleatorio)) 
 
         call random_number(numAleatorio)
@@ -86,15 +85,18 @@ program DLA
     use DlaModules
     implicit none
     integer :: tabuleiro(-100:100,-100:100)
-    integer :: numPontos, z = 0
+    integer :: numPontos, z = 0, i = 0
     ! Iniciamos nosso tabuleiro
     tabuleiro = 0
-    tabuleiro(:,0) = 1        
 
-
-    numPontos = 201
-    
     open(1, file="saida-4")
+    do i = -100,100
+        tabuleiro(i,0) = 1
+        call escrevePonto(i, 0, 0, 0)
+    end do
+
+    numPontos = 1
+    
     do while (numPontos .le. 3000 .and. z < 90)
         call geraPonto(z, tabuleiro, numPontos)
     end do
