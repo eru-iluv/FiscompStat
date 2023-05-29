@@ -30,5 +30,5 @@ subprocess.run(["pdflatex", nomeArquivo+".tex"], cwd="gnuplot/")
 subprocess.run(["limpa.sh"], cwd="gnuplot/")
 subprocess.run(["moveGrafico.sh", pastaArquivo, nomeArquivo+".pdf"], cwd="gnuplot/")
 subprocess.run(["evince", "{}.pdf".format(nomeArquivo)], cwd=pastaArquivo)
-if (shallConvert): subprocess.run(["convert", "-density", "400", nomeArquivo+".pdf",
-                                    nomeArquivo+".jpg"], cwd=pastaArquivo)
+if (shallConvert): subprocess.run(["convert", "-density", "200", nomeArquivo+".pdf",
+                                    nomeArquivo+".png"], cwd=pastaArquivo)
