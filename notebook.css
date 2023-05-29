@@ -145,6 +145,23 @@ code {
     font-family: "Roboto Mono", sans-serif;
     font-weight: 300;
 }
+
+example {
+     font-family: "Roboto Mono", sans-serif;
+     font-weight: 300;
+     font-family: monospace;
+     white-space: pre;
+}
+.ascii-art {
+    font-family: monospace;
+    white-space: pre;
+    font-size: 15%;
+}
+pre {
+    font-family: monospace;
+    white-space: pre;
+    font-size: 15%;
+}
 pre.example::before {
     display: block;
     background-color: #ffffff;    content: "Output";
@@ -154,10 +171,11 @@ pre.example::before {
 }
 
 pre.example {
-    font-size: 95%;
+    font-size: 13%;
     background-color: #f9f9ff;
-    line-height: 1.4em;
-    font-family: "Roboto Mono", sans-serif;
+    line-height: 1.2em;
+    text-align: center;
+    font-family: monospace;
     font-weight: 300;
     padding: 0.5em 1em 0.5em 1em;
 }

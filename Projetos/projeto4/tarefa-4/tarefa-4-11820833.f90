@@ -36,7 +36,7 @@ contains
 
 
     integer function numVizinhos(x, y, tabuleiro)
-        integer :: x, y, tabuleiro(-100:100,-100:100)
+        integer :: x, y, tabuleiro(-100:100,0:100)
         numVizinhos = tabuleiro(x+1,y) &
             + tabuleiro(x-1,y) + tabuleiro(x,y+1) &
             + tabuleiro(x, y-1)
@@ -44,7 +44,7 @@ contains
 
 
     subroutine geraPonto(z, tabuleiro, numPontos)
-        integer :: x, y, tabuleiro(-100:100,-100:100), numPontos
+        integer :: x, y, tabuleiro(-100:100,0:100), numPontos
         integer, intent(out) :: z
         real(8) :: numAleatorio
         ! y0 pertence [yMin - dy, yMin + dy]
@@ -84,12 +84,12 @@ end module DlaModules
 program DLA
     use DlaModules
     implicit none
-    integer :: tabuleiro(-100:100,-100:100)
+    integer :: tabuleiro(-100:100,0:100)
     integer :: numPontos, z = 0, i = 0
     ! Iniciamos nosso tabuleiro
     tabuleiro = 0
 
-    open(1, file="saida-4")
+    open(1, file="saida-4-11820833")
     do i = -100,100
         tabuleiro(i,0) = 1
         call escrevePonto(i, 0, 0, 0)

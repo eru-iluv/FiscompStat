@@ -7,8 +7,8 @@ set multiplot layout 2,2 \
     title "Evolução da DLA\n"\
     font ",20"
 
-set ylabel "x"
-set xlabel "y"
+set ylabel "y"
+set xlabel "x"
 # set size sq
 # set pointsize 2
 

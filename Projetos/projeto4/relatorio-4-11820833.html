@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-05-20 Sat 11:12 -->
+<!-- 2023-05-20 Sat 23:52 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>[[https://edisciplinas.usp.br/pluginfile.php/7686722/mod_resource/content/1/projeto-fiscompII-quarto-2023-scan.pdf][MODELOS DE CRESCIMENTO]]</title>
@@ -51,9 +51,9 @@
 <span class="subtitle">Edgard Macena Cabral Nº 11820833  <br> Maio 2023</span>
 </h1>
 
-<div id="outline-container-org456b84d" class="outline-2">
-<h2 id="org456b84d">Introdução</h2>
-<div class="outline-text-2" id="text-org456b84d">
+<div id="outline-container-org0c4cf76" class="outline-2">
+<h2 id="org0c4cf76">Introdução</h2>
+<div class="outline-text-2" id="text-org0c4cf76">
 <p>
 Nessa tarefa, buscamos estudar modelos de
 crescimento. Dinâmicas de crescimento
@@ -86,16 +86,16 @@ como cristais e descargas elétricas.
 </div>
 </div>
 
-<div id="outline-container-orgda030bd" class="outline-2">
-<h2 id="orgda030bd">ACD</h2>
-<div class="outline-text-2" id="text-orgda030bd">
+<div id="outline-container-org9931480" class="outline-2">
+<h2 id="org9931480">ACD</h2>
+<div class="outline-text-2" id="text-org9931480">
 <p>
 Aqui, buscamos reproduzir 3 regras
 que dependem apenas dos vizinhos
 imediatos da célula em \(t-1\). Isso é
 </p>
 
-<div class="latex" id="org1556685">
+<div class="latex" id="org58b1bae">
 \begin{equation}
 c_{i}^{t+1} = f(c_{i-1}^{t}, c_{i}^{t}, c_{i+1}^{t})
 \end{equation}
@@ -128,9 +128,9 @@ aleatórios=
 </ul>
 </div>
 
-<div id="outline-container-org9416249" class="outline-3">
-<h3 id="org9416249">Programa</h3>
-<div class="outline-text-3" id="text-org9416249">
+<div id="outline-container-orgba564b3" class="outline-3">
+<h3 id="orgba564b3">Programa</h3>
+<div class="outline-text-3" id="text-orgba564b3">
 <p>
 Usamos um programa que permitisse rodar
 um ACD para qualquer que seja nossa
@@ -138,7 +138,7 @@ regra. Fizemos
 </p>
 
 <div class="org-src-container">
-<label class="org-src-name"><span class="listing-number">Listing 1: </span>Programa da tarefa 1</label><pre class="src src-fortran" id="org5f6355a">module AcdModules
+<label class="org-src-name"><span class="listing-number">Listing 1: </span>Programa da tarefa 1</label><pre class="src src-fortran" id="org332b347">module AcdModules
     <span style="color: #ECBE7B;">implicit none</span>
 
     public :: bernoulli, vetorBinario, &amp;
@@ -286,19 +286,23 @@ regra. Fizemos
 </div>
 
 
-<div id="outline-container-orge80f92d" class="outline-3">
-<h3 id="orge80f92d">Resultados</h3>
-<div class="outline-text-3" id="text-orge80f92d">
+<div id="outline-container-orgfaba329" class="outline-3">
+<h3 id="orgfaba329">Resultados</h3>
+<div class="outline-text-3" id="text-orgfaba329">
 </div>
-<div id="outline-container-orgf2001bf" class="outline-4">
-<h4 id="orgf2001bf">Regra <b>51</b></h4>
-<div class="outline-text-4" id="text-orgf2001bf">
+<div id="outline-container-org76ea154" class="outline-4">
+<h4 id="org76ea154">Regra <b>51</b></h4>
+<div class="outline-text-4" id="text-org76ea154">
+</div>
+<ul class="org-ul">
+<li><a id="orgf7309f7"></a>Para valores iniciais aleatório<br />
+<div class="outline-text-5" id="text-orgf7309f7">
 <div class="org-src-container">
 <pre class="src src-shell"> <span style="color: #ECBE7B;">cat</span> saidas/tarefa-1/regra-51/saida_-1
 </pre>
 </div>
 
-<pre class="example" id="org5519013">
+<pre class="example" id="orgfc49aec">
  ..$..$...$$$....$.$.$.$$$$$$$$$$..$.$.$.$$.$$.$.$$..$$..$$...$..$....$$.$$.$$$.$$$$$....$$$.........$$...$$.$...$.....$.$$.$.$.$$$.$$$..$.$$$$.$$..$.$.$.$$$.$$$$....$..$$$$.$$..$.....$.$..$$$.......$.
  $$.$$.$$$...$$$$.$.$.$..........$$.$.$.$..$..$.$..$$..$$..$$$.$$.$$$$..$..$...$.....$$$$...$$$$$$$$$..$$$..$.$$$.$$$$$.$..$.$.$...$...$$.$....$..$$.$.$.$...$....$$$$.$$....$..$$.$$$$$.$.$$...$$$$$$$.$
  ..$..$...$$$....$.$.$.$$$$$$$$$$..$.$.$.$$.$$.$.$$..$$..$$...$..$....$$.$$.$$$.$$$$$....$$$.........$$...$$.$...$.....$.$$.$.$.$$$.$$$..$.$$$$.$$..$.$.$.$$$.$$$$....$..$$$$.$$..$.....$.$..$$$.......$.
@@ -402,13 +406,17 @@ regra. Fizemos
  ..$..$...$$$....$.$.$.$$$$$$$$$$..$.$.$.$$.$$.$.$$..$$..$$...$..$....$$.$$.$$$.$$$$$....$$$.........$$...$$.$...$.....$.$$.$.$.$$$.$$$..$.$$$$.$$..$.$.$.$$$.$$$$....$..$$$$.$$..$.....$.$..$$$.......$.
  $$.$$.$$$...$$$$.$.$.$..........$$.$.$.$..$..$.$..$$..$$..$$$.$$.$$$$..$..$...$.....$$$$...$$$$$$$$$..$$$..$.$$$.$$$$$.$..$.$.$...$...$$.$....$..$$.$.$.$...$....$$$$.$$....$..$$.$$$$$.$.$$...$$$$$$$.$
 </pre>
+</div>
+</li>
 
+<li><a id="orga2bfbf2"></a>Para valores iniciais 0<br />
+<div class="outline-text-5" id="text-orga2bfbf2">
 <div class="org-src-container">
 <pre class="src src-shell"> <span style="color: #ECBE7B;">cat</span> saidas/tarefa-1/regra-51/saida_0
 </pre>
 </div>
 
-<pre class="example" id="orgf3fe84e">
+<pre class="example" id="org890d749">
  ........................................................................................................................................................................................................
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
  ........................................................................................................................................................................................................
@@ -512,13 +520,17 @@ regra. Fizemos
  ........................................................................................................................................................................................................
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 </pre>
+</div>
+</li>
 
+<li><a id="org74715f3"></a>Para valores iniciais 1<br />
+<div class="outline-text-5" id="text-org74715f3">
 <div class="org-src-container">
 <pre class="src src-shell"> <span style="color: #ECBE7B;">cat</span> saidas/tarefa-1/regra-51/saida_1
 </pre>
 </div>
 
-<pre class="example" id="orgc5be4a7">
+<pre class="example" id="org706b856">
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
  ........................................................................................................................................................................................................
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -623,23 +635,29 @@ regra. Fizemos
  ........................................................................................................................................................................................................
 </pre>
 </div>
+</li>
+</ul>
 </div>
 
 
-<div id="outline-container-org4e863e9" class="outline-4">
-<h4 id="org4e863e9">Regra <b>232</b></h4>
-<div class="outline-text-4" id="text-org4e863e9">
+<div id="outline-container-org7d0ba0c" class="outline-4">
+<h4 id="org7d0ba0c">Regra <b>232</b></h4>
+<div class="outline-text-4" id="text-org7d0ba0c">
 <p>
 Para regra 232, vimos
 </p>
+</div>
 
 
+<ul class="org-ul">
+<li><a id="org6297208"></a>Para valores iniciais aleatórios<br />
+<div class="outline-text-5" id="text-org6297208">
 <div class="org-src-container">
 <pre class="src src-shell"> <span style="color: #ECBE7B;">cat</span> saidas/tarefa-1/regra-232/saida_-1
 </pre>
 </div>
 
-<pre class="example" id="orgcb0e234">
+<pre class="example" id="orgb1d0973">
  $$...$$.....$....$$..$..$.....$..$.$..$$$..$..$$$.$.$$$$$.$$$.$.....$$$.$$.$.$$$.$$...$....$$$.....$$$...$$$..$$$$$.$$$...$$$$$.$$$..$.$..$$..$.$....$...$$$$.$$$..$$$..$.$$$$...$$...$$$$$$$$$$$.$..$.$
  $$...$$..........$$...............$...$$$.....$$$$.$$$$$$$$$$$......$$$$$$$.$$$$$$$........$$$.....$$$...$$$..$$$$$$$$$...$$$$$$$$$...$...$$...$.........$$$$$$$$..$$$...$$$$$...$$...$$$$$$$$$$$$....$$
  $$...$$..........$$...................$$$.....$$$$$$$$$$$$$$$$......$$$$$$$$$$$$$$$........$$$.....$$$...$$$..$$$$$$$$$...$$$$$$$$$.......$$.............$$$$$$$$..$$$...$$$$$...$$...$$$$$$$$$$$$....$$
@@ -743,13 +761,17 @@ Para regra 232, vimos
  $$...$$..........$$...................$$$.....$$$$$$$$$$$$$$$$......$$$$$$$$$$$$$$$........$$$.....$$$...$$$..$$$$$$$$$...$$$$$$$$$.......$$.............$$$$$$$$..$$$...$$$$$...$$...$$$$$$$$$$$$....$$
  $$...$$..........$$...................$$$.....$$$$$$$$$$$$$$$$......$$$$$$$$$$$$$$$........$$$.....$$$...$$$..$$$$$$$$$...$$$$$$$$$.......$$.............$$$$$$$$..$$$...$$$$$...$$...$$$$$$$$$$$$....$$
 </pre>
+</div>
+</li>
 
+<li><a id="orgb8fc6a4"></a>Para valores iniciais 0<br />
+<div class="outline-text-5" id="text-orgb8fc6a4">
 <div class="org-src-container">
 <pre class="src src-shell"> <span style="color: #ECBE7B;">cat</span> saidas/tarefa-1/regra-232/saida_0
 </pre>
 </div>
 
-<pre class="example" id="orgb0bd3c5">
+<pre class="example" id="orgd1b3b65">
  ........................................................................................................................................................................................................
  ........................................................................................................................................................................................................
  ........................................................................................................................................................................................................
@@ -853,13 +875,17 @@ Para regra 232, vimos
  ........................................................................................................................................................................................................
  ........................................................................................................................................................................................................
 </pre>
+</div>
+</li>
 
+<li><a id="org4c66923"></a>Para valores iniciais 1<br />
+<div class="outline-text-5" id="text-org4c66923">
 <div class="org-src-container">
 <pre class="src src-shell"> <span style="color: #ECBE7B;">cat</span> saidas/tarefa-1/regra-232/saida_1
 </pre>
 </div>
 
-<pre class="example" id="org5d843b0">
+<pre class="example" id="org3bead30">
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -964,18 +990,24 @@ Para regra 232, vimos
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 </pre>
 </div>
+</li>
+</ul>
 </div>
 
 
-<div id="outline-container-org61f407d" class="outline-4">
-<h4 id="org61f407d">Regra 254</h4>
-<div class="outline-text-4" id="text-org61f407d">
+<div id="outline-container-orgcf18024" class="outline-4">
+<h4 id="orgcf18024">Regra 254</h4>
+<div class="outline-text-4" id="text-orgcf18024">
+</div>
+<ul class="org-ul">
+<li><a id="org8a4eb81"></a>Para valores iniciais aleatórios<br />
+<div class="outline-text-5" id="text-org8a4eb81">
 <div class="org-src-container">
 <pre class="src src-shell"> <span style="color: #ECBE7B;">cat</span> saidas/tarefa-1/regra-254/saida_-1
 </pre>
 </div>
 
-<pre class="example" id="orgb407026">
+<pre class="example" id="org6a6a9e3">
  ...$.$...$$$..$$$$$.$.$$$$.$.$$.$..$$..$$$.$$$$$...$$$$$..$...$$$..$.$$$$$$$$..$.$$..$$.$..$.$.$...$...$..$.$$$$.$.$$$$...$$.$..$...$$$.$...$$..$$$..$..$$$.....$....$....$..$$...$........$.$..$$$$..$.
  ..$$$$$.$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$.$$$$$$$$$$.$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$.$$$.$$$$$$$$$$$$$$$$$$.$$$$$$$$$.$$$$$$$.$$$$$$$$$$$$$$$$$...$$$..$$$..$$$$$$$.$$$......$$$$$$$$$$$$$$
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$.$$$$$$$$$$$$$$$$$$$$$$$....$$$$$$$$$$$$$$$
@@ -1079,13 +1111,17 @@ Para regra 232, vimos
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 </pre>
+</div>
+</li>
 
+<li><a id="org2608177"></a>Para valores iniciais 0<br />
+<div class="outline-text-5" id="text-org2608177">
 <div class="org-src-container">
 <pre class="src src-shell"> <span style="color: #ECBE7B;">cat</span> saidas/tarefa-1/regra-254/saida_0
 </pre>
 </div>
 
-<pre class="example" id="org74d1abb">
+<pre class="example" id="org13b9849">
  ........................................................................................................................................................................................................
  ........................................................................................................................................................................................................
  ........................................................................................................................................................................................................
@@ -1189,13 +1225,17 @@ Para regra 232, vimos
  ........................................................................................................................................................................................................
  ........................................................................................................................................................................................................
 </pre>
+</div>
+</li>
 
+<li><a id="org9680ee6"></a>Para valores iniciais 1<br />
+<div class="outline-text-5" id="text-org9680ee6">
 <div class="org-src-container">
 <pre class="src src-shell"> <span style="color: #ECBE7B;">cat</span> saidas/tarefa-1/regra-254/saida_1
 </pre>
 </div>
 
-<pre class="example" id="org08dfc39">
+<pre class="example" id="org2bd0fab">
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -1299,19 +1339,24 @@ Para regra 232, vimos
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 </pre>
-</div>
-</div>
-</div>
-</div>
 
 
-<div id="outline-container-orga69a8a3" class="outline-2">
-<h2 id="orga69a8a3">DLA</h2>
-<div class="outline-text-2" id="text-orga69a8a3">
+<p>
+Aqui defendemos o ascii.
+</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgb5de71b" class="outline-2">
+<h2 id="orgb5de71b">DLA</h2>
+<div class="outline-text-2" id="text-orgb5de71b">
 <p>
 No estudo de modelos aleatórios, geramos
-moléculas dentro de um raio \(r = r_{a} + 5\)
-até \(1,5r\) de um aglomerado de raio \(r_{a}\).
+moléculas dentro do intervalor de \(r = r_{a} + 5\)
+até \(1,5r\) para um aglomerado de raio \(r_{a}\).
 </p>
 
 <p>
@@ -1324,16 +1369,16 @@ computacionalmente
 </p>
 </div>
 
-<div id="outline-container-orgda70f2d" class="outline-3">
-<h3 id="orgda70f2d">Programa</h3>
-<div class="outline-text-3" id="text-orgda70f2d">
+<div id="outline-container-orgf6a8488" class="outline-3">
+<h3 id="orgf6a8488">Programa</h3>
+<div class="outline-text-3" id="text-orgf6a8488">
 <p>
 Para o programa do DLA, o foco
 do código foi em ter
 um algoritmo capaz de criar
 posições aleatórias dentro
-do intervalo comentado
-num tabuleiro 200x200.
+do intervalo comentado,
+num tabuleiro 201x201.
 </p>
 
 <p>
@@ -1343,8 +1388,20 @@ polares que depois é convertido
 em posições <b>x</b> e <b>y</b>.
 </p>
 
+<p>
+Ademais, computacionalmente,
+escolhemos que nosso programa
+parace ao atingir \(3000\) pontos
+aglutinados ou \(r > 98\).
+</p>
+
+<p>
+Na prática, ambos os limites foram
+muito próximos, com alguns programas
+acabando antes disso, e outro
+</p>
 <div class="org-src-container">
-<pre class="src src-fortran">module DlaModule
+<label class="org-src-name"><span class="listing-number">Listing 2: </span>Programa da tarefa 2</label><pre class="src src-fortran" id="org173211f">module DlaModule
     <span style="color: #ECBE7B;">implicit none</span>
     <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), <span style="color: #ECBE7B;">parameter</span> :: pi =  <span style="color: #c678dd;">acos</span>(-1.d0)
     <span style="color: #ECBE7B;">integer</span>, <span style="color: #ECBE7B;">parameter</span> :: idx(<span style="color: #da8548; font-weight: bold;">0</span>:<span style="color: #da8548; font-weight: bold;">8</span>) = (/-<span style="color: #da8548; font-weight: bold;">1</span>, -<span style="color: #da8548; font-weight: bold;">1</span>, -<span style="color: #da8548; font-weight: bold;">1</span>,  <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">0</span>,  <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">1</span>/),<span style="color: #5B6268;">&amp;</span>
@@ -1452,9 +1509,9 @@ em posições <b>x</b> e <b>y</b>.
 </div>
 </div>
 
-<div id="outline-container-org646c615" class="outline-3">
-<h3 id="org646c615">Resultados</h3>
-<div class="outline-text-3" id="text-org646c615">
+<div id="outline-container-org8314e63" class="outline-3">
+<h3 id="org8314e63">Resultados</h3>
+<div class="outline-text-3" id="text-org8314e63">
 <p>
 Rodamos 50 interações do programa da tarefa 2
 e obtemos um valor médio de \(df = 1,64\),
@@ -1468,13 +1525,774 @@ grande.
 <p>
 Embora seja inviável mostrar os gráficos
 de cada interação, os de quatro delas
-estão a seguir
+estão a seguir.
 </p>
 
 
-<div id="org43ebe60" class="figure">
-<p><img src="tarefa-2/tarefa-2-graf-11820833.png" alt="tarefa-2-graf-11820833.png" />
+<div id="org5e1a96d" class="figure">
+<p><img src="tarefa-2/tarefa-2-graf-1-11820833.png" alt="tarefa-2-graf-1-11820833.png" />
 </p>
+</div>
+
+<p>
+Aqui, as cores representam em que
+interação determinado ponto se
+aglutinou ao aglomerado.
+</p>
+
+<p>
+Podemos ver o gráfico de \(df\) para
+essas configurações na imagem a seguir,
+em escala logarítima:
+</p>
+
+
+<div id="org1829d29" class="figure">
+<p><img src="tarefa-2/tarefa-2-graf-2-11820833.png" alt="tarefa-2-graf-2-11820833.png" />
+</p>
+</div>
+
+
+<p>
+A divergência do fitting em torno
+de \(r = 0\) pode assustar, mas,
+embora ocupe muito do gráfico
+(ele é logaritmo, afinal),
+a concordância ao final, onde
+estão concentrados quase todos
+os pontos, é muito boa.
+</p>
+
+<p>
+Note que o alto desvio padrão
+se repete na amostra. os valores
+pipocam em várias regiões. Isso
+não surpreende olhando o gráfico,
+é possível ver vários momentos
+onde o número de pontos
+cresce sem grande influência
+no \(r\). Apesar disso,
+para um número de pontos
+consideravelmente maior,
+ou para resultados estátisticos
+(com fizemos), \(df\) deve
+convergir para o valor esperado.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3f53ef7" class="outline-2">
+<h2 id="org3f53ef7">DLA em 3 dimensões</h2>
+<div class="outline-text-2" id="text-org3f53ef7">
+<p>
+Podemos fazer o mesmo processo
+para três dimensões com
+poucas alterações ao programa,
+seguindo as mesmas regras.
+</p>
+</div>
+
+<div id="outline-container-org93230e1" class="outline-3">
+<h3 id="org93230e1">Programa</h3>
+<div class="outline-text-3" id="text-org93230e1">
+<p>
+O programa está a seguir:
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 3: </span>Programa da tarefa 3</label><pre class="src src-fortran" id="orga273693">module DlaModule
+    <span style="color: #ECBE7B;">implicit none</span>
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), <span style="color: #ECBE7B;">parameter</span> :: pi =  <span style="color: #c678dd;">acos</span>(-1.d0)
+
+<span style="color: #5B6268;">c</span><span style="color: #5B6268;">ontains</span>
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">andarDoBebado</span>(x,  y, z)
+        <span style="color: #ECBE7B;">integer</span>, intent(out) :: x, y, z
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) ::  numAleatorio
+        <span style="color: #ECBE7B;">integer</span> ::  dx, dy, dz
+
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+        dx = <span style="color: #c678dd;">nint</span>(<span style="color: #da8548; font-weight: bold;">2</span>*numAleatorio - <span style="color: #da8548; font-weight: bold;">1</span>)
+        x = x + dx
+
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+        dy = <span style="color: #c678dd;">nint</span>(<span style="color: #da8548; font-weight: bold;">2</span>*numAleatorio - <span style="color: #da8548; font-weight: bold;">1</span>)
+        y = y + dy
+
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+        dz = <span style="color: #c678dd;">nint</span>(<span style="color: #da8548; font-weight: bold;">2</span>*numAleatorio - <span style="color: #da8548; font-weight: bold;">1</span>)
+        z = z + dz
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">andarDoBebado</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">escrevePonto</span>(numPontos, r)
+        <span style="color: #ECBE7B;">integer</span>, intent(in) :: numPontos
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: r
+        <span style="color: #51afef;">write</span>(<span style="color: #da8548; font-weight: bold;">1</span>, *) numPontos, r
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">escrevePonto</span>
+
+
+    <span style="color: #ECBE7B;">integer</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">raioQuad</span>(x, y, z)
+        <span style="color: #ECBE7B;">integer</span>, intent(in) :: x, y, z
+        raioQuad = x**<span style="color: #da8548; font-weight: bold;">2</span> + y**<span style="color: #da8548; font-weight: bold;">2</span> + z**<span style="color: #da8548; font-weight: bold;">2</span>
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">raioQuad</span>
+
+
+
+    <span style="color: #ECBE7B;">integer</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">numVizinhos</span>(x, y, z, tabuleiro)
+        <span style="color: #ECBE7B;">integer</span> :: x, y, z, tabuleiro(-<span style="color: #da8548; font-weight: bold;">75</span>:<span style="color: #da8548; font-weight: bold;">75</span>,-<span style="color: #da8548; font-weight: bold;">75</span>:<span style="color: #da8548; font-weight: bold;">75</span>,-<span style="color: #da8548; font-weight: bold;">75</span>:<span style="color: #da8548; font-weight: bold;">75</span>)
+        numVizinhos = &amp;
+            tabuleiro(x+<span style="color: #da8548; font-weight: bold;">1</span>, y, z) + tabuleiro(x-<span style="color: #da8548; font-weight: bold;">1</span>,y,z) + &amp;
+            tabuleiro(x, y+<span style="color: #da8548; font-weight: bold;">1</span>, z) + tabuleiro(x,y-<span style="color: #da8548; font-weight: bold;">1</span>,z) + &amp;
+            tabuleiro(x, y, z+<span style="color: #da8548; font-weight: bold;">1</span>) + tabuleiro(x,y,z-<span style="color: #da8548; font-weight: bold;">1</span>)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">numVizinhos</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">geraPonto</span>(r, tabuleiro, numPontos)
+        <span style="color: #ECBE7B;">integer</span> :: x, y, z, tabuleiro(-<span style="color: #da8548; font-weight: bold;">75</span>:<span style="color: #da8548; font-weight: bold;">75</span>,-<span style="color: #da8548; font-weight: bold;">75</span>:<span style="color: #da8548; font-weight: bold;">75</span>,-<span style="color: #da8548; font-weight: bold;">75</span>:<span style="color: #da8548; font-weight: bold;">75</span>), numPontos
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), intent(out) :: r
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: teta, fi, numAleatorio
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">rho pertence [rhoMin, rhoMin + drho]</span>
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: rhoMin, drho, rho
+
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">gera teta</span>
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+        teta =  pi*numAleatorio
+
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">gera fi</span>
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+        fi = <span style="color: #da8548; font-weight: bold;">2</span>*pi*numAleatorio
+
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">gera p</span>
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+        rhoMin = r + <span style="color: #da8548; font-weight: bold;">5</span>
+        drho = 0.5d0*rhoMin
+        rho = rhoMin + drho*numAleatorio
+        x = floor(rho*<span style="color: #c678dd;">sin</span>(teta)*<span style="color: #c678dd;">cos</span>(fi))
+        y = floor(rho*<span style="color: #c678dd;">sin</span>(teta)*<span style="color: #c678dd;">sin</span>(fi))
+        z = floor(rho*<span style="color: #c678dd;">cos</span>(teta))
+
+        <span style="color: #51afef;">do</span> <span style="color: #51afef;">while</span> ( raioQuad(x,y,z) <span style="color: #51afef;">.le.</span> (1.5d0*rhoMin)**<span style="color: #da8548; font-weight: bold;">2</span> &amp;
+             <span style="color: #51afef;">.and.</span> <span style="color: #c678dd;">abs</span>(x) &lt; <span style="color: #da8548; font-weight: bold;">74</span> <span style="color: #51afef;">.and.</span> <span style="color: #c678dd;">abs</span>(y) &lt; <span style="color: #da8548; font-weight: bold;">74</span> <span style="color: #51afef;">.and.</span> <span style="color: #c678dd;">abs</span>(z) &lt; <span style="color: #da8548; font-weight: bold;">74</span> )
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">andarDoBebado</span>(x,y,z)
+            <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Achou local para acoplar, atualiza tabuleiro</span>
+            <span style="color: #51afef;">if</span> ( numVizinhos(x,y, z, tabuleiro) &gt; <span style="color: #da8548; font-weight: bold;">0</span> ) <span style="color: #51afef;">then</span>
+                numPontos = numPontos + <span style="color: #da8548; font-weight: bold;">1</span>
+                tabuleiro(x,y,z) = <span style="color: #da8548; font-weight: bold;">1</span>
+                <span style="color: #51afef;">if</span> ( raioQuad(x,y,z) &gt; r**<span style="color: #da8548; font-weight: bold;">2</span>  ) <span style="color: #51afef;">then</span>
+                    r = raioQuad(x,y,z)**(1.d0/2.d0)
+                <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+                <span style="color: #51afef;">call</span> <span style="color: #c678dd;">escrevePonto</span>(numPontos,r)
+                <span style="color: #51afef;">exit</span>
+            <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">geraPonto</span>
+
+<span style="color: #51afef;">end</span> module DlaModule
+
+<span style="color: #51afef;">program</span> <span style="color: #c678dd;">DLA_3D</span>
+    use DlaModule
+    <span style="color: #ECBE7B;">implicit none</span>
+    <span style="color: #ECBE7B;">integer</span>, <span style="color: #ECBE7B;">save</span> :: tabuleiro(-<span style="color: #da8548; font-weight: bold;">75</span>:<span style="color: #da8548; font-weight: bold;">75</span>,-<span style="color: #da8548; font-weight: bold;">75</span>:<span style="color: #da8548; font-weight: bold;">75</span>,-<span style="color: #da8548; font-weight: bold;">75</span>:<span style="color: #da8548; font-weight: bold;">75</span>)
+    <span style="color: #ECBE7B;">integer</span> :: numPontos
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: r
+
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Iniciamos nosso tabuleiro</span>
+    tabuleiro = <span style="color: #da8548; font-weight: bold;">0</span>
+    tabuleiro(<span style="color: #da8548; font-weight: bold;">0</span>,<span style="color: #da8548; font-weight: bold;">0</span>,<span style="color: #da8548; font-weight: bold;">0</span>) = <span style="color: #da8548; font-weight: bold;">1</span>
+    numPontos = <span style="color: #da8548; font-weight: bold;">1</span>
+
+    <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">1</span>, file=<span style="color: #98be65;">"saida-3-11820833"</span>)
+
+    r = 0.d0
+
+    <span style="color: #51afef;">do</span> <span style="color: #51afef;">while</span> (numPontos <span style="color: #51afef;">.le.</span> <span style="color: #da8548; font-weight: bold;">10000</span> <span style="color: #51afef;">.and.</span> r &lt; <span style="color: #da8548; font-weight: bold;">70</span>)
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">geraPonto</span>(r, tabuleiro, numPontos)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+    <span style="color: #51afef;">close</span>(<span style="color: #da8548; font-weight: bold;">1</span>)
+
+
+<span style="color: #51afef;">end</span> <span style="color: #51afef;">program</span> <span style="color: #c678dd;">DLA_3D</span>
+</pre>
+</div>
+
+<p>
+A principal diferença está em
+na geração do movimento da
+partícula.
+</p>
+
+<p>
+Embora seria possível (e ideal)
+adaptar o algoritmo anterior para
+o caso 3D, prefirimos usar
+a geração de um número aleatório
+para cada direção, que é bem mais
+legível do que 3 arrays de 27 ints
+no início.
+</p>
+
+<p>
+Aqui, o limite imposto ao
+número de pontos propenderou
+sobre o imposto ao raio,
+que ficou em torno de 45
+para maioria das interações.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org484ec7e" class="outline-3">
+<h3 id="org484ec7e">Resultados</h3>
+<div class="outline-text-3" id="text-org484ec7e">
+<p>
+Obtivemos, para 30 interações
+\(df = 2,00 \pm 0.14\).
+</p>
+
+<p>
+Dessa vez, é impeditivo
+(e não muito útil) enxergar
+o aglomerado, mas podemos
+ver as curvas de \(df\)
+para 4 iterações a seguir
+</p>
+
+
+<div id="org6142656" class="figure">
+<p><img src="tarefa-3/tarefa-3-graf-11820833.png" alt="tarefa-3-graf-11820833.png" />
+</p>
+</div>
+
+<p>
+Vemos outra vez um gráfico
+bastante distribuído.
+Novamente, para \(N\)
+grande o suficiente, esses
+valores devem convergir.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org35088af" class="outline-2">
+<h2 id="org35088af">Efeito Corona</h2>
+<div class="outline-text-2" id="text-org35088af">
+<p>
+Ao mudarmos a geração dos novos pontos
+de acontecer em torno de uma origem para
+acontecer acima de uma linha, temos
+efeitos parecidos com o do efeito
+corona. Buscamos reproduzir esse efeito
+com código a seguir
+</p>
+</div>
+
+<div id="outline-container-org95d1263" class="outline-3">
+<h3 id="org95d1263">Programa</h3>
+<div class="outline-text-3" id="text-org95d1263">
+<p>
+Aqui, apenas alteramos levemente o programa
+da DLA.
+</p>
+
+<p>
+Primeiramente, fizemos de crescimento
+da semente todo eixo \(y = 0\), depois
+fizemos o programa gerar novas moléculas
+apenas em \(y > 0\). Por fim, essa moléculas
+tinham que estar inicialmente ao menos
+5 blocos acima do nosso aglomerado.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 4: </span>Programa usado na tarefa 4</label><pre class="src src-fortran" id="org03e1fcd">module DlaModules
+    <span style="color: #ECBE7B;">implicit none</span>
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), <span style="color: #ECBE7B;">parameter</span> :: pi =  <span style="color: #c678dd;">acos</span>(-1.d0)
+    <span style="color: #ECBE7B;">integer</span>, <span style="color: #ECBE7B;">parameter</span> :: idx(<span style="color: #da8548; font-weight: bold;">0</span>:<span style="color: #da8548; font-weight: bold;">8</span>) = (/-<span style="color: #da8548; font-weight: bold;">1</span>, -<span style="color: #da8548; font-weight: bold;">1</span>, -<span style="color: #da8548; font-weight: bold;">1</span>,  <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">0</span>,  <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">1</span>/),<span style="color: #5B6268;">&amp;</span>
+                          idy(<span style="color: #da8548; font-weight: bold;">0</span>:<span style="color: #da8548; font-weight: bold;">8</span>) = (/-<span style="color: #da8548; font-weight: bold;">1</span>,  <span style="color: #da8548; font-weight: bold;">0</span>,  <span style="color: #da8548; font-weight: bold;">1</span>, -<span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">1</span>, -<span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">1</span>/)
+<span style="color: #5B6268;">c</span><span style="color: #5B6268;">ontains</span>
+
+    <span style="color: #ECBE7B;">integer</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">bernoulli</span>(p)
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: p, numAleatorio
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+        <span style="color: #51afef;">if</span> ( numAleatorio &lt; p ) <span style="color: #51afef;">then</span>
+            bernoulli = <span style="color: #da8548; font-weight: bold;">1</span>
+        <span style="color: #51afef;">else</span>
+            bernoulli = <span style="color: #da8548; font-weight: bold;">0</span>
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">bernoulli</span>
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">andarDoBebado</span>(x,  y)
+        <span style="color: #ECBE7B;">integer</span>, intent(out) :: x, y
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) ::  numAleatorio
+        <span style="color: #ECBE7B;">integer</span> ::  idr
+
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+        idr = <span style="color: #c678dd;">nint</span>(<span style="color: #da8548; font-weight: bold;">8</span>*numAleatorio)
+
+        x = x + idx(idr)
+        y = y + idy(idr)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">andarDoBebado</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">escrevePonto</span>(x,  y, numPontos, z)
+        <span style="color: #ECBE7B;">integer</span>, intent(in) :: x, y, numPontos
+        <span style="color: #ECBE7B;">integer</span> :: z
+        <span style="color: #51afef;">write</span>(<span style="color: #da8548; font-weight: bold;">1</span>, *) x, y, numPontos, z
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">escrevePonto</span>
+
+
+    <span style="color: #ECBE7B;">integer</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">numVizinhos</span>(x, y, tabuleiro)
+        <span style="color: #ECBE7B;">integer</span> :: x, y, tabuleiro(-<span style="color: #da8548; font-weight: bold;">100</span>:<span style="color: #da8548; font-weight: bold;">100</span>,<span style="color: #da8548; font-weight: bold;">0</span>:<span style="color: #da8548; font-weight: bold;">100</span>)
+        numVizinhos = tabuleiro(x+<span style="color: #da8548; font-weight: bold;">1</span>,y) &amp;
+            + tabuleiro(x-<span style="color: #da8548; font-weight: bold;">1</span>,y) + tabuleiro(x,y+<span style="color: #da8548; font-weight: bold;">1</span>) &amp;
+            + tabuleiro(x, y-<span style="color: #da8548; font-weight: bold;">1</span>)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">numVizinhos</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">geraPonto</span>(z, tabuleiro, numPontos)
+        <span style="color: #ECBE7B;">integer</span> :: x, y, tabuleiro(-<span style="color: #da8548; font-weight: bold;">100</span>:<span style="color: #da8548; font-weight: bold;">100</span>,<span style="color: #da8548; font-weight: bold;">0</span>:<span style="color: #da8548; font-weight: bold;">100</span>), numPontos
+        <span style="color: #ECBE7B;">integer</span>, intent(out) :: z
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: numAleatorio
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">y0 pertence [yMin - dy, yMin + dy]</span>
+        <span style="color: #ECBE7B;">integer</span> :: yMin, dy
+
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">gera x</span>
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+        yMin = z + <span style="color: #da8548; font-weight: bold;">5</span>
+        dy = <span style="color: #c678dd;">nint</span>(0.5d0*yMin)
+        y = (yMin + <span style="color: #c678dd;">nint</span>(dy*numAleatorio))
+
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+        x = <span style="color: #c678dd;">nint</span>(<span style="color: #da8548; font-weight: bold;">200</span>*numAleatorio-<span style="color: #da8548; font-weight: bold;">100</span>)
+
+        <span style="color: #51afef;">do</span> <span style="color: #51afef;">while</span> ( x /= <span style="color: #da8548; font-weight: bold;">0</span> <span style="color: #51afef;">.and.</span> x &lt; 1.5d0*yMin <span style="color: #51afef;">.and.</span> &amp;
+             <span style="color: #c678dd;">abs</span>(x) &lt; <span style="color: #da8548; font-weight: bold;">99</span> <span style="color: #51afef;">.and.</span> <span style="color: #c678dd;">abs</span>(y) &lt; <span style="color: #da8548; font-weight: bold;">99</span> )
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">andarDoBebado</span>(x,y)
+            <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Achou local para acoplar, atualiza tabuleiro</span>
+            <span style="color: #51afef;">if</span> ( numVizinhos(x,y,tabuleiro) &gt; <span style="color: #da8548; font-weight: bold;">0</span> ) <span style="color: #51afef;">then</span>
+                numPontos = numPontos + <span style="color: #da8548; font-weight: bold;">1</span>
+                tabuleiro(x,y) = numPontos
+                <span style="color: #51afef;">if</span> ( y &gt; z  ) <span style="color: #51afef;">then</span>
+                    z = y
+                <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+                <span style="color: #51afef;">call</span> <span style="color: #c678dd;">escrevePonto</span>(x, y, numPontos, z)
+
+                <span style="color: #51afef;">exit</span>
+            <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">geraPonto</span>
+
+
+<span style="color: #51afef;">end</span> module DlaModules
+
+<span style="color: #51afef;">program</span> <span style="color: #c678dd;">DLA</span>
+    use DlaModules
+    <span style="color: #ECBE7B;">implicit none</span>
+    <span style="color: #ECBE7B;">integer</span> :: tabuleiro(-<span style="color: #da8548; font-weight: bold;">100</span>:<span style="color: #da8548; font-weight: bold;">100</span>,<span style="color: #da8548; font-weight: bold;">0</span>:<span style="color: #da8548; font-weight: bold;">100</span>)
+    <span style="color: #ECBE7B;">integer</span> :: numPontos, z = <span style="color: #da8548; font-weight: bold;">0</span>, i = <span style="color: #da8548; font-weight: bold;">0</span>
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Iniciamos nosso tabuleiro</span>
+    tabuleiro = <span style="color: #da8548; font-weight: bold;">0</span>
+
+    <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">1</span>, file=<span style="color: #98be65;">"saida-4-11820833"</span>)
+    <span style="color: #51afef;">do</span> i = -<span style="color: #da8548; font-weight: bold;">100</span>,<span style="color: #da8548; font-weight: bold;">100</span>
+        tabuleiro(i,<span style="color: #da8548; font-weight: bold;">0</span>) = <span style="color: #da8548; font-weight: bold;">1</span>
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">escrevePonto</span>(i, <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">0</span>)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    numPontos = <span style="color: #da8548; font-weight: bold;">1</span>
+
+    <span style="color: #51afef;">do</span> <span style="color: #51afef;">while</span> (numPontos <span style="color: #51afef;">.le.</span> <span style="color: #da8548; font-weight: bold;">3000</span> <span style="color: #51afef;">.and.</span> z &lt; <span style="color: #da8548; font-weight: bold;">90</span>)
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">geraPonto</span>(z, tabuleiro, numPontos)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+    <span style="color: #51afef;">close</span>(<span style="color: #da8548; font-weight: bold;">1</span>)
+
+
+<span style="color: #51afef;">end</span> <span style="color: #51afef;">program</span> <span style="color: #c678dd;">DLA</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgcb5cca3" class="outline-3">
+<h3 id="orgcb5cca3">Resultados</h3>
+<div class="outline-text-3" id="text-orgcb5cca3">
+<p>
+Temos a seguir 4 interações
+</p>
+
+
+<div id="org6d704d1" class="figure">
+<p><img src="tarefa-4/tarefa-4-graf-11820833.png" alt="tarefa-4-graf-11820833.png" />
+</p>
+</div>
+
+<p>
+Onde novamente as cores indicam
+o número de pontos quando a
+molécula se agregou ao aglomerado
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc018b46" class="outline-2">
+<h2 id="orgc018b46">Modelo de Revoluções populares</h2>
+<div class="outline-text-2" id="text-orgc018b46">
+<blockquote>
+<p>
+ An specter is haunting the lattice, the specter
+ of communism
+&#x2013; John Lennon
+</p>
+</blockquote>
+
+<p>
+Buscamos fazer um experimento
+diferente: Se ao invés de moléculas
+andando como bêbadas, tivermos
+nosso aglomerado andando e
+agragando as moléculas onde
+esbarram, teremos um novo
+modelo de crescimento.
+</p>
+</div>
+<div id="outline-container-orgd77f1af" class="outline-3">
+<h3 id="orgd77f1af">Programa</h3>
+<div class="outline-text-3" id="text-orgd77f1af">
+<p>
+Dessa vez, ao invés
+de termos uma grade, fizemos
+duas arrays, uma guardando a
+posição de todas as moléculas.
+e outra contendo os nossos
+revolucionários.
+</p>
+
+<p>
+Em cada interação, moviamos
+os revolucionários
+viamos quais células eram vizinhas
+a eles. Essas células
+são então removidas do vetor de
+todas as moléculas
+(No caso, jogadas para um ponto bem
+longe do limite do tabuleiro) e
+inseridas às massas mobilizidas.
+</p>
+
+<p>
+Por fim, a configuração de
+&ldquo;todas as moléculas&rdquo;, foi dada
+por uma inicialização que, com
+uma chance \(p\), adicionava
+uma nova molécula, representada
+por sua posição, no vetor de todas
+moléculas.
+</p>
+
+<p>
+Para guardar a posição das moléculas,
+criamos uma struct vértice.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 5: </span>Programa usado na tarefa 5</label><pre class="src src-fortran" id="org37c6793">module RevolutionModule
+    <span style="color: #ECBE7B;">implicit none</span>
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), <span style="color: #ECBE7B;">parameter</span> :: pi =  <span style="color: #c678dd;">acos</span>(-1.d0)
+    <span style="color: #ECBE7B;">integer</span>, <span style="color: #ECBE7B;">parameter</span> :: idx(<span style="color: #da8548; font-weight: bold;">0</span>:<span style="color: #da8548; font-weight: bold;">8</span>) = (/-<span style="color: #da8548; font-weight: bold;">1</span>, -<span style="color: #da8548; font-weight: bold;">1</span>, -<span style="color: #da8548; font-weight: bold;">1</span>,  <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">0</span>,  <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">1</span>/),<span style="color: #5B6268;">&amp;</span>
+                          idy(<span style="color: #da8548; font-weight: bold;">0</span>:<span style="color: #da8548; font-weight: bold;">8</span>) = (/-<span style="color: #da8548; font-weight: bold;">1</span>,  <span style="color: #da8548; font-weight: bold;">0</span>,  <span style="color: #da8548; font-weight: bold;">1</span>, -<span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">1</span>, -<span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">1</span>/)
+
+
+    type :: vertice
+        <span style="color: #ECBE7B;">integer</span> :: x
+        <span style="color: #ECBE7B;">integer</span> :: y
+    contains
+        procedure :: mudaVertice
+    <span style="color: #51afef;">end</span> type
+
+<span style="color: #5B6268;">c</span><span style="color: #5B6268;">ontains</span>
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">mudaVertice</span>(this, dx, dy)
+        class(vertice) :: this
+        <span style="color: #ECBE7B;">integer</span> :: dx, dy
+            this%x = this%x + dx
+            this%y = this%y + dy
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">mudaVertice</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">andarDoBebado</span>(x,  y)
+        <span style="color: #ECBE7B;">integer</span>, intent(out) :: x, y
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) ::  numAleatorio
+        <span style="color: #ECBE7B;">integer</span> ::  idr
+
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+        idr = <span style="color: #c678dd;">nint</span>(<span style="color: #da8548; font-weight: bold;">8</span>*numAleatorio)
+
+        x = x + idx(idr)
+        y = y + idy(idr)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">andarDoBebado</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">inciaTabuleiro</span>(pontosIniciais,&amp;
+         tamanhoIniciais, tamanhoTabuleiro, p)
+        type(vertice), intent(out) :: pontosIniciais(:)
+        <span style="color: #ECBE7B;">integer</span>, intent(in) :: tamanhoTabuleiro
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), intent(in) ::  p
+        <span style="color: #ECBE7B;">integer</span> :: tamanhoIniciais, x, y, ponto, numPontos = <span style="color: #da8548; font-weight: bold;">0</span>
+
+        percorre_tabuleiro: <span style="color: #51afef;">do</span> x = -tamanhoTabuleiro/<span style="color: #da8548; font-weight: bold;">2</span>, tamanhoTabuleiro<span style="color: #5B6268;">/2</span>
+            <span style="color: #51afef;">do</span> y = -tamanhoTabuleiro/<span style="color: #da8548; font-weight: bold;">2</span>, tamanhoTabuleiro/<span style="color: #da8548; font-weight: bold;">2</span>
+                ponto = bernoulli(p)
+
+                <span style="color: #51afef;">if</span> ( ponto == <span style="color: #da8548; font-weight: bold;">1</span> ) <span style="color: #51afef;">then</span>
+                    numPontos = numPontos+<span style="color: #da8548; font-weight: bold;">1</span>
+                    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">insereVertice</span>(pontosIniciais,&amp;
+                        tamanhoIniciais, x, y)
+                <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+            <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span> percorre_tabuleiro
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">inciaTabuleiro</span>
+
+
+    <span style="color: #ECBE7B;">integer</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">raioQuad</span>(x, y)
+        <span style="color: #ECBE7B;">integer</span>, intent(in) :: x, y
+        raioQuad = x**<span style="color: #da8548; font-weight: bold;">2</span> + y**<span style="color: #da8548; font-weight: bold;">2</span>
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">raioQuad</span>
+
+
+    <span style="color: #ECBE7B;">integer</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">bernoulli</span>(p)
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: p, numAleatorio
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+            <span style="color: #51afef;">if</span> ( numAleatorio &lt; p ) <span style="color: #51afef;">then</span>
+                bernoulli = <span style="color: #da8548; font-weight: bold;">1</span>
+            <span style="color: #51afef;">else</span>
+                bernoulli = <span style="color: #da8548; font-weight: bold;">0</span>
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">bernoulli</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">insereVertice</span>(pontos,  tamanhoPontos, x, y)
+        type(vertice), intent(out) :: pontos(:)
+        <span style="color: #ECBE7B;">integer</span>, intent(inout) ::  tamanhoPontos
+        <span style="color: #ECBE7B;">integer</span> :: x, y
+
+        tamanhoPontos = tamanhoPontos + <span style="color: #da8548; font-weight: bold;">1</span>
+        pontos(tamanhoPontos) = vertice(x,y)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">insereVertice</span>
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">removeVertice</span>(pontos, i, tamanhoTabuleiro)
+        type(vertice), intent(in) :: pontos(:)
+        <span style="color: #ECBE7B;">integer</span>, intent(in) ::  i, tamanhoTabuleiro
+
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Joga os pontos pra bem longe para n&#227;o ter risco de interfer&#234;ncia</span>
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">no resto do jogo</span>
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">pontos</span>(i)%mudaVertice(-<span style="color: #da8548; font-weight: bold;">10</span>*tamanhoTabuleiro,-<span style="color: #da8548; font-weight: bold;">10</span>*tamanhoTabul<span style="color: #5B6268;">eiro)</span>
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">removeVertice</span>
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">moveRevolucao</span>(pontosRevolucao, &amp;
+                    tamanhoRevolucao)
+        type(vertice), intent(in) :: pontosRevolucao(:)
+        <span style="color: #ECBE7B;">integer</span>, intent(out) :: tamanhoRevolucao
+        <span style="color: #ECBE7B;">integer</span> :: dx, dy, i
+
+        dx = <span style="color: #da8548; font-weight: bold;">0</span>; dy = <span style="color: #da8548; font-weight: bold;">0</span>
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">andarDoBebado</span>(dx, dy)
+        <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, tamanhoRevolucao
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">pontosRevolucao</span>(i)%mudaVertice(dx,dy)
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">moveRevolucao</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">aglutinaCamaradas</span>(pontosRevolucao, pontosIniciais,&amp;
+         tamanhoRevolucao, tamanhoIniciais, tamanhoTabuleiro, rQuad)
+
+        type(vertice) :: pontosRevolucao(:), pontosIniciais(:)
+        <span style="color: #ECBE7B;">integer</span> :: tamanhoIniciais, tamanhoTabuleiro, tamanhoRevolucao
+        <span style="color: #ECBE7B;">integer</span> :: i, j, x_i, y_i, x_r, y_r,&amp;
+                x_trotsky, y_trotsky, tamanhoRevolucaoAtual
+        <span style="color: #ECBE7B;">logical</span> :: vizinho
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: rQuad, rQuad_i
+
+        tamanhoRevolucaoAtual = tamanhoRevolucao
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Ponto inicial do cluster</span>
+        x_trotsky = pontosRevolucao(<span style="color: #da8548; font-weight: bold;">1</span>)%x
+        y_trotsky = pontosRevolucao(<span style="color: #da8548; font-weight: bold;">1</span>)%y
+
+        <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, tamanhoIniciais
+            x_i = pontosIniciais(i)%x
+            y_i = pontosIniciais(i)%y
+
+            <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Devemos tomar cuidado de usar o tamanho da revolu&#231;&#227;o</span>
+            <span style="color: #5B6268;">! </span><span style="color: #5B6268;">no inicio da itera&#231;&#227;o, j&#225; que esse valor se altera no loop</span>
+            <span style="color: #51afef;">do</span> j = <span style="color: #da8548; font-weight: bold;">1</span>, tamanhoRevolucaoAtual
+
+                x_r = pontosRevolucao(j)%x
+                y_r = pontosRevolucao(j)%y
+                <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Checa se o ponto &#233; vizinho de um revolucionario</span>
+                vizinho = &amp;
+                    (x_i == x_r <span style="color: #51afef;">.and.</span> (y_i == y_r+<span style="color: #da8548; font-weight: bold;">1</span> <span style="color: #51afef;">.or.</span> y_i == y_r-<span style="color: #da8548; font-weight: bold;">1</span>)) <span style="color: #5B6268;">&amp;</span>
+                    <span style="color: #51afef;">.or.</span> (y_i == y_r <span style="color: #51afef;">.and.</span> (x_i == x_r+<span style="color: #da8548; font-weight: bold;">1</span> <span style="color: #51afef;">.or.</span> x_i == x_r<span style="color: #5B6268;">-1))</span>
+
+                <span style="color: #51afef;">if</span> ( vizinho ) <span style="color: #51afef;">then</span>
+                    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">insereVertice</span>(pontosRevolucao, tamanhoRevolucao<span style="color: #5B6268;">, x_i, y_i)</span>
+
+                    rQuad_i = raioQuad(x_trotsky-x_i, y_trotsky-y_i)
+
+                    <span style="color: #51afef;">if</span> (rQuad &lt; rQuad_i ) <span style="color: #51afef;">then</span>
+                        rQuad = rQuad_i
+                    <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+                    <span style="color: #51afef;">write</span>(<span style="color: #da8548; font-weight: bold;">1</span>,*) tamanhoRevolucao, <span style="color: #c678dd;">sqrt</span>(rQuad)
+
+                    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">removeVertice</span>(pontosIniciais, i, tamanhoTabulei<span style="color: #5B6268;">ro)</span>
+                    <span style="color: #51afef;">exit</span>
+                <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+            <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">aglutinaCamaradas</span>
+
+<span style="color: #51afef;">end</span> module RevolutionModule
+
+
+<span style="color: #51afef;">program</span> <span style="color: #c678dd;">trotskyExe</span>
+    use RevolutionModule
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), <span style="color: #ECBE7B;">parameter</span> :: p = 0.2d0
+
+    <span style="color: #ECBE7B;">integer</span>, <span style="color: #ECBE7B;">parameter</span> :: tamanhoTabuleiro = <span style="color: #da8548; font-weight: bold;">200</span>, &amp;
+                          tamanhoListas = <span style="color: #da8548; font-weight: bold;">1.5</span>*tamanhoTabuleiro**<span style="color: #da8548; font-weight: bold;">2</span>*p
+    type(vertice) :: pontosIniciais(tamanhoListas),&amp;
+                     pontosRevolucao(tamanhoListas)
+
+    <span style="color: #ECBE7B;">integer</span> :: tamanhoIniciais = <span style="color: #da8548; font-weight: bold;">0</span>, tamanhoRevolucao = <span style="color: #da8548; font-weight: bold;">0</span>, i = <span style="color: #da8548; font-weight: bold;">0</span>
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: rQuad = 0.d0
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Cria sociedade capitalista fadada ao fracasso</span>
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">inciaTabuleiro</span>(pontosIniciais, tamanhoIniciais, &amp;
+                         tamanhoTabuleiro, p)
+
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Um espectro ronda o tabuleiro, o espectro do comunismo</span>
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">insereVertice</span>(pontosRevolucao, tamanhoRevolucao, <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">0</span>)
+    <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">1</span>, file=<span style="color: #98be65;">"saida-5-11820833"</span>)
+
+    <span style="color: #51afef;">do</span> <span style="color: #51afef;">while</span> (i &lt; <span style="color: #da8548; font-weight: bold;">2000</span> <span style="color: #51afef;">.and.</span> rQuad &lt; <span style="color: #da8548; font-weight: bold;">0.7</span>*(tamanhoTabuleiro/<span style="color: #da8548; font-weight: bold;">2</span>)**<span style="color: #da8548; font-weight: bold;">2.</span> <span style="color: #51afef;">.and.</span> <span style="color: #5B6268;">tamanhoRevolucao &lt; 5000)</span>
+        i = i + <span style="color: #da8548; font-weight: bold;">1</span>
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">moveRevolucao</span>(pontosRevolucao, tamanhoRevolucao)
+         <span style="color: #51afef;">call</span> <span style="color: #c678dd;">aglutinaCamaradas</span>(pontosRevolucao, pontosIniciais,&amp;
+                 tamanhoRevolucao, tamanhoIniciais, tamanhoTabuleiro, rQ<span style="color: #5B6268;">uad)</span>
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+    <span style="color: #51afef;">close</span>(<span style="color: #da8548; font-weight: bold;">1</span>)
+
+<span style="color: #51afef;">end</span> <span style="color: #51afef;">program</span> <span style="color: #c678dd;">trotskyExe</span>
+</pre>
+</div>
+
+<p>
+Infelizmente, esse código não permite
+visualizar a configuração final
+</p>
+</div>
+</div>
+<div id="outline-container-org028a5a2" class="outline-3">
+<h3 id="org028a5a2">Resultados</h3>
+<div class="outline-text-3" id="text-org028a5a2">
+<p>
+O gráfico de \(df\) para diferentes
+valores de \(p\) está a seguir:
+</p>
+
+
+<div id="org4440de1" class="figure">
+<p><img src="tarefa-5/tarefa-5-graf-11820833.png" alt="tarefa-5-graf-11820833.png" />
+</p>
+</div>
+
+<p>
+Observamos a tendência de convergência
+ds valores de \(df\) no extremo de
+\(r\). Caso isso não tenha ficado
+claro, registrados o valor
+de \(df\) para cada \(p\)
+na tabela abaixo:
+</p>
+
+<div class="org-center">
+<p>
+
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">\(p\)</th>
+<th scope="col" class="org-left">\(df\)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">\(0,1\)</td>
+<td class="org-left">\(1,54\)</td>
+</tr>
+
+<tr>
+<td class="org-left">\(0,2\)</td>
+<td class="org-left">\(1,68\)</td>
+</tr>
+
+<tr>
+<td class="org-left">\(0,3\)</td>
+<td class="org-left">\(1,74\)</td>
+</tr>
+
+<tr>
+<td class="org-left">\(0,4\)</td>
+<td class="org-left">\(1,72\)</td>
+</tr>
+
+<tr>
+<td class="org-left">\(0,5\)</td>
+<td class="org-left">\(1,77\)</td>
+</tr>
+
+<tr>
+<td class="org-left">\(0,6\)</td>
+<td class="org-left">\( 2,05\)</td>
+</tr>
+
+<tr>
+<td class="org-left">\(0,7\)</td>
+<td class="org-left">\(1,90\)</td>
+</tr>
+
+<tr>
+<td class="org-left">\(0,8\)</td>
+<td class="org-left">\(2,00\)</td>
+</tr>
+
+<tr>
+<td class="org-left">\(0,9\)</td>
+<td class="org-left">\(1,94\)</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>

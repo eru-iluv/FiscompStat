@@ -40,13 +40,12 @@ def tarefa5():
     caminhoDir = "saidas/tarefa-5/"
     dfArray = []
     
-    for i in range(30):
+    for i in range(1,10):
         caminhoSaida = caminhoDir + "saida-{}".format(i) 
         data = leData(caminhoSaida)
         dfArray.append(obtemDf(data))
 
-    dfArray = np.array(dfArray)
-    return (np.mean(dfArray), np.std(dfArray, ddof=1 ))
+    return dfArray
 
 
 def obtemDf(data: np.array):

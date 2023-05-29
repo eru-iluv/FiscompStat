@@ -90,7 +90,7 @@ contains
         
         ! Joga os pontos pra bem longe para não ter risco de interferência
         ! no resto do jogo
-        call pontos(i)%mudaVertice(-5*tamanhoTabuleiro,-5*tamanhoTabuleiro)
+        call pontos(i)%mudaVertice(-10*tamanhoTabuleiro,-10*tamanhoTabuleiro)
     end subroutine removeVertice
 
     subroutine moveRevolucao(pontosRevolucao, &
@@ -113,10 +113,11 @@ contains
         
         type(vertice) :: pontosRevolucao(:), pontosIniciais(:)
         integer :: tamanhoIniciais, tamanhoTabuleiro, tamanhoRevolucao
-        integer :: i, j, x_i, y_i, x_r, y_r, x_trotsky, y_trotsky
+        integer :: i, j, x_i, y_i, x_r, y_r, x_trotsky, y_trotsky, tamanhoRevolucaoAtual 
         logical :: vizinho 
         real(8) :: rQuad, rQuad_i 
 
+        tamanhoRevolucaoAtual = tamanhoRevolucao
         ! Ponto inicial do cluster
         x_trotsky = pontosRevolucao(1)%x
         y_trotsky = pontosRevolucao(1)%y
@@ -125,8 +126,8 @@ contains
         do i = 1, tamanhoIniciais
             x_i = pontosIniciais(i)%x
             y_i = pontosIniciais(i)%y
-
-            do j = 1, tamanhoRevolucao
+            if ( x_i > -5*tamanhoTabuleiro ) then
+            do j = 1, tamanhoRevolucaoAtual
 
                 x_r = pontosRevolucao(j)%x
                 y_r = pontosRevolucao(j)%y
@@ -150,7 +151,7 @@ contains
                 end if
 
             end do
-
+            end if
         end do
         
     end subroutine aglutinaCamaradas
@@ -159,26 +160,27 @@ end module RevolutionModule
 
 program trotskyExe
     use RevolutionModule
-    real(8), parameter :: p = 0.1d0
+    real(8), parameter :: p = 0.4d0
     
     integer, parameter :: tamanhoTabuleiro = 300, &
                           tamanhoListas = 1.5*tamanhoTabuleiro**2*p
     type(vertice) :: pontosIniciais(tamanhoListas),&
                      pontosRevolucao(tamanhoListas)
     
-    integer :: tamanhoIniciais = 0, tamanhoRevolucao = 0, i
+    integer :: tamanhoIniciais = 0, tamanhoRevolucao = 0, i = 0
     real(8) :: rQuad = 0.d0
     ! Cria sociedade capitalista fadada ao fracasso
     call inciaTabuleiro(pontosIniciais, tamanhoIniciais, &
-                         tamanhoTabuleiro, .1d0)
+                         tamanhoTabuleiro, p)
     
 
     ! Um espectro ronda o tabuleiro, o espectro do comunismo
     call insereVertice(pontosRevolucao, tamanhoRevolucao, 0, 0)
     open(1, file="saida-5-11820833")
 
-    do i = 0, 1000
-        
+
+    do while (i < 50000 .and. rQuad < 0.7*(tamanhoTabuleiro/2)**2) 
+        i = i + 1
         call moveRevolucao(pontosRevolucao, tamanhoRevolucao)
          call aglutinaCamaradas(pontosRevolucao, pontosIniciais,&
                  tamanhoRevolucao, tamanhoIniciais, tamanhoTabuleiro, rQuad)

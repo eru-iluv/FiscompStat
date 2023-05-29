@@ -1,4 +1,3 @@
-program main
 module fourierMod
     implicit none
     public :: escreveFrequencias
@@ -36,4 +35,4 @@ contains
 
 end module fourierMod
 
-end program main
+end program

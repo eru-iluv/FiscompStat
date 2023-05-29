@@ -70,7 +70,7 @@ contains
         y = floor(rho*sin(teta)*sin(fi))
         z = floor(rho*cos(teta))
 
-        do while ( x**2 + y**2 + z**2 .le. (1.5d0*rhoMin)**2 &
+        do while ( raioQuad(x,y,z) .le. (1.5d0*rhoMin)**2 &
              .and. abs(x) < 74 .and. abs(y) < 74 .and. abs(z) < 74 )
             call andarDoBebado(x,y,z)
             ! Achou local para acoplar, atualiza tabuleiro
@@ -87,40 +87,29 @@ contains
         end do
 
     end subroutine geraPonto
-
-    subroutine main(i)
-        integer, save :: tabuleiro(-75:75,-75:75,-75:75)
-        integer :: numPontos, i 
-        real(8) :: r
-        character(len=27) :: filename
-
-        ! Iniciamos nosso tabuleiro
-        tabuleiro = 0
-        tabuleiro(0,0,0) = 1
-        numPontos = 1
-        
-        write (filename, "(A25, I1)") "../saidas/tarefa-3/saida-", i    
-        open(1, file=trim(filename))
-        
-        r = 0.d0
-        
-        do while (numPontos .le. 10000 .and. r < 70)
-            call geraPonto(r, tabuleiro, numPontos)
-        end do
-        close(1)
-            
-        end subroutine main
-        
+    
 end module DlaModule
 
 program DLA_3D
     use DlaModule
     implicit none
-    integer :: i
+    integer, save :: tabuleiro(-75:75,-75:75,-75:75)
+    integer :: numPontos 
+    real(8) :: r
 
-    do i = 2, 9
-        call main(i)        
+    ! Iniciamos nosso tabuleiro
+    tabuleiro = 0
+    tabuleiro(0,0,0) = 1
+    numPontos = 1
+    
+    open(1, file="saida-3-11820833")
+    
+    r = 0.d0
+    
+    do while (numPontos .le. 10000 .and. r < 70)
+        call geraPonto(r, tabuleiro, numPontos)
     end do
+    close(1)    
 
 
 end program DLA_3D

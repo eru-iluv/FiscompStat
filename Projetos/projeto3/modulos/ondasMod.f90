@@ -1,8 +1,7 @@
-program main
 module ondasMod
     implicit none
     public :: Gaussiana, dancaDaCadeira, propagaPresoPreso,&
-      propagaPresoLivre imprimeOnda
+      propagaPresoLivre, imprimeOnda
 
     contains
     function Gaussiana(i, dx, x0, sigma)
@@ -55,5 +54,3 @@ module ondasMod
         write(file, '(3000F16.8)') (ondaAtual(i), i=1,size_x)
     end subroutine imprimeOnda
 end module ondasMod
-
-end program main
