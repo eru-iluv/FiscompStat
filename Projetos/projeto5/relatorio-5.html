@@ -1,0 +1,798 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-06-15 Thu 17:33 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>[[https://edisciplinas.usp.br/pluginfile.php/7722176/mod_resource/content/1/projeto-fiscompII-quinto-2023.pdf][Simulações de Monte Carlo]]</title>
+<meta name="author" content="Edgard Macena Cabral" />
+<meta name="description" content="A GNU Emacs notebook demonstration" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="../../notebook.css" />
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title"><a href="https://edisciplinas.usp.br/pluginfile.php/7722176/mod_resource/content/1/projeto-fiscompII-quinto-2023.pdf">Simulações de Monte Carlo</a>
+<br />
+<span class="subtitle">Edgard Macena Cabral Nº 11820833  <br> Maio 2023</span>
+</h1>
+<div id="outline-container-org778c7d9" class="outline-2">
+<h2 id="org778c7d9">Tarefa A</h2>
+<div class="outline-text-2" id="text-org778c7d9">
+<p>
+Na tarefa A, rodamos o modelo de Ising,
+partindo de uma configuração completamente
+organizada em duas temperaturas:
+\(T_{1} = 3/J \) e \(T_{2} = 1/J\).
+</p>
+</div>
+
+<div id="outline-container-orgd7c04f1" class="outline-3">
+<h3 id="orgd7c04f1">Programa</h3>
+<div class="outline-text-3" id="text-orgd7c04f1">
+<p>
+Buscamos fazer um código que nos desse a
+configuração final, além da energia e
+da magnetização durante o processo.
+</p>
+
+<p>
+Ao mesmo tempo, não queremos gastar
+processamento inutilmente, e, caso
+observemos que o programa está a várias
+interações em torno de uma única
+magnetização, devemos interrompê-lo.
+Para realizar essas exigências, fizemos
+o programa a seguir:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fortran"><span style="color: #51afef;">program</span> <span style="color: #c678dd;">isingModel</span>
+    use isingModule
+    <span style="color: #ECBE7B;">implicit none</span>
+    <span style="color: #ECBE7B;">integer</span> :: i, iMC, desvioMax = <span style="color: #da8548; font-weight: bold;">9</span>, magnet = <span style="color: #da8548; font-weight: bold;">0</span>
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), <span style="color: #ECBE7B;">parameter</span> :: p = 0.5d0
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: dBeta = <span style="color: #da8548; font-weight: bold;">0</span>, beta = 3.d0 <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Beta &#233; dado em 1/J</span>
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: E
+
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaIProxIMenos</span>()
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaMalha</span>(p, magnet)
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaListaExp</span>(beta)
+    E = calculaE()
+
+    <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">2</span>, file=<span style="color: #98be65;">"saida-a-2"</span>)
+
+    <span style="color: #51afef;">do</span> iMC = <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">3000</span>
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">escreveMagE</span>(magnet, E)
+        listaMagnet(<span style="color: #c678dd;">mod</span>(iMC, tamListaMag) + <span style="color: #da8548; font-weight: bold;">1</span>) = magnet
+        <span style="color: #51afef;">if</span> ( alcancouEquilibrio(desvioMax) <span style="color: #51afef;">.and.</span> iMC &gt; tamListaMag ) the<span style="color: #5B6268;">n</span>
+            <span style="color: #51afef;">exit</span>
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+        <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">0</span>, tempoMC
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">alteraS</span>(E, magnet)
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+        beta = beta + dBeta
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaListaExp</span>(beta)
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    <span style="color: #51afef;">close</span>(<span style="color: #da8548; font-weight: bold;">2</span>)
+
+    <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">1</span>, file=<span style="color: #98be65;">"saida-a-1"</span>)
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">escreveSpins</span>()
+    <span style="color: #51afef;">close</span>(<span style="color: #da8548; font-weight: bold;">1</span>)
+
+<span style="color: #51afef;">end</span> <span style="color: #51afef;">program</span> <span style="color: #c678dd;">isingModel</span>
+
+
+module isingModule
+    <span style="color: #ECBE7B;">implicit none</span>
+    <span style="color: #ECBE7B;">integer</span>, <span style="color: #ECBE7B;">parameter</span> :: L = <span style="color: #da8548; font-weight: bold;">60</span>, tamListaMag = <span style="color: #da8548; font-weight: bold;">15</span>
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: listaExp(-<span style="color: #da8548; font-weight: bold;">4</span> : <span style="color: #da8548; font-weight: bold;">4</span>)
+    <span style="color: #ECBE7B;">integer</span> :: iProx(L), iAnt(L), listaMagnet(tamListaMag)
+    <span style="color: #ECBE7B;">integer</span> :: tempoMC = L**<span style="color: #da8548; font-weight: bold;">2</span>
+    <span style="color: #ECBE7B;">integer</span>(<span style="color: #da8548; font-weight: bold;">1</span>) :: spins(L,L)
+<span style="color: #5B6268;">c</span><span style="color: #5B6268;">ontains</span>
+
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Fun&#231;&#227;o de bernoulli</span>
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Para p = 0.5, se torna um gerador</span>
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">de 0 ou 1 com probabilidade identica</span>
+    <span style="color: #ECBE7B;">integer</span>(<span style="color: #da8548; font-weight: bold;">1</span>) <span style="color: #51afef;">function</span> <span style="color: #c678dd;">bernoulli</span>(p)
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: p, numAleatorio
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+        <span style="color: #51afef;">if</span> ( numAleatorio &lt; p ) <span style="color: #51afef;">then</span>
+            bernoulli = <span style="color: #da8548; font-weight: bold;">1</span>
+        <span style="color: #51afef;">else</span>
+            bernoulli = -<span style="color: #da8548; font-weight: bold;">1</span>
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">bernoulli</span>
+
+
+    <span style="color: #ECBE7B;">integer</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">intAleatorio</span>(valMax)
+        <span style="color: #ECBE7B;">real</span> :: numAleatorio
+        <span style="color: #ECBE7B;">integer</span> :: valMax
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+        intAleatorio = <span style="color: #c678dd;">nint</span>(valMax*numAleatorio)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">intAleatorio</span>
+
+
+    <span style="color: #ECBE7B;">integer</span>(<span style="color: #da8548; font-weight: bold;">1</span>) <span style="color: #51afef;">function</span> <span style="color: #c678dd;">vizinhos</span>(i, j)
+        <span style="color: #ECBE7B;">integer</span>, intent(in) :: i, j
+
+        vizinhos = spins(iAnt(i), j) + spins(iProx(i),j) &amp;
+                           + spins(i, iAnt(j)) + spins(i, iProx(j))
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">vizinhos</span>
+
+    <span style="color: #ECBE7B;">logical</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">alcancouEquilibrio</span>(desvioMax)
+        <span style="color: #ECBE7B;">integer</span> :: desvioMax, magMax, magMin
+
+        magMax = maxval(listaMagnet)
+        magMin = minval(listaMagnet)
+        alcancouEquilibrio = (magMax - magMin &lt; desvioMax)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">alcancouEquilibrio</span>
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">iniciaListaExp</span>(beta)
+        <span style="color: #ECBE7B;">integer</span> :: i
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: beta
+        <span style="color: #51afef;">do</span> i = -<span style="color: #da8548; font-weight: bold;">4</span>, <span style="color: #da8548; font-weight: bold;">4</span>
+            listaExp(i) = <span style="color: #c678dd;">exp</span>(-i*beta)
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">iniciaListaExp</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">iniciaIProxIMenos</span>()
+        <span style="color: #ECBE7B;">integer</span> :: i
+
+        <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, L
+            iProx(i) = i + <span style="color: #da8548; font-weight: bold;">1</span>
+            iAnt(i) = i - <span style="color: #da8548; font-weight: bold;">1</span>
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+        iProx(L) = <span style="color: #da8548; font-weight: bold;">1</span>
+        iAnt(<span style="color: #da8548; font-weight: bold;">1</span>) = L
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">iniciaIProxIMenos</span>
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">escreveMagE</span>(magnet, E)
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), intent(in) :: E
+        <span style="color: #ECBE7B;">integer</span>, intent(in) :: magnet
+
+        <span style="color: #51afef;">write</span>(<span style="color: #da8548; font-weight: bold;">2</span>,*) magnet, E
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">escreveMagE</span>
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">escreveSpins</span>()
+        <span style="color: #ECBE7B;">character</span>*<span style="color: #da8548; font-weight: bold;">1</span> <span style="color: #dcaeea;">isimb</span>(-<span style="color: #da8548; font-weight: bold;">1</span>:<span style="color: #da8548; font-weight: bold;">1</span>)
+        <span style="color: #ECBE7B;">integer</span> :: i, j
+        isimb(<span style="color: #da8548; font-weight: bold;">1</span>) = <span style="color: #98be65;">'+'</span>
+        isimb(<span style="color: #da8548; font-weight: bold;">0</span>) = <span style="color: #98be65;">'E'</span>
+        isimb(-<span style="color: #da8548; font-weight: bold;">1</span>) = <span style="color: #98be65;">'-'</span>
+
+        <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, L
+            <span style="color: #51afef;">write</span>(<span style="color: #da8548; font-weight: bold;">1</span>,*) (isimb(spins(i,j)),j=<span style="color: #da8548; font-weight: bold;">1</span>,L)
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">escreveSpins</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">iniciaMalha</span>(p, magnet)
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), intent(in) :: p
+        <span style="color: #ECBE7B;">integer</span> :: i, j, magnet
+
+        <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, L
+            <span style="color: #51afef;">do</span> j = <span style="color: #da8548; font-weight: bold;">1</span>, L
+                spins(i, j) = bernoulli(p)
+                <span style="color: #51afef;">if</span> ( spins(i,j) == <span style="color: #da8548; font-weight: bold;">1</span> ) <span style="color: #51afef;">then</span>
+                    magnet = magnet + <span style="color: #da8548; font-weight: bold;">1</span>
+                <span style="color: #51afef;">else</span>
+                    magnet = magnet - <span style="color: #da8548; font-weight: bold;">1</span>
+                <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+            <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">iniciaMalha</span>
+
+
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) <span style="color: #51afef;">function</span> <span style="color: #c678dd;">calculaE</span>()
+
+        <span style="color: #ECBE7B;">integer</span> :: i, j
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: dobroE
+
+        dobroE = 0.d0
+
+        <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, L
+            <span style="color: #51afef;">do</span> j = <span style="color: #da8548; font-weight: bold;">1</span>, L
+                dobroE = dobroE &amp;
+                    - 1.d0*spins(i,j)*vizinhos(i, j)
+            <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+        calculaE = dobroE/2.d0
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">calculaE</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">alteraS</span>(E, magnet)
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: E, dE
+        <span style="color: #ECBE7B;">integer</span> :: i, j, magnet
+        <span style="color: #ECBE7B;">integer</span>(<span style="color: #da8548; font-weight: bold;">1</span>) :: deltaM
+        <span style="color: #ECBE7B;">integer</span>(<span style="color: #da8548; font-weight: bold;">1</span>) :: s
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: probMudar, numAleatorio
+
+        i = intAleatorio(L-<span style="color: #da8548; font-weight: bold;">1</span>) + <span style="color: #da8548; font-weight: bold;">1</span> <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Gera numeros entre 1 e 60</span>
+        j = intAleatorio(L-<span style="color: #da8548; font-weight: bold;">1</span>) + <span style="color: #da8548; font-weight: bold;">1</span>
+
+
+        s = spins(i,j)
+
+        deltaM = vizinhos(i,j)
+        dE =  -<span style="color: #da8548; font-weight: bold;">1</span>*s*deltaM
+
+        probMudar = listaExp(s*deltaM) / &amp;
+                (listaExp(s*deltaM) + listaExp(-s*deltaM))
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+
+        <span style="color: #51afef;">if</span> ( numAleatorio &lt; probMudar) <span style="color: #51afef;">then</span>
+            spins(i, j) = -s
+            magnet = magnet - <span style="color: #da8548; font-weight: bold;">2</span>*s
+            E = E - <span style="color: #da8548; font-weight: bold;">2</span>*dE
+
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">alteraS</span>
+
+<span style="color: #51afef;">end</span> module isingModule
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6ee5e60" class="outline-3">
+<h3 id="org6ee5e60">Resultados</h3>
+<div class="outline-text-3" id="text-org6ee5e60">
+<p>
+Obtivemos, para diferentes temperaturas,
+os seguintes resultado:
+</p>
+
+
+<div id="org7dcf3e0" class="figure">
+<p><img src="tarefa-a/tarefa-a-graf-1-11820833.png" alt="tarefa-a-graf-1-11820833.png" />
+</p>
+</div>
+
+<p>
+Todos bastante caretas.
+</p>
+</div>
+
+<div id="outline-container-orge79749c" class="outline-4">
+<h4 id="orge79749c">\(\beta = 0,1\)</h4>
+<div class="outline-text-4" id="text-orge79749c">
+<p>
+Nesse \(\beta\), correpondente a altas temperaturas,
+observamos padrões aleatórios. Isso nos demonstra
+que nessa temperatura, os dipolos magnéticos se
+comportam quase indepentemente de seus vizinhos.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd275740" class="outline-4">
+<h4 id="orgd275740">\(\beta = 3\)</h4>
+<div class="outline-text-4" id="text-orgd275740">
+<p>
+Para um \(\beta\) relacionado a baixas temperaturas,
+Os spins são fortemente afetados pelos vizinhos
+próximos, e se torna quase impossível ocorrer
+alterações num sistema que começa completamente
+homogêneo.
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc728b82" class="outline-2">
+<h2 id="orgc728b82">Tarefa B</h2>
+<div class="outline-text-2" id="text-orgc728b82">
+<p>
+Para tarefa B, buscamos representar
+os processos de recozimento (diminuimos
+gradualmente a temperatura, sempre
+mantendo o equilíbrio) e têmpera
+(resfriamos rapidamente um sistema
+que estava em temperatura infinita).
+</p>
+</div>
+
+<div id="outline-container-orgd54eabe" class="outline-3">
+<h3 id="orgd54eabe">Programa</h3>
+<div class="outline-text-3" id="text-orgd54eabe">
+<p>
+Foi usado o mesmo programa da
+tarefa A.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf6ee52c" class="outline-3">
+<h3 id="orgf6ee52c">Resultados</h3>
+<div class="outline-text-3" id="text-orgf6ee52c">
+</div>
+<ul class="org-ul">
+<li><a id="org70c63e9"></a>Recozimento<br />
+<div class="outline-text-5" id="text-org70c63e9">
+<p>
+Para dois processos de recozimento
+distintos, obtivemos os seguintes
+resultados:
+</p>
+
+
+<div id="orgeb9a88b" class="figure">
+<p><img src="tarefa-b/tarefa-b-graf-1-11820833.png" alt="tarefa-b-graf-1-11820833.png" />
+</p>
+</div>
+
+<p>
+Esses dois sistemas estão
+relacionados as seguintes curvas
+de Energia e magnetismo médio:
+</p>
+
+
+<div id="org74a7318" class="figure">
+<p><img src="tarefa-b/tarefa-b-graf-3-11820833.png" alt="tarefa-b-graf-3-11820833.png" />
+</p>
+</div>
+
+<p>
+As configurações, embora (de novo)
+bastante sem graças demonstram características
+interessantes na energia e magnetização média:
+</p>
+
+<p>
+Ambas as magnetizações apresentam variações
+radicais em torno de \(t_{MC} \approx 400\) (\(\beta = 400/J\)).
+</p>
+
+<p>
+Na curva de energia média, observamos uma curva
+que lembra uma curva logística, com um módulo
+de energia crescendo cada vez mais rápido até
+se aproximar do limite de crescimento em 2.
+</p>
+</div>
+</li>
+
+<li><a id="orgeb43a36"></a>Têmpera<br />
+<div class="outline-text-5" id="text-orgeb43a36">
+<p>
+Para têmpera, obtivemos:
+</p>
+
+
+<div id="orgdbc2adc" class="figure">
+<p><img src="tarefa-b/tarefa-b-graf-2-11820833.png" alt="tarefa-b-graf-2-11820833.png" />
+</p>
+</div>
+
+<p>
+e as curvas de energia associada foram
+</p>
+
+
+<div id="org26fb91f" class="figure">
+<p><img src="tarefa-b/tarefa-b-graf-4-11820833.png" alt="tarefa-b-graf-4-11820833.png" />
+</p>
+</div>
+
+<p>
+Não há muito de interessante para se
+falar da têmpera, o sistema rapidamente
+se organiza numa configuração onde os
+dipolos estão associados aos seus vizinhos.
+</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgd2aa948" class="outline-2">
+<h2 id="orgd2aa948">Tarefa C1</h2>
+<div class="outline-text-2" id="text-orgd2aa948">
+<p>
+Na tarefa C1, buscamos estimar a temperatura
+crítica do nosso sistema, para isso, fizemos
+um programa que nos permitisse fazer um loop
+térmico: partindo de uma configuração de alta
+temperatura esfriar nosso sistema em recozimento
+e depois aquecê-lo em processo reverso.
+</p>
+
+<p>
+Rodamos o programa em malhas de \(60, 80\) e \(100\)
+dipolos magnéticos, e pra cada uma delas, executamos
+o recozimento para \(\Delta\beta/\Delta i_{MC}\) sendo \(0,001\) e
+\(0,0001\)
+</p>
+</div>
+
+<div id="outline-container-org0d27ff2" class="outline-3">
+<h3 id="org0d27ff2">Programa C1</h3>
+<div class="outline-text-3" id="text-org0d27ff2">
+<p>
+Rodamos o seguinte programa
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fortran"><span style="color: #51afef;">program</span> <span style="color: #c678dd;">isingModel</span>
+    use isingModule
+    <span style="color: #ECBE7B;">implicit none</span>
+    <span style="color: #ECBE7B;">integer</span> :: i, iMC, magnet = <span style="color: #da8548; font-weight: bold;">0</span>
+    <span style="color: #ECBE7B;">integer</span> :: iMC_Max
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), <span style="color: #ECBE7B;">parameter</span> :: p = 0.5d0
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: dBeta = <span style="color: #da8548; font-weight: bold;">0.0001</span>, beta = 0.d0, betaMax = <span style="color: #da8548; font-weight: bold;">1.75</span>
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: E
+
+    iMC_Max = <span style="color: #da8548; font-weight: bold;">2</span>*<span style="color: #c678dd;">nint</span>(betaMax/dBeta) + <span style="color: #da8548; font-weight: bold;">1</span>
+
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaIProxIMenos</span>()
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaMalha</span>(p, magnet)
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaListaExp</span>(beta)
+    E = calculaE()
+
+    <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">2</span>, file=<span style="color: #98be65;">"saida-1"</span>)
+
+    <span style="color: #51afef;">do</span> iMC = <span style="color: #da8548; font-weight: bold;">0</span>, iMC_Max
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">escreveMagE</span>(beta, magnet, E)
+
+        <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">0</span>, tempoMC
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">alteraS</span>(E, magnet)
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+        <span style="color: #51afef;">if</span> ( iMC &gt; iMC_Max/<span style="color: #da8548; font-weight: bold;">2</span> ) <span style="color: #51afef;">then</span>
+            beta = beta - dBeta
+        <span style="color: #51afef;">else</span>
+            beta = beta + dBeta
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaListaExp</span>(beta)
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    <span style="color: #51afef;">close</span>(<span style="color: #da8548; font-weight: bold;">2</span>)
+
+<span style="color: #51afef;">end</span> <span style="color: #51afef;">program</span> <span style="color: #c678dd;">isingModel</span>
+</pre>
+</div>
+
+<p>
+Usando o mesmo módulo do programa
+anterior (Prático!).
+</p>
+</div>
+</div>
+
+<div id="outline-container-org39246cd" class="outline-3">
+<h3 id="org39246cd">Resultados</h3>
+<div class="outline-text-3" id="text-org39246cd">
+<p>
+Conseguimos as seguintes curvas de energia
+média pra cada configuração,
+</p>
+
+
+<div id="orgc836bfb" class="figure">
+<p><img src="tarefa-c/tarefa-c-graf-1-11820833.png" alt="tarefa-c-graf-1-11820833.png" />
+</p>
+</div>
+
+<p>
+Em que as curvas mais escuras correspondem
+ao \(d\beta = 0,0001\)
+</p>
+
+<p>
+Note que a escala horizontal desse gráfico
+é um pouco estranha porque ela representa a
+interação, mas é descrita pela temperatura.
+Como estamos interessados em fenômenos em
+torno da temperatura, acreditamos estar
+ressaltando os dados de interesse, mas vale
+o aviso.
+</p>
+
+<p>
+Junto desses resultados, obtivemos as magnetizações
+a seguir
+</p>
+
+
+<div id="org02333a5" class="figure">
+<p><img src="tarefa-c/tarefa-c-graf-2-11820833.png" alt="tarefa-c-graf-2-11820833.png" />
+</p>
+</div>
+
+<p>
+O gráfico das magnetizações requer um pouco
+mais de cuidado pra ser lido, mas repare o
+que ressaltamos ainda na B:
+</p>
+
+<p>
+Parece haver um atraso entre as variações
+de \(\langle E \rangle\) e \(\langle m \rangle\)
+</p>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org097d41e" class="outline-2">
+<h2 id="org097d41e">Tarefa C2</h2>
+<div class="outline-text-2" id="text-org097d41e">
+<p>
+Na tarefa C2, aplicamos o modelo de Ising a
+várias temperaturas em uma configuração inicial
+onde metade dos dipolos estão atralados entre
+si e outra metade está completamente desorganizada.
+</p>
+
+<p>
+Buscamos ver em qual temperatura o sistema apresenta
+maior variação de comportamento
+</p>
+</div>
+
+<div id="outline-container-orga72fb40" class="outline-3">
+<h3 id="orga72fb40">Programa C2</h3>
+<div class="outline-text-3" id="text-orga72fb40">
+<p>
+Para executar o programa C2, foram necessárias duas
+alterações. O programa em si está a seguir
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fortran"><span style="color: #51afef;">program</span> <span style="color: #c678dd;">isingModel</span>
+    use isingModule
+    <span style="color: #ECBE7B;">implicit none</span>
+    <span style="color: #ECBE7B;">integer</span> :: i, iMC, magnet = <span style="color: #da8548; font-weight: bold;">0</span>
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: beta = 0.d0
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: E
+
+    <span style="color: #51afef;">read</span>(*,*) beta, L
+
+    allocate(iProx(L), iAnt(L), spins(L,L))
+
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaIProxIMenos</span>()
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaMalha</span>(magnet)
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaListaExp</span>(beta)
+    E = calculaE()
+
+    <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">2</span>, file=<span style="color: #98be65;">"saida-c-2"</span>)
+
+    <span style="color: #51afef;">do</span> iMC = <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">3000</span>
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">escreveMagE</span>(beta, magnet, E)
+
+        <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">3000</span>
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">alteraS</span>(E, magnet)
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaListaExp</span>(beta)
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    <span style="color: #51afef;">close</span>(<span style="color: #da8548; font-weight: bold;">2</span>)
+
+<span style="color: #51afef;">end</span> <span style="color: #51afef;">program</span> <span style="color: #c678dd;">isingModel</span>
+</pre>
+</div>
+
+<p>
+e a alteração principal ocorreu no módulo, onde
+escrevemos
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fortran">    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">iniciaMalha</span>(magnet)
+        <span style="color: #ECBE7B;">integer</span> :: i, j, magnet
+
+        <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, L
+            <span style="color: #51afef;">do</span> j = <span style="color: #da8548; font-weight: bold;">1</span>, L/<span style="color: #da8548; font-weight: bold;">2</span>
+                spins(i, j) = bernoulli(0.5d0)
+                <span style="color: #51afef;">if</span> ( spins(i,j) == <span style="color: #da8548; font-weight: bold;">1</span> ) <span style="color: #51afef;">then</span>
+                    magnet = magnet + <span style="color: #da8548; font-weight: bold;">1</span>
+                <span style="color: #51afef;">else</span>
+                    magnet = magnet - <span style="color: #da8548; font-weight: bold;">1</span>
+                <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+            <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+            <span style="color: #51afef;">do</span> j = L/<span style="color: #da8548; font-weight: bold;">2</span> + <span style="color: #da8548; font-weight: bold;">1</span>, L
+                spins(i, j) = <span style="color: #da8548; font-weight: bold;">1</span>
+                magnet = magnet + <span style="color: #da8548; font-weight: bold;">1</span>
+            <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">iniciaMalha</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc3444b4" class="outline-3">
+<h3 id="orgc3444b4">Resultados</h3>
+<div class="outline-text-3" id="text-orgc3444b4">
+
+<div id="orgec7c84f" class="figure">
+<p><img src="tarefa-c/tarefa-c-graf-3-11820833.png" alt="tarefa-c-graf-3-11820833.png" />
+</p>
+</div>
+
+
+
+<div id="org8695a0c" class="figure">
+<p><img src="tarefa-c/tarefa-c-graf-4-11820833.png" alt="tarefa-c-graf-4-11820833.png" />
+</p>
+</div>
+
+
+
+<div id="orgaa616c4" class="figure">
+<p><img src="tarefa-c/tarefa-c-graf-5-11820833.png" alt="tarefa-c-graf-5-11820833.png" />
+</p>
+</div>
+
+<p>
+Observamos que as variações são mais extremas,
+em todos os tamanhos da malha, no entorno de
+\(\beta = 0,44/J\). Apesar disso, a diferença é
+muito pequena e é difícil dizer se esse é
+o valor preciso, como se pode observar pelas
+linhas claras no gráfico (frias para beta menores,
+quentes para maiores).
+</p>
+
+<p>
+Em compensação, para valores um pouco mais afastados,
+começamos a ver variações cada vez menores, como
+é bem visível para linhas escuras, em especial
+para \(\beta =0,55/J\).
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org83707df" class="outline-2">
+<h2 id="org83707df">Tarefa D</h2>
+<div class="outline-text-2" id="text-org83707df">
+<p>
+Nessa tarefa, buscamos estudar o tempo que leva
+para o sistema com \(\beta > \beta_{c}\).
+</p>
+</div>
+
+<div id="outline-container-orga562fe6" class="outline-3">
+<h3 id="orga562fe6">Programa</h3>
+<div class="outline-text-3" id="text-orga562fe6">
+<p>
+Foi usado o seguinte código:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fortran"><span style="color: #51afef;">program</span> <span style="color: #c678dd;">tarefaD</span>
+    use isingModule
+    <span style="color: #ECBE7B;">implicit none</span>
+    <span style="color: #ECBE7B;">integer</span> :: i, iMC, magnetAnt, magnet = <span style="color: #da8548; font-weight: bold;">0</span>
+    <span style="color: #ECBE7B;">integer</span> :: tempoMC, iQuebraSimetria, vezesQuebrada
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), <span style="color: #ECBE7B;">parameter</span> :: p = 0.5d0
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: beta = 0.5d0
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: E, tMedio
+    <span style="color: #51afef;">open</span>(<span style="color: #da8548; font-weight: bold;">2</span>, file=<span style="color: #98be65;">"saida-d"</span>)
+        tMedio = <span style="color: #da8548; font-weight: bold;">0</span>
+
+        tempoMC = L**<span style="color: #da8548; font-weight: bold;">2</span>
+
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaIProxIMenos</span>()
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaMalha</span>(p, magnet)
+
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaListaExp</span>(beta)
+        vezesQuebrada = <span style="color: #da8548; font-weight: bold;">0</span>
+        iQuebraSimetria = <span style="color: #da8548; font-weight: bold;">0</span>
+
+        <span style="color: #51afef;">do</span> iMC = <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #da8548; font-weight: bold;">3000</span>
+            magnetAnt = magnet
+
+            <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, tempoMC
+                <span style="color: #51afef;">call</span> <span style="color: #c678dd;">alteraS</span>(E, magnet)
+            <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+            <span style="color: #51afef;">if</span> ( magnet*magnetAnt &lt; <span style="color: #da8548; font-weight: bold;">0</span>) <span style="color: #51afef;">then</span>
+                tMedio = tMedio + iQuebraSimetria
+                iQuebraSimetria = <span style="color: #da8548; font-weight: bold;">0</span>
+                vezesQuebrada = vezesQuebrada + <span style="color: #da8548; font-weight: bold;">1</span>
+            <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+            iQuebraSimetria = iQuebraSimetria + <span style="color: #da8548; font-weight: bold;">1</span>
+
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+        <span style="color: #51afef;">write</span>(<span style="color: #da8548; font-weight: bold;">2</span>,*) L, tMedio/vezesQuebrada
+
+
+    <span style="color: #51afef;">close</span>(<span style="color: #da8548; font-weight: bold;">2</span>)
+
+<span style="color: #51afef;">end</span> <span style="color: #51afef;">program</span> <span style="color: #c678dd;">tarefaD</span>
+</pre>
+</div>
+
+<p>
+Novamente usando o mesmo módulo das tarefas
+anteriores.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2dfd58f" class="outline-3">
+<h3 id="org2dfd58f">Resultado</h3>
+<div class="outline-text-3" id="text-org2dfd58f">
+<p>
+Obtivemos, para vários Ls, o seguinte gráfico:
+</p>
+
+
+<div id="org2025a16" class="figure">
+<p><img src="tarefa-d/tarefa-d-graf-11820833.png" alt="tarefa-d-graf-11820833.png" />
+</p>
+</div>
+
+<p>
+Que tem um comportamento bastante exponencial,
+à exceção de \(L = 9\).
+</p>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
