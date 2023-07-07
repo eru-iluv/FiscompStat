@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-07-07 Fri 16:13 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>[[https://edisciplinas.usp.br/pluginfile.php/7722176/mod_resource/content/1/projeto-fiscompII-quinto-2023.pdf][Dinâmica Molecular]]</title>
+<meta name="author" content="Edgard Macena Cabral" />
+<meta name="description" content="A GNU Emacs notebook demonstration" />
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="../../notebook.css" />
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title"><a href="https://edisciplinas.usp.br/pluginfile.php/7722176/mod_resource/content/1/projeto-fiscompII-quinto-2023.pdf">Dinâmica Molecular</a>
+<br />
+<span class="subtitle">Edgard Macena Cabral Nº 11820833  <br> Maio 2023</span>
+</h1>
+<div id="outline-container-orgfdedd4f" class="outline-2">
+<h2 id="orgfdedd4f">Introdução</h2>
+<div class="outline-text-2" id="text-orgfdedd4f">
+<p>
+Buscamos estudar dinâmica molecular
+através de um sistema com contorno
+periódico e força entre as moléculas
+dada pelo potencial de Lennard Jones
+</p>
+
+<div class="latex" id="org4cfe156">
+\begin{equation}
+V_{ik}(r) = 4\epsilon\left[\left(\frac{\sigma}{r}\right)^{12} -
+        \left(\frac{\sigma}{r}\right)^6\right]
+\end{equation}
+
+</div>
+<div class="latex" id="orgd38f374">
+<p>
+
+</p>
+
+\begin{equation}
+f_{ik}(r) = 24\epsilon\left[\left(\frac{\sigma}{r}\right)^{13} -
+        \left(\frac{\sigma}{r}\right)^7\right]
+\end{equation}
+
+</div>
+
+<p>
+Onde tomamos \(\epsilon = 1\) e \(\sigma = 1\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf7ee118" class="outline-2">
+<h2 id="orgf7ee118">Tarefa A</h2>
+<div class="outline-text-2" id="text-orgf7ee118">
+<p>
+Na tarefa A, executamos um
+programa de dinâmica molecular
+com um número de moléculas \(N = 20\),
+velocidade inicial \(v = 1\) com sentidos
+aleatórios, e comprimento \(L = 10\).
+</p>
+</div>
+
+<div id="outline-container-orgd913c88" class="outline-3">
+<h3 id="orgd913c88">Programa</h3>
+<div class="outline-text-3" id="text-orgd913c88">
+<p>
+O programa usado está a seguir
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fortran">module DinamMolecularModule
+    <span style="color: #ECBE7B;">implicit none</span>
+
+    type, public :: molecula
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: x(-<span style="color: #da8548; font-weight: bold;">1</span>:<span style="color: #da8548; font-weight: bold;">1</span>), y(-<span style="color: #da8548; font-weight: bold;">1</span>:<span style="color: #da8548; font-weight: bold;">1</span>)
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: v_x, v_y
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: a_x, a_y
+    contains
+        procedure :: alteraPosicao, escreveMolecula, alteraVelocidade
+    <span style="color: #51afef;">end</span> type molecula
+
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), <span style="color: #ECBE7B;">parameter</span> :: dt = <span style="color: #da8548; font-weight: bold;">0.02</span>, L = <span style="color: #da8548; font-weight: bold;">10</span>, m = <span style="color: #da8548; font-weight: bold;">1</span>, pi = <span style="color: #c678dd;">acos</span>(-1d0), v =<span style="color: #5B6268;"> 1d0</span>
+    <span style="color: #ECBE7B;">integer</span>, <span style="color: #ECBE7B;">parameter</span> :: N = <span style="color: #da8548; font-weight: bold;">20</span>, ioMoleculas = <span style="color: #da8548; font-weight: bold;">1</span>, ioEnergia = <span style="color: #da8548; font-weight: bold;">2</span>, ioVelo<span style="color: #5B6268;">cidade = 3</span>
+    type(molecula) :: moleculas(N)
+
+
+    contains
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">alteraPosicao</span>(este)
+        class(molecula) :: este
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: proxX, proxY, qntUltrapassou
+
+        proxX = <span style="color: #da8548; font-weight: bold;">2</span>*este%x(<span style="color: #da8548; font-weight: bold;">0</span>) - este%x(-<span style="color: #da8548; font-weight: bold;">1</span>) + este%a_x*dt**<span style="color: #da8548; font-weight: bold;">2</span>
+        qntUltrapassou = floor(proxX/L)*L
+        este%x(<span style="color: #da8548; font-weight: bold;">1</span>)  = proxX - qntUltrapassou
+        este%x(<span style="color: #da8548; font-weight: bold;">0</span>)  = este%x(<span style="color: #da8548; font-weight: bold;">0</span>) - qntUltrapassou
+        este%x(-<span style="color: #da8548; font-weight: bold;">1</span>) = este%x(-<span style="color: #da8548; font-weight: bold;">1</span>) - qntUltrapassou
+
+        proxY = <span style="color: #da8548; font-weight: bold;">2</span>*este%y(<span style="color: #da8548; font-weight: bold;">0</span>) - este%y(-<span style="color: #da8548; font-weight: bold;">1</span>) + este%a_y*dt**<span style="color: #da8548; font-weight: bold;">2</span>
+        qntUltrapassou = floor(proxY/L)*L
+
+        este%y(<span style="color: #da8548; font-weight: bold;">1</span>)  = proxY - qntUltrapassou
+        este%y(<span style="color: #da8548; font-weight: bold;">0</span>)  = este%y(<span style="color: #da8548; font-weight: bold;">0</span>) - qntUltrapassou
+        este%y(-<span style="color: #da8548; font-weight: bold;">1</span>) = este%y(-<span style="color: #da8548; font-weight: bold;">1</span>) - qntUltrapassou
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">alteraPosicao</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">escreveMolecula</span>(este, indice)
+        class(molecula), intent(in) :: este
+        <span style="color: #ECBE7B;">integer</span> :: indice
+        <span style="color: #51afef;">write</span>(ioMoleculas, *) este%x(<span style="color: #da8548; font-weight: bold;">0</span>), este%y(<span style="color: #da8548; font-weight: bold;">0</span>), indice
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">alteraVelocidade</span>(este)
+        class(molecula) :: este
+
+        este%v_x = (este%x(<span style="color: #da8548; font-weight: bold;">1</span>) - este%x(-<span style="color: #da8548; font-weight: bold;">1</span>)) / (<span style="color: #da8548; font-weight: bold;">2</span>*dt)
+        este%v_y = (este%y(<span style="color: #da8548; font-weight: bold;">1</span>) - este%y(-<span style="color: #da8548; font-weight: bold;">1</span>)) / (<span style="color: #da8548; font-weight: bold;">2</span>*dt)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">alteraVelocidade</span>
+
+
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) <span style="color: #51afef;">function</span> <span style="color: #c678dd;">energiaCinetica</span>()
+        <span style="color: #ECBE7B;">integer</span> :: indice
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: v_x, v_y
+        energiaCinetica = 0.d0
+
+        <span style="color: #51afef;">do</span> indice = <span style="color: #da8548; font-weight: bold;">1</span>, N
+            v_x = moleculas(indice)%v_x
+            v_y = moleculas(indice)%v_y
+            energiaCinetica = energiaCinetica + 0.5d0*m*(v_x**<span style="color: #da8548; font-weight: bold;">2</span> + v_y**<span style="color: #da8548; font-weight: bold;">2</span><span style="color: #5B6268;">)</span>
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">function</span> <span style="color: #c678dd;">energiaCinetica</span>
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">inciaMoleculas</span>
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Divide L numa grid de N quadrados com</span>
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">espa&#231;amento L/sqrt(N)</span>
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">iniciaMoleculas</span>()
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: x, y, teta, numAleatorio, v_x, v_y
+        <span style="color: #ECBE7B;">integer</span> :: indice
+        <span style="color: #ECBE7B;">integer</span>, <span style="color: #ECBE7B;">parameter</span> :: sqrtN = ceiling(<span style="color: #c678dd;">sqrt</span>(1d0*N))
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), <span style="color: #ECBE7B;">parameter</span> :: dist = L/sqrtN
+
+
+        <span style="color: #51afef;">do</span> indice = <span style="color: #da8548; font-weight: bold;">1</span>, N
+
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+            x = <span style="color: #c678dd;">mod</span>(indice, sqrtN)*dist + (<span style="color: #da8548; font-weight: bold;">1</span> + 0.5d0*rand())*dist/<span style="color: #da8548; font-weight: bold;">2</span>
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+            y = ceiling(1.d0*indice/sqrtN)*dist - (<span style="color: #da8548; font-weight: bold;">1</span> + 0.5d0*rand())*dis<span style="color: #5B6268;">t/2</span>
+
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">write(*,*) x,y</span>
+
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+            teta = <span style="color: #da8548; font-weight: bold;">2</span>*pi*numAleatorio
+
+            v_x = v*<span style="color: #c678dd;">cos</span>(teta); v_y = v*<span style="color: #c678dd;">sin</span>(teta)
+
+            moleculas(indice)%x = x
+            moleculas(indice)%y = y
+            moleculas(indice)%v_x = v_x
+            moleculas(indice)%v_y = v_y
+            <span style="color: #5B6268;">! </span><span style="color: #5B6268;">write(*,*) v*cos(teta), v*sin(teta), v*cos(teta)**2 + v*sin(teta)**2</span>
+            moleculas(indice)%x(-<span style="color: #da8548; font-weight: bold;">1</span>) = x - v_x*dt
+            moleculas(indice)%y(-<span style="color: #da8548; font-weight: bold;">1</span>) = y - v_y*dt
+            moleculas(indice)%a_x = 0d0
+            moleculas(indice)%a_y = 0d0
+
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">iniciaMoleculas</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">evoluiSistema</span>(indice)
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: r, seno, coss, a_ik
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: energiaPotencial, velocidade(N)
+        <span style="color: #ECBE7B;">integer</span> :: i, k, indice
+
+        <span style="color: #51afef;">if</span> ( <span style="color: #c678dd;">mod</span>(indice-<span style="color: #da8548; font-weight: bold;">1</span>,<span style="color: #da8548; font-weight: bold;">3</span>) == <span style="color: #da8548; font-weight: bold;">2</span>) <span style="color: #51afef;">then</span>
+            <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, N
+                <span style="color: #51afef;">call</span> <span style="color: #c678dd;">moleculas</span>(i)%escreveMolecula(i)
+            <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+        <span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span> ( <span style="color: #c678dd;">mod</span>(indice-<span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">20</span>) == <span style="color: #da8548; font-weight: bold;">0</span> ) <span style="color: #51afef;">then</span>
+            <span style="color: #51afef;">write</span>(ioVelocidade, *) velocidade
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+
+        energiaPotencial = <span style="color: #da8548; font-weight: bold;">0</span>
+
+        <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, N
+            moleculas(i)%a_x = 0.d0
+            moleculas(i)%a_y = 0.d0
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Calcula as acelera&#231;&#245;es</span>
+        <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, N
+            <span style="color: #51afef;">do</span> k = i + <span style="color: #da8548; font-weight: bold;">1</span>, N
+                <span style="color: #51afef;">call</span> <span style="color: #c678dd;">rSenoCoss</span>(moleculas(i), moleculas(k), r, seno, coss<span style="color: #5B6268;">)</span>
+
+                <span style="color: #51afef;">if</span> (r &lt;= 3.d0) <span style="color: #51afef;">then</span>
+                    a_ik = <span style="color: #da8548; font-weight: bold;">24</span>*(<span style="color: #da8548; font-weight: bold;">2</span>/r**<span style="color: #da8548; font-weight: bold;">13</span> - <span style="color: #da8548; font-weight: bold;">1</span>/r**<span style="color: #da8548; font-weight: bold;">7</span>)/m
+                    moleculas(i)%a_x = moleculas(i)%a_x + a_ik*coss
+                    moleculas(i)%a_y = moleculas(i)%a_y + a_ik*seno
+
+                    moleculas(k)%a_x = moleculas(k)%a_x - a_ik*coss
+                    moleculas(k)%a_y = moleculas(k)%a_y - a_ik*seno
+                <span style="color: #51afef;">endif</span>
+                <span style="color: #5B6268;">!    </span><span style="color: #5B6268;">Calcula energia potencial</span>
+                energiaPotencial = energiaPotencial + <span style="color: #da8548; font-weight: bold;">4</span> * (r**(-<span style="color: #da8548; font-weight: bold;">12</span>) - r*<span style="color: #5B6268;">*(-6))</span>
+
+            <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">moleculas</span>(i)%alteraPosicao()
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">moleculas</span>(i)%alteraVelocidade()
+
+            velocidade(i) = &amp;
+                <span style="color: #c678dd;">sqrt</span>(moleculas(i)%v_x**<span style="color: #da8548; font-weight: bold;">2</span> + moleculas(i)%v_y**<span style="color: #da8548; font-weight: bold;">2</span>)
+
+            moleculas(i)%x(-<span style="color: #da8548; font-weight: bold;">1</span>) = moleculas(i)%x(<span style="color: #da8548; font-weight: bold;">0</span>)
+            moleculas(i)%x(<span style="color: #da8548; font-weight: bold;">0</span>)  = moleculas(i)%x(<span style="color: #da8548; font-weight: bold;">1</span>)
+
+            moleculas(i)%y(-<span style="color: #da8548; font-weight: bold;">1</span>) = moleculas(i)%y(<span style="color: #da8548; font-weight: bold;">0</span>)
+            moleculas(i)%y(<span style="color: #da8548; font-weight: bold;">0</span>)  = moleculas(i)%y(<span style="color: #da8548; font-weight: bold;">1</span>)
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+        <span style="color: #51afef;">write</span>(ioEnergia, *) energiaPotencial + energiaCinetica()
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">evoluiSistema</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">rSenoCoss</span>(mol_i,  mol_k, r, seno, coss)
+        class(molecula) :: mol_i, mol_k
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: dx, dy
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: r, seno, coss
+
+        dx = mol_i%x(<span style="color: #da8548; font-weight: bold;">0</span>) - mol_k%x(<span style="color: #da8548; font-weight: bold;">0</span>)
+        <span style="color: #51afef;">if</span> ( <span style="color: #c678dd;">abs</span>(dx) &gt; L/<span style="color: #da8548; font-weight: bold;">2</span> ) <span style="color: #51afef;">then</span>
+            dx = dx - dx/<span style="color: #c678dd;">abs</span>(dx) * L
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+        dy = mol_i%y(<span style="color: #da8548; font-weight: bold;">0</span>) - mol_k%y(<span style="color: #da8548; font-weight: bold;">0</span>)
+        <span style="color: #51afef;">if</span> ( <span style="color: #c678dd;">abs</span>(dy) &gt; L/<span style="color: #da8548; font-weight: bold;">2</span> ) <span style="color: #51afef;">then</span>
+            dy = dy - dy/<span style="color: #c678dd;">abs</span>(dy) * L
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+        r = <span style="color: #c678dd;">sqrt</span>(dx**<span style="color: #da8548; font-weight: bold;">2</span> + dy**<span style="color: #da8548; font-weight: bold;">2</span>)
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">write(*,*)  r, dx, dy, mol_i%x(0)</span>
+
+        seno = dy/r; coss = dx/r
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">rSenoCoss</span>
+<span style="color: #51afef;">end</span> module DinamMolecularModule
+
+<span style="color: #51afef;">program</span> <span style="color: #c678dd;">tarefaA</span>
+    use DinamMolecularModule
+    <span style="color: #ECBE7B;">implicit none</span>
+    <span style="color: #ECBE7B;">integer</span> :: i
+
+    <span style="color: #51afef;">open</span>(ioMoleculas, file=<span style="color: #98be65;">"saida-a"</span>)
+    <span style="color: #51afef;">open</span>(ioEnergia, file=<span style="color: #98be65;">"saida-energia"</span>)
+    <span style="color: #51afef;">open</span>(ioVelocidade, file=<span style="color: #98be65;">"saida-velocidade"</span>)
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaMoleculas</span>()
+
+    <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">200</span>
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">evoluiSistema</span>(i)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+
+    <span style="color: #51afef;">close</span>(ioMoleculas)
+    <span style="color: #51afef;">close</span>(ioEnergia)
+    <span style="color: #51afef;">close</span>(ioVelocidade)
+<span style="color: #51afef;">end</span> <span style="color: #51afef;">program</span> <span style="color: #c678dd;">tarefaA</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8e08e59" class="outline-3">
+<h3 id="org8e08e59">Resultado</h3>
+<div class="outline-text-3" id="text-org8e08e59">
+<p>
+Obtivemos, após 500 interações,
+o seguinte resultado:
+</p>
+
+
+<div id="org3223822" class="figure">
+<p><img src="tarefa-a/tarefa-a-graf-1-11820833.png" alt="tarefa-a-graf-1-11820833.png" />
+</p>
+</div>
+
+<p>
+e a energia
+</p>
+
+
+<div id="org5ae8660" class="figure">
+<p><img src="tarefa-a/tarefa-a-graf-2-11820833.png" alt="tarefa-a-graf-2-11820833.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgac9d71f" class="outline-2">
+<h2 id="orgac9d71f">Tarefa B</h2>
+<div class="outline-text-2" id="text-orgac9d71f">
+<p>
+Na tarefa B, buscamos observar o formato
+do gráfico da distribuição de velocidades, e
+averiguar se segue a distribuição de Maxwell
+Boltzmann.
+</p>
+</div>
+
+<div id="outline-container-org800d3b6" class="outline-3">
+<h3 id="org800d3b6">Programa</h3>
+<div class="outline-text-3" id="text-org800d3b6">
+<p>
+Usamos um código muito parecido
+com o anterior. As alterações relevantes
+foram feitas na subrotina da evolução do
+sistema.
+</p>
+
+<p>
+Aqui, agrupamos as velocidades em intervalos
+de \(20\Delta t\) para que possamos colocá-los no
+histograma com um número de caixas adequadas.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-fortran">module DinamMolecularModule
+    <span style="color: #ECBE7B;">implicit none</span>
+
+    type, public :: molecula
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: x(-<span style="color: #da8548; font-weight: bold;">1</span>:<span style="color: #da8548; font-weight: bold;">1</span>), y(-<span style="color: #da8548; font-weight: bold;">1</span>:<span style="color: #da8548; font-weight: bold;">1</span>)
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: v_x, v_y
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: a_x, a_y
+    contains
+        procedure :: alteraPosicao, escreveMolecula, alteraVelocidade
+    <span style="color: #51afef;">end</span> type molecula
+
+    <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), <span style="color: #ECBE7B;">parameter</span> :: dt = <span style="color: #da8548; font-weight: bold;">0.02</span>, L = <span style="color: #da8548; font-weight: bold;">10</span>, m = <span style="color: #da8548; font-weight: bold;">1</span>, pi = <span style="color: #c678dd;">acos</span>(-1d0)
+    <span style="color: #ECBE7B;">integer</span>, <span style="color: #ECBE7B;">parameter</span> :: N = <span style="color: #da8548; font-weight: bold;">20</span>, ioVx = <span style="color: #da8548; font-weight: bold;">1</span>, ioVy = <span style="color: #da8548; font-weight: bold;">2</span>, ioVelocidade = <span style="color: #da8548; font-weight: bold;">3</span>, <span style="color: #5B6268;">ioTemp = 4</span>
+    type(molecula) :: moleculas(N)
+
+
+    contains
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">alteraPosicao</span>(este)
+        class(molecula) :: este
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: proxX, proxY, qntUltrapassou
+
+        proxX = <span style="color: #da8548; font-weight: bold;">2</span>*este%x(<span style="color: #da8548; font-weight: bold;">0</span>) - este%x(-<span style="color: #da8548; font-weight: bold;">1</span>) + este%a_x*dt**<span style="color: #da8548; font-weight: bold;">2</span>
+        qntUltrapassou = floor(proxX/L)*L
+        este%x(<span style="color: #da8548; font-weight: bold;">1</span>)  = proxX - qntUltrapassou
+        este%x(<span style="color: #da8548; font-weight: bold;">0</span>)  = este%x(<span style="color: #da8548; font-weight: bold;">0</span>) - qntUltrapassou
+        este%x(-<span style="color: #da8548; font-weight: bold;">1</span>) = este%x(-<span style="color: #da8548; font-weight: bold;">1</span>) - qntUltrapassou
+
+        proxY = <span style="color: #da8548; font-weight: bold;">2</span>*este%y(<span style="color: #da8548; font-weight: bold;">0</span>) - este%y(-<span style="color: #da8548; font-weight: bold;">1</span>) + este%a_y*dt**<span style="color: #da8548; font-weight: bold;">2</span>
+        qntUltrapassou = floor(proxY/L)*L
+
+        este%y(<span style="color: #da8548; font-weight: bold;">1</span>)  = proxY - qntUltrapassou
+        este%y(<span style="color: #da8548; font-weight: bold;">0</span>)  = este%y(<span style="color: #da8548; font-weight: bold;">0</span>) - qntUltrapassou
+        este%y(-<span style="color: #da8548; font-weight: bold;">1</span>) = este%y(-<span style="color: #da8548; font-weight: bold;">1</span>) - qntUltrapassou
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">alteraPosicao</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">escreveMolecula</span>(este, indice)
+        class(molecula), intent(in) :: este
+        <span style="color: #ECBE7B;">integer</span> :: indice
+        <span style="color: #51afef;">write</span>(ioVx, *) este%x(<span style="color: #da8548; font-weight: bold;">0</span>), este%y(<span style="color: #da8548; font-weight: bold;">0</span>), indice
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">alteraVelocidade</span>(este)
+        class(molecula) :: este
+
+        este%v_x = (este%x(<span style="color: #da8548; font-weight: bold;">1</span>) - este%x(-<span style="color: #da8548; font-weight: bold;">1</span>)) / (<span style="color: #da8548; font-weight: bold;">2</span>*dt)
+        este%v_y = (este%y(<span style="color: #da8548; font-weight: bold;">1</span>) - este%y(-<span style="color: #da8548; font-weight: bold;">1</span>)) / (<span style="color: #da8548; font-weight: bold;">2</span>*dt)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">alteraVelocidade</span>
+
+
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">inciaMoleculas</span>
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Divide L numa grid de N quadrados com</span>
+    <span style="color: #5B6268;">! </span><span style="color: #5B6268;">espa&#231;amento L/sqrt(N)</span>
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">iniciaMoleculas</span>()
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: x, y, teta, numAleatorio, v_x, v_y, v = 1.d0
+        <span style="color: #ECBE7B;">integer</span> :: indice
+        <span style="color: #ECBE7B;">integer</span>, <span style="color: #ECBE7B;">parameter</span> :: sqrtN = ceiling(<span style="color: #c678dd;">sqrt</span>(1d0*N))
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>), <span style="color: #ECBE7B;">parameter</span> :: dist = L/sqrtN
+
+
+        <span style="color: #51afef;">do</span> indice = <span style="color: #da8548; font-weight: bold;">1</span>, N
+
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+            x = <span style="color: #c678dd;">mod</span>(indice, sqrtN)*dist + (<span style="color: #da8548; font-weight: bold;">1</span> + 0.5d0*rand())*dist/<span style="color: #da8548; font-weight: bold;">2</span>
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+            y = ceiling(1.d0*indice/sqrtN)*dist - (<span style="color: #da8548; font-weight: bold;">1</span> + 0.5d0*rand())*dis<span style="color: #5B6268;">t/2</span>
+
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">write(*,*) x,y</span>
+
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">random_number</span>(numAleatorio)
+            teta = <span style="color: #da8548; font-weight: bold;">2</span>*pi*numAleatorio
+
+            v_x = v*<span style="color: #c678dd;">cos</span>(teta); v_y = v*<span style="color: #c678dd;">sin</span>(teta)
+
+            moleculas(indice)%x = x
+            moleculas(indice)%y = y
+            moleculas(indice)%v_x = v_x
+            moleculas(indice)%v_y = v_y
+            <span style="color: #5B6268;">! </span><span style="color: #5B6268;">write(*,*) v*cos(teta), v*sin(teta), v*cos(teta)**2 + v*sin(teta)**2</span>
+            moleculas(indice)%x(-<span style="color: #da8548; font-weight: bold;">1</span>) = x - v_x*dt
+            moleculas(indice)%y(-<span style="color: #da8548; font-weight: bold;">1</span>) = y - v_y*dt
+            moleculas(indice)%a_x = 0d0
+            moleculas(indice)%a_y = 0d0
+
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">iniciaMoleculas</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">evoluiSistema</span>(indice)
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: r, seno, coss, a_ik
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: energiaPotencial, energiaCinetica
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: v_x(<span style="color: #da8548; font-weight: bold;">20</span>*N), v_y(<span style="color: #da8548; font-weight: bold;">20</span>*N),v(<span style="color: #da8548; font-weight: bold;">20</span>*N) = 1.d0, vQuad
+        <span style="color: #ECBE7B;">integer</span> :: i, k, indice
+
+        <span style="color: #51afef;">if</span> ( <span style="color: #c678dd;">mod</span>(indice, <span style="color: #da8548; font-weight: bold;">20</span>) == <span style="color: #da8548; font-weight: bold;">0</span> ) <span style="color: #51afef;">then</span>
+            <span style="color: #51afef;">write</span>(ioVelocidade, *) v
+            <span style="color: #51afef;">write</span>(ioVx, *) v_x
+            <span style="color: #51afef;">write</span>(ioVy, *) v_y
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+
+        energiaPotencial = <span style="color: #da8548; font-weight: bold;">0</span>
+        energiaCinetica = <span style="color: #da8548; font-weight: bold;">0</span>
+
+        <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, N
+            moleculas(i)%a_x = 0.d0
+            moleculas(i)%a_y = 0.d0
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Calcula as acelera&#231;&#245;es</span>
+        <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, N
+            <span style="color: #51afef;">do</span> k = i + <span style="color: #da8548; font-weight: bold;">1</span>, N
+                <span style="color: #51afef;">call</span> <span style="color: #c678dd;">rSenoCoss</span>(moleculas(i), moleculas(k), r, seno, coss<span style="color: #5B6268;">)</span>
+
+                <span style="color: #51afef;">if</span> (r &lt;= 3.d0) <span style="color: #51afef;">then</span>
+                    a_ik = <span style="color: #da8548; font-weight: bold;">24</span>*(<span style="color: #da8548; font-weight: bold;">2</span>/r**<span style="color: #da8548; font-weight: bold;">13</span> - <span style="color: #da8548; font-weight: bold;">1</span>/r**<span style="color: #da8548; font-weight: bold;">7</span>)/m
+                    moleculas(i)%a_x = moleculas(i)%a_x + a_ik*coss
+                    moleculas(i)%a_y = moleculas(i)%a_y + a_ik*seno
+
+                    moleculas(k)%a_x = moleculas(k)%a_x - a_ik*coss
+                    moleculas(k)%a_y = moleculas(k)%a_y - a_ik*seno
+                <span style="color: #51afef;">endif</span>
+                <span style="color: #5B6268;">!    </span><span style="color: #5B6268;">Calcula energia potencial</span>
+                energiaPotencial = energiaPotencial + <span style="color: #da8548; font-weight: bold;">4</span> * (r**(-<span style="color: #da8548; font-weight: bold;">12</span>) - r*<span style="color: #5B6268;">*(-6))</span>
+
+            <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">moleculas</span>(i)%alteraPosicao()
+            <span style="color: #51afef;">call</span> <span style="color: #c678dd;">moleculas</span>(i)%alteraVelocidade()
+
+            <span style="color: #5B6268;">! </span><span style="color: #5B6268;">Calculos de velocidade</span>
+
+            vQuad = (moleculas(i)%v_x**<span style="color: #da8548; font-weight: bold;">2</span> + moleculas(i)%v_y**<span style="color: #da8548; font-weight: bold;">2</span>)
+            v_x(<span style="color: #c678dd;">mod</span>(indice, <span style="color: #da8548; font-weight: bold;">20</span>)*N + i) = moleculas(i)%v_x
+            v_y(<span style="color: #c678dd;">mod</span>(indice, <span style="color: #da8548; font-weight: bold;">20</span>)*N + i) = moleculas(i)%v_y
+
+            v(<span style="color: #c678dd;">mod</span>(indice, <span style="color: #da8548; font-weight: bold;">20</span>)*N + i) = <span style="color: #c678dd;">sqrt</span>(vQuad)
+            energiaCinetica = energiaCinetica + 0.5d0*m*vQuad
+
+            moleculas(i)%x(-<span style="color: #da8548; font-weight: bold;">1</span>) = moleculas(i)%x(<span style="color: #da8548; font-weight: bold;">0</span>)
+            moleculas(i)%x(<span style="color: #da8548; font-weight: bold;">0</span>)  = moleculas(i)%x(<span style="color: #da8548; font-weight: bold;">1</span>)
+
+            moleculas(i)%y(-<span style="color: #da8548; font-weight: bold;">1</span>) = moleculas(i)%y(<span style="color: #da8548; font-weight: bold;">0</span>)
+            moleculas(i)%y(<span style="color: #da8548; font-weight: bold;">0</span>)  = moleculas(i)%y(<span style="color: #da8548; font-weight: bold;">1</span>)
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+
+        <span style="color: #51afef;">write</span>(ioTemp, *) energiaCinetica/N
+
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">evoluiSistema</span>
+
+
+    <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">rSenoCoss</span>(mol_i,  mol_k, r, seno, coss)
+        class(molecula) :: mol_i, mol_k
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: dx, dy
+        <span style="color: #ECBE7B;">real</span>(<span style="color: #da8548; font-weight: bold;">8</span>) :: r, seno, coss
+
+        dx = mol_i%x(<span style="color: #da8548; font-weight: bold;">0</span>) - mol_k%x(<span style="color: #da8548; font-weight: bold;">0</span>)
+        <span style="color: #51afef;">if</span> ( <span style="color: #c678dd;">abs</span>(dx) &gt; L/<span style="color: #da8548; font-weight: bold;">2</span> ) <span style="color: #51afef;">then</span>
+            dx = dx - dx/<span style="color: #c678dd;">abs</span>(dx) * L
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+        dy = mol_i%y(<span style="color: #da8548; font-weight: bold;">0</span>) - mol_k%y(<span style="color: #da8548; font-weight: bold;">0</span>)
+        <span style="color: #51afef;">if</span> ( <span style="color: #c678dd;">abs</span>(dy) &gt; L/<span style="color: #da8548; font-weight: bold;">2</span> ) <span style="color: #51afef;">then</span>
+            dy = dy - dy/<span style="color: #c678dd;">abs</span>(dy) * L
+        <span style="color: #51afef;">end</span> <span style="color: #51afef;">if</span>
+
+        r = <span style="color: #c678dd;">sqrt</span>(dx**<span style="color: #da8548; font-weight: bold;">2</span> + dy**<span style="color: #da8548; font-weight: bold;">2</span>)
+        <span style="color: #5B6268;">! </span><span style="color: #5B6268;">write(*,*)  r, dx, dy, mol_i%x(0)</span>
+
+        seno = dy/r; coss = dx/r
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">subroutine</span> <span style="color: #c678dd;">rSenoCoss</span>
+<span style="color: #51afef;">end</span> module DinamMolecularModule
+
+<span style="color: #51afef;">program</span> <span style="color: #c678dd;">tarefaB</span>
+    use DinamMolecularModule
+    <span style="color: #ECBE7B;">implicit none</span>
+    <span style="color: #ECBE7B;">integer</span> :: i
+
+    <span style="color: #51afef;">open</span>(ioVx, file=<span style="color: #98be65;">"saida-vx"</span>)
+    <span style="color: #51afef;">open</span>(ioVy, file=<span style="color: #98be65;">"saida-vy"</span>)
+    <span style="color: #51afef;">open</span>(ioVelocidade, file=<span style="color: #98be65;">"saida-v"</span>)
+    <span style="color: #51afef;">open</span>(ioTemp, file=<span style="color: #98be65;">"saida-temp"</span>)
+    <span style="color: #51afef;">call</span> <span style="color: #c678dd;">iniciaMoleculas</span>()
+
+    <span style="color: #51afef;">do</span> i = <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #da8548; font-weight: bold;">200</span>
+        <span style="color: #51afef;">call</span> <span style="color: #c678dd;">evoluiSistema</span>(i)
+    <span style="color: #51afef;">end</span> <span style="color: #51afef;">do</span>
+
+
+    <span style="color: #51afef;">close</span>(ioVx)
+    <span style="color: #51afef;">close</span>(ioVy)
+    <span style="color: #51afef;">close</span>(ioVelocidade)
+    <span style="color: #51afef;">close</span>(ioTemp)
+<span style="color: #51afef;">end</span> <span style="color: #51afef;">program</span> <span style="color: #c678dd;">tarefaB</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgda44f28" class="outline-3">
+<h3 id="orgda44f28">Resultados</h3>
+<div class="outline-text-3" id="text-orgda44f28">
+<p>
+Os resultados obtidos estão a seguir:
+</p>
+
+<ul class="org-ul">
+<li>Para velocidade</li>
+</ul>
+
+<div id="org8e20eec" class="figure">
+<p><img src="tarefa-b/tarefa-b-graf-1-11820833.png" alt="tarefa-b-graf-1-11820833.png" />
+</p>
+</div>
+<ul class="org-ul">
+<li>Para \(v_{x}\)</li>
+</ul>
+
+<div id="orgb830a74" class="figure">
+<p><img src="tarefa-b/tarefa-b-graf-2-11820833.png" alt="tarefa-b-graf-2-11820833.png" />
+</p>
+</div>
+<ul class="org-ul">
+<li>Para \(v_{y}\)</li>
+</ul>
+
+<div id="org87c7fe9" class="figure">
+<p><img src="tarefa-b/tarefa-b-graf-3-11820833.png" alt="tarefa-b-graf-3-11820833.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

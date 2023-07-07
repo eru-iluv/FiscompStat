@@ -1,0 +1,636 @@
+* Introdução
+
+Buscamos estudar dinâmica molecular
+através de um sistema com contorno
+periódico e força entre as moléculas
+dada pelo potencial de Lennard Jones
+
+#+begin_latex
+\begin{equation}
+V_{ik}(r) = 4\epsilon\left[\left(\frac{\sigma}{r}\right)^{12} -
+        \left(\frac{\sigma}{r}\right)^6\right]
+\end{equation}
+#+end_latex
+#+begin_latex
+
+\begin{equation}
+f_{ik}(r) = 24\epsilon\left[\left(\frac{\sigma}{r}\right)^{13} -
+        \left(\frac{\sigma}{r}\right)^7\right]
+\end{equation}
+#+end_latex
+
+Onde tomamos \(\epsilon = 1\) e \(\sigma = 1\).
+
+* Tarefa A
+
+Na tarefa A, executamos um
+programa de dinâmica molecular
+com um número de moléculas \(N = 20\),
+velocidade inicial \(v = 1\) com sentidos
+aleatórios, e comprimento \(L = 10\).
+
+** Programa
+O programa usado está a seguir
+
+#+begin_src fortran
+module DinamMolecularModule
+    implicit none
+
+    type, public :: molecula
+        real(8) :: x(-1:1), y(-1:1)
+        real(8) :: v_x, v_y
+        real(8) :: a_x, a_y
+    contains
+        procedure :: alteraPosicao, escreveMolecula, alteraVelocidade
+    end type molecula
+
+    real(8), parameter :: dt = 0.02, L = 10, m = 1, pi = acos(-1d0), v = 1d0
+    integer, parameter :: N = 20, ioMoleculas = 1, ioEnergia = 2, ioVelocidade = 3
+    type(molecula) :: moleculas(N)
+
+
+    contains
+
+    subroutine alteraPosicao(este)
+        class(molecula) :: este
+        real(8) :: proxX, proxY, qntUltrapassou
+
+        proxX = 2*este%x(0) - este%x(-1) + este%a_x*dt**2
+        qntUltrapassou = floor(proxX/L)*L
+        este%x(1)  = proxX - qntUltrapassou
+        este%x(0)  = este%x(0) - qntUltrapassou
+        este%x(-1) = este%x(-1) - qntUltrapassou
+
+        proxY = 2*este%y(0) - este%y(-1) + este%a_y*dt**2
+        qntUltrapassou = floor(proxY/L)*L
+
+        este%y(1)  = proxY - qntUltrapassou
+        este%y(0)  = este%y(0) - qntUltrapassou
+        este%y(-1) = este%y(-1) - qntUltrapassou
+
+    end subroutine alteraPosicao
+
+
+    subroutine escreveMolecula(este, indice)
+        class(molecula), intent(in) :: este
+        integer :: indice
+        write(ioMoleculas, *) este%x(0), este%y(0), indice
+
+    end subroutine
+
+
+    subroutine alteraVelocidade(este)
+        class(molecula) :: este
+
+        este%v_x = (este%x(1) - este%x(-1)) / (2*dt)
+        este%v_y = (este%y(1) - este%y(-1)) / (2*dt)
+    end subroutine alteraVelocidade
+
+
+    real(8) function energiaCinetica()
+        integer :: indice
+        real(8) :: v_x, v_y
+        energiaCinetica = 0.d0
+
+        do indice = 1, N
+            v_x = moleculas(indice)%v_x
+            v_y = moleculas(indice)%v_y
+            energiaCinetica = energiaCinetica + 0.5d0*m*(v_x**2 + v_y**2)
+        end do
+
+    end function energiaCinetica
+    ! inciaMoleculas
+    ! Divide L numa grid de N quadrados com
+    ! espaçamento L/sqrt(N)
+    subroutine iniciaMoleculas()
+        real(8) :: x, y, teta, numAleatorio, v_x, v_y
+        integer :: indice
+        integer, parameter :: sqrtN = ceiling(sqrt(1d0*N))
+        real(8), parameter :: dist = L/sqrtN
+
+
+        do indice = 1, N
+
+            call random_number(numAleatorio)
+            x = mod(indice, sqrtN)*dist + (1 + 0.5d0*rand())*dist/2
+            call random_number(numAleatorio)
+            y = ceiling(1.d0*indice/sqrtN)*dist - (1 + 0.5d0*rand())*dist/2
+
+        ! write(*,*) x,y
+
+            call random_number(numAleatorio)
+            teta = 2*pi*numAleatorio
+
+            v_x = v*cos(teta); v_y = v*sin(teta)
+
+            moleculas(indice)%x = x
+            moleculas(indice)%y = y
+            moleculas(indice)%v_x = v_x
+            moleculas(indice)%v_y = v_y
+            ! write(*,*) v*cos(teta), v*sin(teta), v*cos(teta)**2 + v*sin(teta)**2
+            moleculas(indice)%x(-1) = x - v_x*dt
+            moleculas(indice)%y(-1) = y - v_y*dt
+            moleculas(indice)%a_x = 0d0
+            moleculas(indice)%a_y = 0d0
+
+        end do
+
+    end subroutine iniciaMoleculas
+
+
+    subroutine evoluiSistema(indice)
+        real(8) :: r, seno, coss, a_ik
+        real(8) :: energiaPotencial, velocidade(N)
+        integer :: i, k, indice
+
+        if ( mod(indice-1,3) == 2) then
+            do i = 1, N
+                call moleculas(i)%escreveMolecula(i)
+            end do
+        else if ( mod(indice-1, 20) == 0 ) then
+            write(ioVelocidade, *) velocidade
+        end if
+
+
+        energiaPotencial = 0
+
+        do i = 1, N
+            moleculas(i)%a_x = 0.d0
+            moleculas(i)%a_y = 0.d0
+        end do
+
+        ! Calcula as acelerações
+        do i = 1, N
+            do k = i + 1, N
+                call rSenoCoss(moleculas(i), moleculas(k), r, seno, coss)
+
+                if (r <= 3.d0) then
+                    a_ik = 24*(2/r**13 - 1/r**7)/m
+                    moleculas(i)%a_x = moleculas(i)%a_x + a_ik*coss
+                    moleculas(i)%a_y = moleculas(i)%a_y + a_ik*seno
+
+                    moleculas(k)%a_x = moleculas(k)%a_x - a_ik*coss
+                    moleculas(k)%a_y = moleculas(k)%a_y - a_ik*seno
+                endif
+                !    Calcula energia potencial
+                energiaPotencial = energiaPotencial + 4 * (r**(-12) - r**(-6))
+
+            end do
+
+            call moleculas(i)%alteraPosicao()
+            call moleculas(i)%alteraVelocidade()
+
+            velocidade(i) = &
+                sqrt(moleculas(i)%v_x**2 + moleculas(i)%v_y**2)
+
+            moleculas(i)%x(-1) = moleculas(i)%x(0)
+            moleculas(i)%x(0)  = moleculas(i)%x(1)
+
+            moleculas(i)%y(-1) = moleculas(i)%y(0)
+            moleculas(i)%y(0)  = moleculas(i)%y(1)
+        end do
+
+        write(ioEnergia, *) energiaPotencial + energiaCinetica()
+
+    end subroutine evoluiSistema
+
+
+    subroutine rSenoCoss(mol_i,  mol_k, r, seno, coss)
+        class(molecula) :: mol_i, mol_k
+        real(8) :: dx, dy
+        real(8) :: r, seno, coss
+
+        dx = mol_i%x(0) - mol_k%x(0)
+        if ( abs(dx) > L/2 ) then
+            dx = dx - dx/abs(dx) * L
+        end if
+
+        dy = mol_i%y(0) - mol_k%y(0)
+        if ( abs(dy) > L/2 ) then
+            dy = dy - dy/abs(dy) * L
+        end if
+
+        r = sqrt(dx**2 + dy**2)
+        ! write(*,*)  r, dx, dy, mol_i%x(0)
+
+        seno = dy/r; coss = dx/r
+    end subroutine rSenoCoss
+end module DinamMolecularModule
+
+program tarefaA
+    use DinamMolecularModule
+    implicit none
+    integer :: i
+
+    open(ioMoleculas, file="saida-a")
+    open(ioEnergia, file="saida-energia")
+    open(ioVelocidade, file="saida-velocidade")
+    call iniciaMoleculas()
+
+    do i = 1, 200
+        call evoluiSistema(i)
+    end do
+
+
+    close(ioMoleculas)
+    close(ioEnergia)
+    close(ioVelocidade)
+end program tarefaA
+#+end_src
+
+** Resultado
+
+Obtivemos, após 500 interações,
+o seguinte resultado:
+
+[[file:tarefa-a/tarefa-a-graf-1-11820833.png]]
+
+e a energia
+
+[[file:tarefa-a/tarefa-a-graf-2-11820833.png]]
+
+* Tarefa B
+Na tarefa B, buscamos observar o formato
+do gráfico da distribuição de velocidades, e
+averiguar se segue a distribuição de Maxwell
+Boltzmann.
+
+** Programa
+Usamos um código muito parecido
+com o anterior. As alterações relevantes
+foram feitas na subrotina da evolução do
+sistema.
+
+Aqui, agrupamos as velocidades em intervalos
+de \(20\Delta t\) para que possamos colocá-los no
+histograma com um número de caixas adequadas.
+
+#+begin_src fortran
+module DinamMolecularModule
+    implicit none
+
+    type, public :: molecula
+        real(8) :: x(-1:1), y(-1:1)
+        real(8) :: v_x, v_y
+        real(8) :: a_x, a_y
+    contains
+        procedure :: alteraPosicao, escreveMolecula, alteraVelocidade
+    end type molecula
+
+    real(8), parameter :: dt = 0.02, L = 10, m = 1, pi = acos(-1d0)
+    integer, parameter :: N = 20, ioVx = 1, ioVy = 2, ioVelocidade = 3, ioTemp = 4
+    type(molecula) :: moleculas(N)
+
+
+    contains
+
+    subroutine alteraPosicao(este)
+        class(molecula) :: este
+        real(8) :: proxX, proxY, qntUltrapassou
+
+        proxX = 2*este%x(0) - este%x(-1) + este%a_x*dt**2
+        qntUltrapassou = floor(proxX/L)*L
+        este%x(1)  = proxX - qntUltrapassou
+        este%x(0)  = este%x(0) - qntUltrapassou
+        este%x(-1) = este%x(-1) - qntUltrapassou
+
+        proxY = 2*este%y(0) - este%y(-1) + este%a_y*dt**2
+        qntUltrapassou = floor(proxY/L)*L
+
+        este%y(1)  = proxY - qntUltrapassou
+        este%y(0)  = este%y(0) - qntUltrapassou
+        este%y(-1) = este%y(-1) - qntUltrapassou
+
+    end subroutine alteraPosicao
+
+
+    subroutine escreveMolecula(este, indice)
+        class(molecula), intent(in) :: este
+        integer :: indice
+        write(ioVx, *) este%x(0), este%y(0), indice
+
+    end subroutine
+
+
+    subroutine alteraVelocidade(este)
+        class(molecula) :: este
+
+        este%v_x = (este%x(1) - este%x(-1)) / (2*dt)
+        este%v_y = (este%y(1) - este%y(-1)) / (2*dt)
+    end subroutine alteraVelocidade
+
+
+    ! inciaMoleculas
+    ! Divide L numa grid de N quadrados com
+    ! espaçamento L/sqrt(N)
+    subroutine iniciaMoleculas()
+        real(8) :: x, y, teta, numAleatorio, v_x, v_y, v = 1.d0
+        integer :: indice
+        integer, parameter :: sqrtN = ceiling(sqrt(1d0*N))
+        real(8), parameter :: dist = L/sqrtN
+
+
+        do indice = 1, N
+
+            call random_number(numAleatorio)
+            x = mod(indice, sqrtN)*dist + (1 + 0.5d0*rand())*dist/2
+            call random_number(numAleatorio)
+            y = ceiling(1.d0*indice/sqrtN)*dist - (1 + 0.5d0*rand())*dist/2
+
+        ! write(*,*) x,y
+
+            call random_number(numAleatorio)
+            teta = 2*pi*numAleatorio
+
+            v_x = v*cos(teta); v_y = v*sin(teta)
+
+            moleculas(indice)%x = x
+            moleculas(indice)%y = y
+            moleculas(indice)%v_x = v_x
+            moleculas(indice)%v_y = v_y
+            ! write(*,*) v*cos(teta), v*sin(teta), v*cos(teta)**2 + v*sin(teta)**2
+            moleculas(indice)%x(-1) = x - v_x*dt
+            moleculas(indice)%y(-1) = y - v_y*dt
+            moleculas(indice)%a_x = 0d0
+            moleculas(indice)%a_y = 0d0
+
+        end do
+
+    end subroutine iniciaMoleculas
+
+
+    subroutine evoluiSistema(indice)
+        real(8) :: r, seno, coss, a_ik
+        real(8) :: energiaPotencial, energiaCinetica
+        real(8) :: v_x(20*N), v_y(20*N),v(20*N) = 1.d0, vQuad
+        integer :: i, k, indice
+
+        if ( mod(indice, 20) == 0 ) then
+            write(ioVelocidade, *) v
+            write(ioVx, *) v_x
+            write(ioVy, *) v_y
+        end if
+
+
+        energiaPotencial = 0
+        energiaCinetica = 0
+
+        do i = 1, N
+            moleculas(i)%a_x = 0.d0
+            moleculas(i)%a_y = 0.d0
+        end do
+
+        ! Calcula as acelerações
+        do i = 1, N
+            do k = i + 1, N
+                call rSenoCoss(moleculas(i), moleculas(k), r, seno, coss)
+
+                if (r <= 3.d0) then
+                    a_ik = 24*(2/r**13 - 1/r**7)/m
+                    moleculas(i)%a_x = moleculas(i)%a_x + a_ik*coss
+                    moleculas(i)%a_y = moleculas(i)%a_y + a_ik*seno
+
+                    moleculas(k)%a_x = moleculas(k)%a_x - a_ik*coss
+                    moleculas(k)%a_y = moleculas(k)%a_y - a_ik*seno
+                endif
+                !    Calcula energia potencial
+                energiaPotencial = energiaPotencial + 4 * (r**(-12) - r**(-6))
+
+            end do
+
+            call moleculas(i)%alteraPosicao()
+            call moleculas(i)%alteraVelocidade()
+
+            ! Calculos de velocidade
+
+            vQuad = (moleculas(i)%v_x**2 + moleculas(i)%v_y**2)
+            v_x(mod(indice, 20)*N + i) = moleculas(i)%v_x
+            v_y(mod(indice, 20)*N + i) = moleculas(i)%v_y
+
+            v(mod(indice, 20)*N + i) = sqrt(vQuad)
+            energiaCinetica = energiaCinetica + 0.5d0*m*vQuad
+
+            moleculas(i)%x(-1) = moleculas(i)%x(0)
+            moleculas(i)%x(0)  = moleculas(i)%x(1)
+
+            moleculas(i)%y(-1) = moleculas(i)%y(0)
+            moleculas(i)%y(0)  = moleculas(i)%y(1)
+        end do
+
+
+        write(ioTemp, *) energiaCinetica/N
+
+    end subroutine evoluiSistema
+
+
+    subroutine rSenoCoss(mol_i,  mol_k, r, seno, coss)
+        class(molecula) :: mol_i, mol_k
+        real(8) :: dx, dy
+        real(8) :: r, seno, coss
+
+        dx = mol_i%x(0) - mol_k%x(0)
+        if ( abs(dx) > L/2 ) then
+            dx = dx - dx/abs(dx) * L
+        end if
+
+        dy = mol_i%y(0) - mol_k%y(0)
+        if ( abs(dy) > L/2 ) then
+            dy = dy - dy/abs(dy) * L
+        end if
+
+        r = sqrt(dx**2 + dy**2)
+        ! write(*,*)  r, dx, dy, mol_i%x(0)
+
+        seno = dy/r; coss = dx/r
+    end subroutine rSenoCoss
+end module DinamMolecularModule
+
+program tarefaB
+    use DinamMolecularModule
+    implicit none
+    integer :: i
+
+    open(ioVx, file="saida-vx")
+    open(ioVy, file="saida-vy")
+    open(ioVelocidade, file="saida-v")
+    open(ioTemp, file="saida-temp")
+    call iniciaMoleculas()
+
+    do i = 1, 200
+        call evoluiSistema(i)
+    end do
+
+
+    close(ioVx)
+    close(ioVy)
+    close(ioVelocidade)
+    close(ioTemp)
+end program tarefaB
+#+end_src
+
+
+** Resultados
+Os resultados obtidos, para
+uma simulação de parâmetros idênticos
+à tarefa A estão a seguir:
+
+- Para velocidade
+[[file:tarefa-b/tarefa-b-graf-1-11820833.png]]
+- Para \(v_{x}\)
+[[file:tarefa-b/tarefa-b-graf-2-11820833.png]]
+- Para \(v_{y}\)
+[[file:tarefa-b/tarefa-b-graf-3-11820833.png]]
+
+Observamos que o resultado difere um pouco,
+embora se aproxime, da curva de Maxwell Boltzmannm.
+Isso está dentro do esperado de uma curva com tão
+poucas moléculas, cujos dados ficam sensíveis a
+flutuações abruptas da média. Isso mesmo levando
+20 iterações em consideração.
+
+
+* Notebook configuration :noexport:
+
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+This section is used for configuring various settings in the notebook appearance as well as defining various options for the export in HTML or PDF formats. You can change any of these settings.
+** Document information
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+TITLE:        [[https://edisciplinas.usp.br/pluginfile.php/7722176/mod_resource/content/1/projeto-fiscompII-quinto-2023.pdf][Dinâmica Molecular]]
+#+SUBTITLE:     Edgard Macena Cabral Nº 11820833 @@latex:\\@@ @@html:<br>@@ Maio 2023
+#+AUTHOR:       Edgard Macena Cabral
+#+EMAIL:        edgardmacena@usp.br
+#+DATE:         Junho 2023
+#+DESCRIPTION:  A GNU Emacs notebook demonstration
+#+OPTIONS:      toc:nil
+** HTML export configuration
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_export html
+#+end_export
+
+#+OPTIONS:   num:nil
+#+OPTIONS:   html-style:nil
+#+OPTIONS:   html-scripts:nil
+#+OPTIONS:   html-postamble:nil
+#+OPTIONS:   broken-links:mark
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../../notebook.css" />
+
+** PDF export configuration
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_export PDF
+#+end_export
+
+#+OPTIONS:
+
+** Code snippets
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+*** Notebook setup :lisp:
+
+#+name: setup
+#+header:
+#+begin_src emacs-lisp :results none :exports none :eval no-export
+(setq org-cite-csl-styles-dir ".")
+(setq org-babel-python-command "/opt/anaconda3/bin/python")
+(require 'ob-python)
+(require 'oc-csl)
+nil
+#+end_src
+
+*** Notebook run :lisp:
+
+#+name: run
+#+header: :var scope="all"
+#+begin_src emacs-lisp :results none :exports none :eval never
+(org-babel-execute-buffer)
+nil
+#+end_src
+
+*** Notebook export :lisp:
+
+#+name: export
+#+header: :var target="html"
+#+begin_src emacs-lisp :results none :exports none :eval never
+(cond (((string= target "html")   (org-html-export-to-html))
+       ((string= target "pdf")    (org-latex-export-to-pdf))
+       ((string= target "tex")    (org-latex-export-to-latex))
+       ((string= target "latex")  (org-latex-export-to-latex))
+       (t  (message (format "Unknow backend (%s) for export" target)))))
+#+end_src
+
+*** Notebook information :lisp:
+
+#+name: document-info
+#+header: :var python=python-version emacs=emacs-version org=org-version
+#+begin_src python :results raw :exports results
+return f"{emacs}, {org} & {python}"
+#+end_src
+#+RESULTS: document-info
+
+*** Emacs version :lisp:
+
+#+name: emacs-version
+#+begin_src emacs-lisp :export none :results raw
+(format "[[https://www.gnu.org/software/emacs/][Emacs]] %d.%d"
+        emacs-major-version emacs-minor-version)
+#+end_src
+#+RESULTS: emacs-version
+
+*** Org mode version :lisp:
+
+#+name: org-version
+#+begin_src emacs-lisp :export none :results raw
+(format "[[https://www.gnu.org/software/emacs/][Org mode]] %s"
+        (org-version nil nil))
+#+end_src
+#+RESULTS: org-version
+
+*** Python version :python:
+
+#+name: python-version
+#+begin_src python :export none :results raw
+import platform
+version = platform.python_version()
+return f"[[https://www.python.org/][Python]] {version}"
+#+end_src
+
+*** Matplotlib figure preparation :python:
+
+#+name: pyfig-pre
+#+header: :var width=8 height=1
+#+begin_src python :results file :exports none
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+fig = plt.figure(figsize=(width,height))
+ax = fig.add_axes([0,0,1,1], frameon=False)
+ax.axis("off")
+#+end_src
+
+*** Matplotlib figure finalization :python:
+
+#+name: pyfig-post
+#+header: :var filename=""
+#+begin_src python :results file :exports none
+if filename:
+    plt.savefig(filename, dpi=300)
+    return filename
+return ""
+#+end_src
+
+#+RESULTS: pyfig-post
+[[file:]]
