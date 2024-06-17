@@ -116,7 +116,6 @@ module DinamMolecularModule
             call random_number(numAleatorio)
             y = ceiling(1.d0*indice/sqrtN)*dist - (1 + 0.5d0*rand())*dist/2
 
-        ! write(*,*) x,y
 
             call random_number(numAleatorio)
             teta = 2*pi*numAleatorio
@@ -127,7 +126,6 @@ module DinamMolecularModule
             moleculas(indice)%y = y
             moleculas(indice)%v_x = v_x
             moleculas(indice)%v_y = v_y
-            ! write(*,*) v*cos(teta), v*sin(teta), v*cos(teta)**2 + v*sin(teta)**2
             moleculas(indice)%x(-1) = x - v_x*dt
             moleculas(indice)%y(-1) = y - v_y*dt
             moleculas(indice)%a_x = 0d0
@@ -211,7 +209,7 @@ module DinamMolecularModule
         end if
 
         r = sqrt(dx**2 + dy**2)
-        ! write(*,*)  r, dx, dy, mol_i%x(0)
+
 
         seno = dy/r; coss = dx/r
     end subroutine rSenoCoss
@@ -248,6 +246,12 @@ o seguinte resultado:
 e a energia
 
 [[file:tarefa-a/tarefa-a-graf-2-11820833.png]]
+
+Embora o sistema não conserve energia,
+ela não chega a divergir também, ficando
+sempre restrista em um intervalo com \(0,25\)
+unidades de energia de largura, o que
+garante certa confiabilidade ao sistema.
 
 * Tarefa B
 Na tarefa B, buscamos observar o formato
@@ -337,7 +341,6 @@ module DinamMolecularModule
             call random_number(numAleatorio)
             y = ceiling(1.d0*indice/sqrtN)*dist - (1 + 0.5d0*rand())*dist/2
 
-        ! write(*,*) x,y
 
             call random_number(numAleatorio)
             teta = 2*pi*numAleatorio
@@ -348,7 +351,6 @@ module DinamMolecularModule
             moleculas(indice)%y = y
             moleculas(indice)%v_x = v_x
             moleculas(indice)%v_y = v_y
-            ! write(*,*) v*cos(teta), v*sin(teta), v*cos(teta)**2 + v*sin(teta)**2
             moleculas(indice)%x(-1) = x - v_x*dt
             moleculas(indice)%y(-1) = y - v_y*dt
             moleculas(indice)%a_x = 0d0
@@ -439,7 +441,7 @@ module DinamMolecularModule
         end if
 
         r = sqrt(dx**2 + dy**2)
-        ! write(*,*)  r, dx, dy, mol_i%x(0)
+
 
         seno = dy/r; coss = dx/r
     end subroutine rSenoCoss
@@ -488,6 +490,409 @@ poucas moléculas, cujos dados ficam sensíveis a
 flutuações abruptas da média. Isso mesmo levando
 20 iterações em consideração.
 
+* Tarefa C
+
+** Programa
+Para tarefa C, fizemos alterações em relação
+a inicialização das moléculas apenas.
+Tivemos:
+
+#+begin_src fortran
+    subroutine escreveMolecula(este, indice)
+        class(molecula), intent(in) :: este
+        integer :: indice
+        write(ioVx, *) este%x(0), este%y(0), indice
+
+    end subroutine
+
+
+    subroutine alteraVelocidade(este)
+        class(molecula) :: este
+
+        este%v_x = (este%x(1) - este%x(-1)) / (2*dt)
+        este%v_y = (este%y(1) - este%y(-1)) / (2*dt)
+    end subroutine alteraVelocidade
+
+
+    ! inciaMoleculas
+    ! Divide L numa grid de N quadrados com
+    ! espaçamento L/sqrt(N)
+    subroutine iniciaMoleculas()
+        real(8) :: x, y, numAleatorio, v_x, v_y
+        integer :: indice
+        integer, parameter :: sqrtN = ceiling(sqrt(1d0*N))
+        real(8), parameter :: dist = L/sqrtN
+
+
+        do indice = 1, N
+
+            call random_number(numAleatorio)
+            x = mod(indice, sqrtN)*dist + (1 + 0.5d0*rand())*dist/2
+            call random_number(numAleatorio)
+            y = ceiling(1.d0*indice/sqrtN)*dist - (1 + 0.5d0*rand())*dist/2
+
+
+            call random_number(numAleatorio)
+
+            v_y = 1.0d0
+            v_x = 0.0d0
+            if ( indice > N/2 ) then
+                v_y = 0.0d0
+                v_x = 1.0d0
+            end if
+
+            moleculas(indice)%x = x
+            moleculas(indice)%y = y
+            moleculas(indice)%v_x = v_x
+            moleculas(indice)%v_y = v_y
+            moleculas(indice)%x(-1) = x - v_x*dt
+            moleculas(indice)%y(-1) = y - v_y*dt
+            moleculas(indice)%a_x = 0d0
+            moleculas(indice)%a_y = 0d0
+
+        end do
+
+    end subroutine iniciaMoleculas
+#+end_src
+
+** Resultados
+
+Os resultados foram muito parecidos
+com do tarefa-b, mas com uma necessidade
+de ajustar a curva para velocidade média.
+
+Os gráficos de Maxwell Boltzmann estão
+deslocados para em torno da velocidade
+média. E observamos que, apesar
+dos picos pronunciados nas componentes
+da velocidade (em \(0\) e \(1\), como
+esperamos), as velocidades parecem
+se deslocar para distribuição.
+
+
+- Para velocidade
+[[file:tarefa-c/tarefa-c-graf-1-11820833.png]]
+- Para \(v_{x}\)
+[[file:tarefa-c/tarefa-c-graf-2-11820833.png]]
+- Para \(v_{y}\)
+[[file:tarefa-c/tarefa-c-graf-3-11820833.png]]
+
+* Tarefa D
+
+Além disso, calculamos as temperaturas
+de equilíbrio dos sistemas das tarefas
+*B* e *C*. Não existe um jeito de
+decidir se o sistema entrou em equilíbrio,
+mas, após uma breve observação, decidimos
+medir a média dos valores após a centésima operação
+das últimas duas tarefas. Obtivemos
+
+\(t_{B} = 0,73 \pm 0,05\)
+e
+\(t_{C} = 1,00 \pm 0,05\)
+
+Os pequenos desvios
+padrões associadas nos
+asseguram que de fato o sistema se
+encontra próximo do equillíbrio após
+100 interações.
+
+
+* Tarefa E
+Na tarefa E, buscamos emular uma situação
+de alta densidade com \(p = 1\), fazendo
+\(L = 4\), \(N = 16\) e \(\Delta t = 0,005\). Buscamos observar
+se essa simulação formaria sólidos cristalinos.
+
+Para a formação adequada dos cristais, precisamos
+abaixar a velocidade para \(v = 0.7\).
+
+** Programa
+Usamos o mesmo programa da tarefa-A.
+
+** Resultado
+Os resultados estão a seguir:
+
+[[file:tarefa-e/tarefa-e-graf-1-11820833.png]]
+
+
+[[file:tarefa-e/tarefa-e-graf-2-11820833.png]]
+
+Observa-se que as moléculas se organizam
+em cristais triangulares, rompendo a estruturação
+quadrada que impomos através da inicialização das
+moléculas e das condições de contorno.
+
+* Tarefa F
+Na tarefa F, buscamos examinar a liquefação de
+um cristal sólido. Para isso, injetamos
+velocidade nas partículas e esperamos elas
+alcançarem equilíbrio, até observarmos
+uma transição clara de fazes.
+
+** Programa
+O programa usado está a seguir:
+
+#+begin_src fortran
+module DinamMolecularModule
+    implicit none
+
+    type, public :: molecula
+        real(8) :: x(-1:1), y(-1:1)
+        real(8) :: v_x, v_y
+        real(8) :: a_x, a_y
+    contains
+        procedure :: alteraPosicao, escreveMolecula, alteraVelocidade
+    end type molecula
+
+    real(8), parameter :: dt = 0.005, L = 4, m = 1, rA = 1.5d0, pi = acos(-1.0d0)
+    integer, parameter :: N = 16, ioEnergia = 1, ioVelocidade = 2
+    integer, parameter :: ioCristal = 7, ioLiquInicio = 8, ioLiquFinal = 9
+    real(8) :: testeX0, testeY0, deslocQuad
+    integer :: particulaTeste = 5
+    type(molecula) :: moleculas(N)
+
+
+    contains
+
+    subroutine alteraPosicao(este)
+        class(molecula) :: este
+        real(8) :: proxX, proxY, qntUltrapassou
+
+        proxX = 2*este%x(0) - este%x(-1) + este%a_x*dt**2
+        qntUltrapassou = floor(proxX/L)*L
+        este%x(1)  = proxX - qntUltrapassou
+        este%x(0)  = este%x(0) - qntUltrapassou
+        este%x(-1) = este%x(-1) - qntUltrapassou
+
+        proxY = 2*este%y(0) - este%y(-1) + este%a_y*dt**2
+        qntUltrapassou = floor(proxY/L)*L
+
+        este%y(1)  = proxY - qntUltrapassou
+        este%y(0)  = este%y(0) - qntUltrapassou
+        este%y(-1) = este%y(-1) - qntUltrapassou
+
+    end subroutine alteraPosicao
+
+
+    subroutine escreveMolecula(este, indice, io)
+        class(molecula), intent(in) :: este
+        integer :: indice, io
+        write(io, *) este%x(0), este%y(0), indice
+
+    end subroutine
+
+
+    subroutine alteraVelocidade(este)
+        class(molecula) :: este
+
+        este%v_x = (este%x(1) - este%x(-1)) / (2*dt)
+        este%v_y = (este%y(1) - este%y(-1)) / (2*dt)
+    end subroutine alteraVelocidade
+
+
+    ! inciaMoleculas
+    ! Divide L numa grid de N quadrados com
+    ! espaçamento L/sqrt(N)
+    subroutine iniciaMoleculas()
+        real(8) :: x, y, teta, numAleatorio, v_x, v_y, v = 0.4d0
+        integer :: indice
+        integer, parameter :: sqrtN = ceiling(sqrt(1.0d0*N))
+        real(8), parameter :: dist = L/sqrtN
+
+
+        do indice = 1, N
+
+            x = mod(indice, sqrtN)*dist + (rand() - 0.5d0)*dist/8
+            y = ceiling(1.d0*indice/sqrtN)*dist + (rand() - 0.5d0)*dist/8
+
+            if ( indice == particulaTeste) then
+                testeX0 = x
+                testeY0 = y
+                deslocQuad = 0.d0
+            end if
+
+            call random_number(numAleatorio)
+            teta = 2*pi*numAleatorio
+
+            v_x = v*cos(teta); v_y = v*sin(teta)
+
+            moleculas(indice)%x = x
+            moleculas(indice)%y = y
+            moleculas(indice)%v_x = v_x
+            moleculas(indice)%v_y = v_y
+            moleculas(indice)%x(-1) = x - v_x*dt
+            moleculas(indice)%y(-1) = y - v_y*dt
+            moleculas(indice)%a_x = 0.d0
+            moleculas(indice)%a_y = 0.d0
+
+        end do
+
+    end subroutine iniciaMoleculas
+
+
+    subroutine evoluiSistema(indice)
+        real(8) :: r, seno, coss, a_ik
+        real(8) :: energiaPotencial, energiaCinetica
+        real(8) :: v(N) = 1.d0, vQuad
+        integer :: i, k, indice
+
+        if ( mod(indice-1,20) == 0 .and. indice > 21000) then
+            do i = 1, N
+                call moleculas(i)%escreveMolecula(i,ioLiquFinal)
+            end do
+        else if ( mod(indice-1,20) == 0 .and. 12000 < indice .and. indice < 14000) then
+            do i = 1, N
+                call moleculas(i)%escreveMolecula(i,ioLiquInicio)
+            end do
+        else if ( mod(indice-1,20) == 0 .and. 3200 < indice .and. indice < 6000) then
+            do i = 1, N
+                call moleculas(i)%escreveMolecula(i,ioCristal)
+            end do
+
+        else if ( mod(indice-1, 2000) == 0 .and. indice > 6000 ) then
+            do i = 1, N
+                moleculas(i)%x(-1) = moleculas(i)%x(0)&
+                    - (moleculas(i)%x(0) - moleculas(i)%x(-1))*rA
+            end do
+        end if
+
+        energiaPotencial = 0.d0
+        energiaCinetica = 0.d0
+
+        do i = 1, N
+            moleculas(i)%a_x = 0.d0
+            moleculas(i)%a_y = 0.d0
+        end do
+
+        ! Calcula as acelerações
+        do i = 1, N
+            do k = i + 1, N
+                call rSenoCoss(moleculas(i), moleculas(k), r, seno, coss)
+
+                if (r <= 3.d0) then
+                    a_ik = 24*(2/r**13 - 1/r**7)/m
+                    moleculas(i)%a_x = moleculas(i)%a_x + a_ik*coss
+                    moleculas(i)%a_y = moleculas(i)%a_y + a_ik*seno
+
+                    moleculas(k)%a_x = moleculas(k)%a_x - a_ik*coss
+                    moleculas(k)%a_y = moleculas(k)%a_y - a_ik*seno
+                endif
+                !    Calcula energia potencial
+                energiaPotencial = energiaPotencial + 4 * (r**(-12) - r**(-6))
+
+            end do
+
+            call moleculas(i)%alteraPosicao()
+            call moleculas(i)%alteraVelocidade()
+
+
+            ! Calculos de velocidade
+            vQuad = (moleculas(i)%v_x**2 + moleculas(i)%v_y**2)
+            v(i) = sqrt(vQuad)
+            energiaCinetica = energiaCinetica + 0.5d0*m*vQuad
+
+            moleculas(i)%x(-1) = moleculas(i)%x(0)
+            moleculas(i)%x(0)  = moleculas(i)%x(1)
+
+            moleculas(i)%y(-1) = moleculas(i)%y(0)
+            moleculas(i)%y(0)  = moleculas(i)%y(1)
+
+            ! Calcula deslocamento quadrado de uma partícula teste
+            if ( i == particulaTeste ) then
+                deslocQuad = deslocQuad + (testeX0 - moleculas(i)%x(0))**2 + &
+                    (testeY0 - moleculas(i)%y(0))**2
+            end if
+
+        end do
+        if ( mod(indice-1,20) == 0 ) then
+            write(ioEnergia, *) energiaPotencial + energiaCinetica, energiaCinetica/N, deslocQuad/20.d0
+            deslocQuad = 0.d0
+        end if
+
+    end subroutine evoluiSistema
+
+
+    subroutine rSenoCoss(mol_i,  mol_k, r, seno, coss)
+        class(molecula) :: mol_i, mol_k
+        real(8) :: dx, dy
+        real(8) :: r, seno, coss
+
+        dx = mol_i%x(0) - mol_k%x(0)
+        if ( abs(dx) > L/2 ) then
+            dx = dx - dx/abs(dx) * L
+        end if
+
+        dy = mol_i%y(0) - mol_k%y(0)
+        if ( abs(dy) > L/2 ) then
+            dy = dy - dy/abs(dy) * L
+        end if
+
+        r = sqrt(dx**2 + dy**2)
+
+
+        seno = dy/r; coss = dx/r
+    end subroutine rSenoCoss
+end module DinamMolecularModule
+
+program tarefaF
+    use DinamMolecularModule
+    implicit none
+    integer :: i
+
+    call srand(1)
+    open(ioCristal, file="saida-f-1")
+    open(ioLiquInicio, file="saida-f-2")
+    open(ioLiquFinal, file="saida-f-3")
+
+    open(ioEnergia, file="saida-energia")
+    call iniciaMoleculas()
+
+    do i = 1, 22000
+        call evoluiSistema(i)
+    end do
+
+
+    close(ioCristal)
+    close(ioLiquInicio)
+    close(ioLiquFinal)
+    close(ioEnergia)
+end program tarefaF
+#+end_src
+
+** Resultados
+
+#+ATTR_HTML: :width 600px
+. [[file:tarefa-f/tarefa-f-graf-1-11820833.png]]
+#+ATTR_HTML: :width 600px
+. [[file:tarefa-f/tarefa-f-graf-2-11820833.png]]
+
+Observamos que o sistema claramente
+passa por um sistema mais ou menos
+estável, embora com uma estrutura cristalina
+menos rígida, antes de se liquifazer completamente.
+
+Podemos observar as alterações na energia
+do sistema a seguir:
+#+ATTR_HTML: :width 600px
+. [[file:tarefa-f/tarefa-f-graf-3-11820833.png]]
+
+Ademais, é interessante sabermos quando o
+sistema se liquefez. Observando o deslocamento
+quadrado médio de uma partícula, notamos
+que as distâncias se mantém bem estáveis até
+\(t = 30\), \(n = 6000\), quando alteramos
+a temperatura pela primeira vez.
+
+A partir daí, as alterações de temperatura
+continuam causando mudanças bruscas, como era
+de se esperar, mas sem alterar substancialmente
+o sistema, até chegarmos em \(t = 75\), \(n = 15000\),
+quando a o deslocamento quadrado passa a se comportar
+de maneira quase aleatória.
+
+#+ATTR_HTML: :width 600px
+. [[file:tarefa-f/tarefa-f-graf-4-11820833.png]]
 
 * Notebook configuration :noexport:
 

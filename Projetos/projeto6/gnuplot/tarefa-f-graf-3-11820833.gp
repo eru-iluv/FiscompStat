@@ -1,5 +1,5 @@
-set terminal png size 1000,1000
-set output "tarefa-a/tarefa-a-graf-1-11820833.png"
+set terminal cairolatex standalone size 20cm, 20cm
+set output "tarefa-f-graf-3-11820833.tex"
 
 unset colorbox
 # line styles
@@ -24,4 +24,11 @@ set palette defined ( 0 '#E41A1C',\
 		      6 '#A65628',\
 		      7 '#F781BF' )
 
-plot "tarefa-a/saida-a" u 1:2:3 ps 3 pt 1 lc palette z t ""
+set title "Energia após $n$ interações"
+set xlabel "$n$"
+set ylabel "E"
+
+set xrange [0:22200]
+
+
+plot "../tarefa-f/saida-energia" u ($0*20):1 w lines t ""

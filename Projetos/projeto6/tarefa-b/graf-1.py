@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 arquivo = open("tarefa-b/saida-v")
 data = arquivo.readlines()
 v = np.arange(0,2.5,0.01)
-kT = 0.66
+kT = 0.7
 nBins = 15
 p = v/kT*np.exp(-v**2/2/kT)
 data = [[float(numeroStr) for numeroStr in data[i].split()] for i in range(len(data))]

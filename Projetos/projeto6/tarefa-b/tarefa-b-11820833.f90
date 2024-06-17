@@ -69,7 +69,6 @@ module DinamMolecularModule
             call random_number(numAleatorio)
             y = ceiling(1.d0*indice/sqrtN)*dist - (1 + 0.5d0*rand())*dist/2
 
-        ! write(*,*) x,y
                 
             call random_number(numAleatorio)
             teta = 2*pi*numAleatorio
@@ -80,7 +79,6 @@ module DinamMolecularModule
             moleculas(indice)%y = y
             moleculas(indice)%v_x = v_x
             moleculas(indice)%v_y = v_y
-            ! write(*,*) v*cos(teta), v*sin(teta), v*cos(teta)**2 + v*sin(teta)**2
             moleculas(indice)%x(-1) = x - v_x*dt
             moleculas(indice)%y(-1) = y - v_y*dt
             moleculas(indice)%a_x = 0d0
@@ -171,22 +169,25 @@ module DinamMolecularModule
         end if
 
         r = sqrt(dx**2 + dy**2)
-        ! write(*,*)  r, dx, dy, mol_i%x(0)
+
         
         seno = dy/r; coss = dx/r
     end subroutine rSenoCoss
 end module DinamMolecularModule
 
-program tarefaA
+program tarefaB
     use DinamMolecularModule
     implicit none
     integer :: i
+
+    call srand(1)
 
     open(ioVx, file="saida-vx")
     open(ioVy, file="saida-vy")
     open(ioVelocidade, file="saida-v")
     open(ioTemp, file="saida-temp")
     call iniciaMoleculas()
+
 
     do i = 1, 200
         call evoluiSistema(i)
@@ -197,4 +198,4 @@ program tarefaA
     close(ioVy)
     close(ioVelocidade)
     close(ioTemp)
-end program tarefaA
+end program tarefaB

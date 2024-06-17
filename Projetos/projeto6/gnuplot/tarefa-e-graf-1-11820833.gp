@@ -1,8 +1,12 @@
-set terminal png size 1000,1000
-set output "tarefa-a/tarefa-a-graf-1-11820833.png"
+set terminal png size 1600,800
+set output "tarefa-e/tarefa-e-graf-1-11820833.png"
 
 unset colorbox
 # line styles
+
+set multiplot layout 1,2 \
+    title "Dinâmica Molecular\n "\
+    font ",20"
 
 set style line 1 lc rgb '#E41A1C' # red
 set style line 2 lc rgb '#377EB8' # blue
@@ -24,4 +28,11 @@ set palette defined ( 0 '#E41A1C',\
 		      6 '#A65628',\
 		      7 '#F781BF' )
 
-plot "tarefa-a/saida-a" u 1:2:3 ps 3 pt 1 lc palette z t ""
+set yrange [0:4]
+set xrange [0:4]
+
+
+set title "De t = 0 a t = 0,1"
+plot "tarefa-e/saida-e-1" u 1:2:3 ps 2 pt 6 lc palette z t ""
+set title "De t = 0,2 a t = 0,4"
+plot "tarefa-e/saida-e-2" u 1:2:3 ps 2 pt 6 lc palette z t ""

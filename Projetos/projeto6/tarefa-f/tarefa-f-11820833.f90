@@ -9,8 +9,11 @@ module DinamMolecularModule
         procedure :: alteraPosicao, escreveMolecula, alteraVelocidade    
     end type molecula
 
-    real(8), parameter :: dt = 0.02, L = 10, m = 1, pi = acos(-1.0d0)
-    integer, parameter :: N = 20, ioMoleculas = 1, ioEnergia = 2, ioVelocidade = 3
+    real(8), parameter :: dt = 0.005, L = 4, m = 1, rA = 1.5d0, pi = acos(-1.0d0)
+    integer, parameter :: N = 16, ioEnergia = 1, ioVelocidade = 2
+    integer, parameter :: ioCristal = 7, ioLiquInicio = 8, ioLiquFinal = 9
+    real(8) :: testeX0, testeY0, deslocQuad
+    integer :: particulaTeste = 5
     type(molecula) :: moleculas(N)
 
 
@@ -36,10 +39,10 @@ module DinamMolecularModule
     end subroutine alteraPosicao
 
 
-    subroutine escreveMolecula(este, indice)
+    subroutine escreveMolecula(este, indice, io)
         class(molecula), intent(in) :: este
-        integer :: indice
-        write(ioMoleculas, *) este%x(0), este%y(0), indice
+        integer :: indice, io
+        write(io, *) este%x(0), este%y(0), indice
         
     end subroutine 
 
@@ -56,7 +59,7 @@ module DinamMolecularModule
     ! Divide L numa grid de N quadrados com
     ! espaçamento L/sqrt(N)
     subroutine iniciaMoleculas()
-        real(8) :: x, y, teta, numAleatorio, v_x, v_y, v = 1.0d0
+        real(8) :: x, y, teta, v_x, v_y, v = 0.5d0
         integer :: indice
         integer, parameter :: sqrtN = ceiling(sqrt(1.0d0*N)) 
         real(8), parameter :: dist = L/sqrtN
@@ -64,14 +67,16 @@ module DinamMolecularModule
 
         do indice = 1, N
             
-            call random_number(numAleatorio)
-            x = mod(indice, sqrtN)*dist ! + (1 + 0.5d0*rand())*dist/2
-            call random_number(numAleatorio)
-            y = ceiling(1.d0*indice/sqrtN)*dist !- (1 + 0.5d0*rand())*dist/2
+            x = mod(indice, sqrtN)*dist + (rand() - 0.5d0)*dist/8
+            y = ceiling(1.d0*indice/sqrtN)*dist + (rand() - 0.5d0)*dist/8
 
+            if ( indice == particulaTeste) then
+                testeX0 = x
+                testeY0 = y
+                deslocQuad = 0.d0 
+            end if
                 
-            call random_number(numAleatorio)
-            teta = 2*pi*numAleatorio
+            teta = 2*pi*rand()
             
             v_x = v*cos(teta); v_y = v*sin(teta)
 
@@ -95,16 +100,26 @@ module DinamMolecularModule
         real(8) :: v(N) = 1.d0, vQuad
         integer :: i, k, indice
         
-        if ( mod(indice-1,3) == 0) then
+        if ( mod(indice-1,20) == 0 .and. indice > 21000) then
             do i = 1, N
-                call moleculas(i)%escreveMolecula(i)
+                call moleculas(i)%escreveMolecula(i,ioLiquFinal)
             end do
-        else if ( mod(indice-1, 20) == 0 ) then
-            write(ioVelocidade, *) v
-
+        else if ( mod(indice-1,20) == 0 .and. 12000 < indice .and. indice < 14000) then
+            do i = 1, N
+                call moleculas(i)%escreveMolecula(i,ioLiquInicio)
+            end do
+        else if ( mod(indice-1,20) == 0 .and. 3200 < indice .and. indice < 6000) then
+            do i = 1, N
+                call moleculas(i)%escreveMolecula(i,ioCristal)
+            end do
         end if
-        
 
+        if ( mod(indice-1, 2000) == 0 .and. indice > 6000 ) then
+            do i = 1, N
+                moleculas(i)%x(-1) = moleculas(i)%x(0)&
+                    - (moleculas(i)%x(0) - moleculas(i)%x(-1))*rA
+            end do
+        end if
         energiaPotencial = 0.d0
         energiaCinetica = 0.d0
 
@@ -134,6 +149,7 @@ module DinamMolecularModule
             call moleculas(i)%alteraPosicao()
             call moleculas(i)%alteraVelocidade()
             
+
             ! Calculos de velocidade
             vQuad = (moleculas(i)%v_x**2 + moleculas(i)%v_y**2)
             v(i) = sqrt(vQuad)
@@ -144,10 +160,18 @@ module DinamMolecularModule
 
             moleculas(i)%y(-1) = moleculas(i)%y(0)
             moleculas(i)%y(0)  = moleculas(i)%y(1)
-        end do
         
+            ! Calcula deslocamento quadrado de uma partícula teste
+            if ( i == particulaTeste ) then
+                deslocQuad = deslocQuad + (testeX0 - moleculas(i)%x(0))**2 + &
+                    (testeY0 - moleculas(i)%y(0))**2 
+            end if
 
-        write(ioEnergia, *) energiaPotencial + energiaCinetica, energiaCinetica/N
+        end do
+        if ( mod(indice-1,20) == 0 ) then
+            write(ioEnergia, *) energiaPotencial + energiaCinetica, energiaCinetica/N, deslocQuad/20.d0            
+            deslocQuad = 0.d0
+        end if
 
     end subroutine evoluiSistema
 
@@ -174,23 +198,26 @@ module DinamMolecularModule
     end subroutine rSenoCoss
 end module DinamMolecularModule
 
-program tarefaA
+program tarefaF
     use DinamMolecularModule
     implicit none
     integer :: i
 
+    call srand(1)
+    open(ioCristal, file="saida-f-1")
+    open(ioLiquInicio, file="saida-f-2")
+    open(ioLiquFinal, file="saida-f-3")
 
-    open(ioMoleculas, file="saida-a")
     open(ioEnergia, file="saida-energia")
-    open(ioVelocidade, file="saida-velocidade")
     call iniciaMoleculas()
 
-    do i = 1, 200
+    do i = 1, 22000
         call evoluiSistema(i)
     end do
 
 
-    close(ioMoleculas)
+    close(ioCristal)
+    close(ioLiquInicio)
+    close(ioLiquFinal)
     close(ioEnergia)
-    close(ioVelocidade)
-end program tarefaA
+end program tarefaF

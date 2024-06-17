@@ -1,7 +1,10 @@
-set terminal png size 1000,1000
-set output "tarefa-a/tarefa-a-graf-1-11820833.png"
+set terminal cairolatex standalone size 20cm, 20cm
+set output "tarefa-f-graf-4-11820833.tex"
 
 unset colorbox
+set title "Energia após $n$ interações" 
+set xlabel "$n$"
+set ylabel "E"
 # line styles
 
 set style line 1 lc rgb '#E41A1C' # red
@@ -24,4 +27,10 @@ set palette defined ( 0 '#E41A1C',\
 		      6 '#A65628',\
 		      7 '#F781BF' )
 
-plot "tarefa-a/saida-a" u 1:2:3 ps 3 pt 1 lc palette z t ""
+set title "Deslocamento quadrado de uma partícula\nda sua posição inicial"
+set xlabel "$n$"
+set ylabel "$r^2$"
+
+set xrange [0:22200]
+
+plot "../tarefa-f/saida-energia" u ($0*20):3 w points ps 0.5 t ""

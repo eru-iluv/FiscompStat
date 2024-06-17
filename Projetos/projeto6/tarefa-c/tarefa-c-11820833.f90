@@ -9,8 +9,8 @@ module DinamMolecularModule
         procedure :: alteraPosicao, escreveMolecula, alteraVelocidade    
     end type molecula
 
-    real(8), parameter :: dt = 0.02, L = 10, m = 1, pi = acos(-1.0d0)
-    integer, parameter :: N = 20, ioMoleculas = 1, ioEnergia = 2, ioVelocidade = 3
+    real(8), parameter :: dt = 0.02, L = 10, m = 1, pi = acos(-1d0)
+    integer, parameter :: N = 20, ioVx = 1, ioVy = 2, ioVelocidade = 3, ioTemp = 4
     type(molecula) :: moleculas(N)
 
 
@@ -39,7 +39,7 @@ module DinamMolecularModule
     subroutine escreveMolecula(este, indice)
         class(molecula), intent(in) :: este
         integer :: indice
-        write(ioMoleculas, *) este%x(0), este%y(0), indice
+        write(ioVx, *) este%x(0), este%y(0), indice
         
     end subroutine 
 
@@ -56,24 +56,28 @@ module DinamMolecularModule
     ! Divide L numa grid de N quadrados com
     ! espaçamento L/sqrt(N)
     subroutine iniciaMoleculas()
-        real(8) :: x, y, teta, numAleatorio, v_x, v_y, v = 1.0d0
+        real(8) :: x, y, numAleatorio, v_x, v_y
         integer :: indice
-        integer, parameter :: sqrtN = ceiling(sqrt(1.0d0*N)) 
+        integer, parameter :: sqrtN = ceiling(sqrt(1d0*N)) 
         real(8), parameter :: dist = L/sqrtN
 
 
         do indice = 1, N
             
             call random_number(numAleatorio)
-            x = mod(indice, sqrtN)*dist ! + (1 + 0.5d0*rand())*dist/2
+            x = mod(indice, sqrtN)*dist + (1 + 0.5d0*rand())*dist/2
             call random_number(numAleatorio)
-            y = ceiling(1.d0*indice/sqrtN)*dist !- (1 + 0.5d0*rand())*dist/2
+            y = ceiling(1.d0*indice/sqrtN)*dist - (1 + 0.5d0*rand())*dist/2
 
                 
             call random_number(numAleatorio)
-            teta = 2*pi*numAleatorio
             
-            v_x = v*cos(teta); v_y = v*sin(teta)
+            v_y = 1.0d0
+            v_x = 0.0d0 
+            if ( indice > N/2 ) then
+                v_y = 0.0d0
+                v_x = 1.0d0
+            end if
 
             moleculas(indice)%x = x 
             moleculas(indice)%y = y
@@ -81,8 +85,8 @@ module DinamMolecularModule
             moleculas(indice)%v_y = v_y
             moleculas(indice)%x(-1) = x - v_x*dt
             moleculas(indice)%y(-1) = y - v_y*dt
-            moleculas(indice)%a_x = 0.d0
-            moleculas(indice)%a_y = 0.d0
+            moleculas(indice)%a_x = 0d0
+            moleculas(indice)%a_y = 0d0
             
         end do
 
@@ -92,21 +96,18 @@ module DinamMolecularModule
     subroutine evoluiSistema(indice)
         real(8) :: r, seno, coss, a_ik
         real(8) :: energiaPotencial, energiaCinetica 
-        real(8) :: v(N) = 1.d0, vQuad
+        real(8) :: v_x(20*N), v_y(20*N),v(20*N) = 1.d0, vQuad
         integer :: i, k, indice
-        
-        if ( mod(indice-1,3) == 0) then
-            do i = 1, N
-                call moleculas(i)%escreveMolecula(i)
-            end do
-        else if ( mod(indice-1, 20) == 0 ) then
-            write(ioVelocidade, *) v
 
+        if ( mod(indice, 20) == 0 ) then
+            write(ioVelocidade, *) v
+            write(ioVx, *) v_x
+            write(ioVy, *) v_y
         end if
         
 
-        energiaPotencial = 0.d0
-        energiaCinetica = 0.d0
+        energiaPotencial = 0
+        energiaCinetica = 0
 
         do i = 1, N
             moleculas(i)%a_x = 0.d0
@@ -135,8 +136,12 @@ module DinamMolecularModule
             call moleculas(i)%alteraVelocidade()
             
             ! Calculos de velocidade
+
             vQuad = (moleculas(i)%v_x**2 + moleculas(i)%v_y**2)
-            v(i) = sqrt(vQuad)
+            v_x(mod(indice, 20)*N + i) = moleculas(i)%v_x
+            v_y(mod(indice, 20)*N + i) = moleculas(i)%v_y
+
+            v(mod(indice, 20)*N + i) = sqrt(vQuad)
             energiaCinetica = energiaCinetica + 0.5d0*m*vQuad
 
             moleculas(i)%x(-1) = moleculas(i)%x(0)
@@ -147,7 +152,7 @@ module DinamMolecularModule
         end do
         
 
-        write(ioEnergia, *) energiaPotencial + energiaCinetica, energiaCinetica/N
+        write(ioTemp, *) energiaCinetica/N
 
     end subroutine evoluiSistema
 
@@ -174,15 +179,17 @@ module DinamMolecularModule
     end subroutine rSenoCoss
 end module DinamMolecularModule
 
-program tarefaA
+program tarefaC
     use DinamMolecularModule
     implicit none
     integer :: i
 
+    call srand(1)
 
-    open(ioMoleculas, file="saida-a")
-    open(ioEnergia, file="saida-energia")
-    open(ioVelocidade, file="saida-velocidade")
+    open(ioVx, file="saida-vx")
+    open(ioVy, file="saida-vy")
+    open(ioVelocidade, file="saida-v")
+    open(ioTemp, file="saida-temp")
     call iniciaMoleculas()
 
     do i = 1, 200
@@ -190,7 +197,8 @@ program tarefaA
     end do
 
 
-    close(ioMoleculas)
-    close(ioEnergia)
+    close(ioVx)
+    close(ioVy)
     close(ioVelocidade)
-end program tarefaA
+    close(ioTemp)
+end program tarefaC

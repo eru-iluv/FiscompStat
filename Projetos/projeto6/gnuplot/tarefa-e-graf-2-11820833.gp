@@ -1,5 +1,5 @@
 set terminal png size 1000,1000
-set output "tarefa-a/tarefa-a-graf-1-11820833.png"
+set output "tarefa-e/tarefa-e-graf-2-11820833.png"
 
 unset colorbox
 # line styles
@@ -24,4 +24,9 @@ set palette defined ( 0 '#E41A1C',\
 		      6 '#A65628',\
 		      7 '#F781BF' )
 
-plot "tarefa-a/saida-a" u 1:2:3 ps 3 pt 1 lc palette z t ""
+set yrange [0:4]
+set xrange [0:4]
+
+
+set title "Dinâmica molecular\nDe t = 13 a t = 16"
+plot "tarefa-e/saida-e-3" u 1:2:3 ps 2 pt 6 lc palette z t ""

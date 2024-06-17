@@ -1,13 +1,13 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-arquivo = open("tarefa-b/saida-vx")
+arquivo = open("tarefa-c/saida-vx")
 data = arquivo.readlines()
 lim = 2.5
 v = np.arange(-lim,lim,0.01)
-kT = 0.9
-nBins = 15
-p = 1/np.sqrt(2*np.pi*kT)*np.exp(-v**2/2/kT)
+kT = 0.80
+nBins = 10
+p = 1/np.sqrt(2*np.pi*kT)*np.exp(-(v-0.5)**2/2/kT)
 data = [[float(numeroStr) for numeroStr in data[i].split()] for i in range(len(data))]
 plt.title("Distribuição de velocidades\nno eixo x")
 plt.xlabel("$v_x$")
@@ -19,4 +19,4 @@ plt.plot(v,p, label="Maxwell Boltzmann")
 plt.xlim([-lim,lim])
 plt.legend()
 0
-plt.savefig("tarefa-b/tarefa-b-graf-2-11820833.png") 
+plt.savefig("tarefa-c/tarefa-c-graf-2-11820833.png") 
